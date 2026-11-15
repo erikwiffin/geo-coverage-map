@@ -88,7 +88,7 @@ async function main() {
   const map = new maplibregl.Map({
     container: "map",
     style: manifest.basemap_style || "https://tiles.openfreemap.org/styles/positron",
-    attributionControl: { compact: false, customAttribution: "Boundary: US Census TIGERweb · Borings: see About" },
+    attributionControl: { compact: matchMedia("(max-width: 760px)").matches, customAttribution: "Boundary: US Census TIGERweb · Borings: see About" },
   });
   map.addControl(new maplibregl.NavigationControl(), "top-left");
   map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
@@ -249,14 +249,15 @@ async function main() {
     const bins = state.colorBy === "distance"
       ? DIST_LABELS.map((l, i) => [DIST_COLORS[i], l]) : RC_LABELS.map((l, i) => [RC_COLORS[i], l]);
     const typesShown = TYPES.filter((t) => state.filters.types.has(t));
-    $("legend").innerHTML = `
+    const open = (document.querySelector("#legend details") as HTMLDetailsElement | null)?.open ?? !matchMedia("(max-width: 760px)").matches;
+    $("legend").innerHTML = `<details ${open ? "open" : ""}><summary>Legend</summary>
       <h3>${state.colorBy === "distance" ? "Distance to nearest boring" : `Reports within ${state.radius} m`}</h3>
       <div class="bins">${bins.map(([c, l]) => `<span class="bin" style="background:${c}"></span><span>${l}</span>`).join("")}</div>
       <h3>Borings</h3>
       <div class="bins">${typesShown.map((t) => `<span class="swatch" style="background:${TYPE_COLOR[t]}"></span><span>${t}</span>`).join("")}
         <span class="swatch" style="border:2px solid #52514e"></span><span>Hollow: tier 3–4</span></div>
       <div class="bins"><span class="bin" style="background:#6250d633;border-color:#6250d6"></span><span>Report footprint</span>
-        <span class="bin" style="border:2px dashed #d03b3b"></span><span>Largest gaps at R</span></div>`;
+        <span class="bin" style="border:2px dashed #d03b3b"></span><span>Largest gaps at R</span></div></details>`;
   }
 
   // ---------------------------------------------------------------- popups
@@ -389,7 +390,7 @@ async function main() {
       <p><strong>Not for design use.</strong> Locations are approximate and records may be incomplete or out of date.
       Always obtain site-specific investigation.</p>
       <h3>Sources</h3>
-      <table><tr><th>Source</th><th>Tier</th><th>Status</th><th>Borings</th></tr>${rows}
+      <table><colgroup><col class="src"><col><col><col></colgroup><tr><th>Source</th><th>Tier</th><th>Status</th><th>Borings</th></tr>${rows}
       <tr><td>City boundary: US Census TIGERweb<br><small>${esc(manifest.boundary.url)}</small></td><td>1</td><td>${esc(manifest.boundary.fetched?.slice(0, 10) ?? "")}</td><td></td></tr></table>
       <h3>License tiers (cumulative)</h3>
       <ol><li>US federal work (public domain).</li>
