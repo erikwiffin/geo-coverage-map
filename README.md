@@ -47,6 +47,7 @@ cd web && npm test   # NN correctness + performance, and web-vs-Python stats con
 | `ca.dep.state.fl.us` | FGS wells | reachable |
 | `tiles.openfreemap.org` | basemap | reachable |
 | `doi.org`, `www.sciencebase.gov` | USGS CPT release (open question 6) | reachable; release has no Florida points |
+| `services1.arcgis.com` | FDOT's ArcGIS Online org (`O1JpcwDW8sjYuddV`) | reachable; its 1,605 hosted services include **no soil-boring layer**, so it's not an FDOT mirror |
 | `geodes.kyrasolutions.com` | FGS well report links (links only; not fetched) | not needed |
 
 ### FDOT access workaround

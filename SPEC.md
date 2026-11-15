@@ -366,3 +366,7 @@ When a request is blocked, the error names the host; add it to the allowlist and
   **none in Florida**; the nearest is Charleston, SC, about 382 km from Gainesville. Nothing to import
   for v1. Index columns (`ID, Latitude, Longitude, Date (YYYYMMDD), Total_Depth (m), WT_Depth`)
   map to the CSV adapter if another city needs them.
+- **FDOT mirror search (2026-11-15):** FDOT's ArcGIS Online org (`services1.arcgis.com/O1JpcwDW8sjYuddV`,
+  1,605 services) has no soil-boring, geotech or drilling layer; the Soil Boring viewer data is
+  only on `gis.fdot.gov`. `www.arcgis.com` (portal search) was not reachable, so other orgs
+  weren't searched.
