@@ -1,0 +1,214 @@
+{
+ "area_id": "gainesville",
+ "h3_resolution": 11,
+ "n_cells": 84619,
+ "area_km2": 169.021,
+ "radii_m": [
+  50,
+  100,
+  250,
+  500,
+  1000
+ ],
+ "default_radius_m": 250,
+ "default_filters": {
+  "max_tier": 4,
+  "types": "all",
+  "sources": [
+   "fdot_d2"
+  ],
+  "exclude_kinds": [
+   "geologic_well"
+  ],
+  "years": "all, incl. undated"
+ },
+ "n_borings_default": 0,
+ "n_reports_default": 0,
+ "median_nearest_m": null,
+ "pct_covered": {
+  "50": 0.0,
+  "100": 0.0,
+  "250": 0.0,
+  "500": 0.0,
+  "1000": 0.0
+ },
+ "pct_covered_all_sources": {
+  "50": 0.345,
+  "100": 1.358,
+  "250": 7.497,
+  "500": 23.65,
+  "1000": 57.56
+ },
+ "pct_covered_by_tier": {
+  "<=1": {
+   "50": 0.0,
+   "100": 0.0,
+   "250": 0.0,
+   "500": 0.0,
+   "1000": 0.0
+  },
+  "<=2": {
+   "50": 0.0,
+   "100": 0.0,
+   "250": 0.0,
+   "500": 0.0,
+   "1000": 0.0
+  },
+  "<=3": {
+   "50": 0.0,
+   "100": 0.0,
+   "250": 0.0,
+   "500": 0.0,
+   "1000": 0.0
+  },
+  "<=4": {
+   "50": 0.0,
+   "100": 0.0,
+   "250": 0.0,
+   "500": 0.0,
+   "1000": 0.0
+  }
+ },
+ "pct_covered_by_type": {
+  "all": {
+   "50": 0.0,
+   "100": 0.0,
+   "250": 0.0,
+   "500": 0.0,
+   "1000": 0.0
+  },
+  "spt_cpt": {
+   "50": 0.0,
+   "100": 0.0,
+   "250": 0.0,
+   "500": 0.0,
+   "1000": 0.0
+  },
+  "excluding_wells": {
+   "50": 0.0,
+   "100": 0.0,
+   "250": 0.0,
+   "500": 0.0,
+   "1000": 0.0
+  }
+ },
+ "pct_covered_by_recency": {
+  "all_years": {
+   "50": 0.0,
+   "100": 0.0,
+   "250": 0.0,
+   "500": 0.0,
+   "1000": 0.0
+  },
+  "2000_and_later": {
+   "50": 0.0,
+   "100": 0.0,
+   "250": 0.0,
+   "500": 0.0,
+   "1000": 0.0
+  },
+  "2015_and_later": {
+   "50": 0.0,
+   "100": 0.0,
+   "250": 0.0,
+   "500": 0.0,
+   "1000": 0.0
+  }
+ },
+ "reports_within_radius": {
+  "radius_m": 250,
+  "median": 0.0,
+  "p90": 0.0,
+  "pct_cells_zero": 100.0
+ },
+ "gaps": {
+  "radius_m": 500,
+  "top": [
+   {
+    "area_km2": 168.2125,
+    "n_cells": 84215,
+    "centroid_lon": -82.346147,
+    "centroid_lat": 29.679648,
+    "max_distance_m": null,
+    "rank": 1
+   },
+   {
+    "area_km2": 0.5941,
+    "n_cells": 297,
+    "centroid_lon": -82.414629,
+    "centroid_lat": 29.618891,
+    "max_distance_m": null,
+    "rank": 2
+   },
+   {
+    "area_km2": 0.152,
+    "n_cells": 76,
+    "centroid_lon": -82.396645,
+    "centroid_lat": 29.614851,
+    "max_distance_m": null,
+    "rank": 3
+   },
+   {
+    "area_km2": 0.042,
+    "n_cells": 21,
+    "centroid_lon": -82.404828,
+    "centroid_lat": 29.612713,
+    "max_distance_m": null,
+    "rank": 4
+   },
+   {
+    "area_km2": 0.006,
+    "n_cells": 3,
+    "centroid_lon": -82.422059,
+    "centroid_lat": 29.616111,
+    "max_distance_m": null,
+    "rank": 5
+   },
+   {
+    "area_km2": 0.004,
+    "n_cells": 2,
+    "centroid_lon": -82.321097,
+    "centroid_lat": 29.62386,
+    "max_distance_m": null,
+    "rank": 6
+   },
+   {
+    "area_km2": 0.002,
+    "n_cells": 1,
+    "centroid_lon": -82.416302,
+    "centroid_lat": 29.643006,
+    "max_distance_m": null,
+    "rank": 7
+   },
+   {
+    "area_km2": 0.002,
+    "n_cells": 1,
+    "centroid_lon": -82.320287,
+    "centroid_lat": 29.62446,
+    "max_distance_m": null,
+    "rank": 8
+   },
+   {
+    "area_km2": 0.002,
+    "n_cells": 1,
+    "centroid_lon": -82.322946,
+    "centroid_lat": 29.622606,
+    "max_distance_m": null,
+    "rank": 9
+   },
+   {
+    "area_km2": 0.002,
+    "n_cells": 1,
+    "centroid_lon": -82.322366,
+    "centroid_lat": 29.62315,
+    "max_distance_m": null,
+    "rank": 10
+   }
+  ]
+ },
+ "generated": "2026-11-15T00:35:57+00:00",
+ "sources_status": {
+  "fdot_d2": "failed",
+  "fgs_wells": "ok"
+ }
+}

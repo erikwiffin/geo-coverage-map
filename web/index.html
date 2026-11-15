@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Geotech Coverage Map</title>
+  <meta name="description" content="Where public geotechnical borings and reports exist, and where the gaps are." />
+</head>
+<body>
+  <div id="app">
+    <aside id="panel" aria-label="Filters and statistics">
+      <header>
+        <h1 id="title">Geotechnical coverage</h1>
+        <p class="sub" id="subtitle">Public borings and reports</p>
+      </header>
+
+      <section id="stats" aria-live="polite">
+        <div class="hero"><span id="hero-pct">–</span><span class="hero-unit">%</span></div>
+        <p class="hero-label">of city area within <strong id="hero-r">250</strong> m of a qualifying boring</p>
+        <dl class="kv">
+          <div><dt>Borings</dt><dd id="st-borings">–</dd></div>
+          <div><dt>Reports</dt><dd id="st-reports">–</dd></div>
+          <div><dt>Median distance</dt><dd id="st-median">–</dd></div>
+        </dl>
+        <figure class="spark">
+          <figcaption>Coverage vs radius</figcaption>
+          <svg id="spark" viewBox="0 0 260 80" role="img" aria-label="Coverage versus radius curve"></svg>
+          <div id="spark-tip" class="tip" hidden></div>
+        </figure>
+        <p id="notice" class="notice" hidden></p>
+      </section>
+
+      <form id="controls" onsubmit="return false">
+        <fieldset>
+          <legend>Coverage radius</legend>
+          <div class="seg" id="radius-presets" role="radiogroup" aria-label="Radius presets"></div>
+          <label class="row">R <input id="radius" type="range" min="25" max="1500" step="25" value="250" aria-describedby="radius-val" /> <output id="radius-val">250 m</output></label>
+        </fieldset>
+        <fieldset>
+          <legend>Maximum license tier</legend>
+          <div id="tiers" class="stack"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Boring types</legend>
+          <div id="types" class="stack"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Sources</legend>
+          <div id="sources" class="stack"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Years</legend>
+          <label class="row">From <input id="year-min" type="range" /> <output id="year-min-val"></output></label>
+          <label class="row">To <input id="year-max" type="range" /> <output id="year-max-val"></output></label>
+          <label class="check"><input id="undated" type="checkbox" checked /> Include undated</label>
+        </fieldset>
+        <fieldset>
+          <legend>Colour hexes by</legend>
+          <label class="check"><input type="radio" name="colorby" value="distance" checked /> Distance to nearest boring</label>
+          <label class="check"><input type="radio" name="colorby" value="reports" /> Reports within R</label>
+        </fieldset>
+        <fieldset>
+          <legend>Layers</legend>
+          <div id="layers" class="stack"></div>
+        </fieldset>
+        <div class="buttons">
+          <button type="button" id="export-csv">Export stats (CSV)</button>
+          <button type="button" id="export-geojson">Export borings (GeoJSON)</button>
+          <button type="button" id="about-btn">About &amp; sources</button>
+        </div>
+      </form>
+      <footer>
+        <p class="warn"><strong>Not for design use.</strong> Locations are approximate.</p>
+        <p id="foot-sources"></p>
+      </footer>
+    </aside>
+    <main id="map" aria-label="Map"></main>
+    <div id="legend" class="legend" aria-label="Legend"></div>
+  </div>
+
+  <dialog id="about" aria-labelledby="about-title">
+    <form method="dialog">
+      <h2 id="about-title">About this map</h2>
+      <div id="about-body"></div>
+      <button value="close" autofocus>Close</button>
+    </form>
+  </dialog>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

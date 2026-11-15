@@ -1,0 +1,32 @@
+id: gainesville
+name: Gainesville, FL
+
+boundary:
+  url: https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer/4
+  where: "GEOID='1225175'"     # verified 2026-11: NAME='Gainesville city', STATE='12'
+  name: US Census TIGERweb Incorporated Places
+  license: US Census Bureau TIGER data, public domain.
+
+# Records outside this box get an out_of_county flag (Alachua County, approximate, WGS84).
+county_bbox: [-82.66, 29.41, -82.05, 29.95]
+
+sources: [fdot_d2, fgs_wells]
+
+envelope_buffer_m: 1000        # fetch boundary bbox + this
+h3_resolution: auto            # auto: 10, or 11 when min(radii_m) < 100
+radii_m: [50, 100, 250, 500, 1000]
+default_radius_m: 250
+report_buffer_m: 30
+report_span_flag_km: 5
+dedupe_m: 5
+report_count_radius_m: 250
+gap_radius_m: 500
+gaps_top_n: 10
+recency_years: [2000, 2015]
+
+basemap_style: https://tiles.openfreemap.org/styles/positron
+
+http:
+  user_agent: "geotech-coverage/0.1 (public geotechnical data coverage map)"
+  contact_email: ""            # set to add "; contact: <email>" to the User-Agent
+  max_rps_per_host: 2

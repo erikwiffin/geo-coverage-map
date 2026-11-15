@@ -1,0 +1,69 @@
+# Source registry. Adding a source is a config change: pick an adapter and map fields.
+# Field-map keys are normalized schema columns; values are native field names.
+# report_key: list of fields or field-tuples; the first non-null entry wins.
+
+- id: fdot_d2
+  name: FDOT District 2 Soil Borings
+  adapter: arcgis
+  url: https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soil_Boring_viewer/MapServer/0
+  homepage: https://www.fdot.gov/geotechnical
+  where: "1=1"
+  tier: 2
+  kind: geotechnical
+  license: >-
+    Florida agency public record (FDOT). See Microdecisions v. Skinner (Fla. 2d DCA 2004).
+    Consultant-authored reports may still carry the consultant's copyright.
+  field_map:
+    native_id: OBJECTID
+    boring_name: BORENUM
+    type: TYPE
+    date: BOREDATE
+    doc_url: DOC_LINK
+    doc_name: DOC_NAME
+    doc_id: DOC_ID
+    project: PROJNUM
+    fin: FIN
+    consultant: CONSULTANT
+    elev: ELEV
+    gw: GR_WTR
+    county: COUNTY
+  report_key: [DOC_ID, DOC_LINK, [FIN, PROJNUM, DOC_NAME]]
+
+- id: fgs_wells
+  name: Florida Geological Survey Wells
+  adapter: arcgis
+  url: https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/FGS_WELLS/MapServer/0
+  homepage: https://floridadep.gov/fgs
+  where: "1=1"
+  tier: 2
+  kind: geologic_well        # hidden by default in UI and headline stats
+  default_on: false
+  license: Florida agency public record (FDEP / Florida Geological Survey).
+  fixed_type: Well
+  field_map:
+    native_id: OBJECTID
+    boring_name: WELL_NAME
+    date: DRILL_DATE
+    year: DRILL_YEAR
+    depth_ft: TOTAL_DEPTH
+    elev: DOCUMENTED_ELEVATION
+    doc_url: REPORT_LINK
+    consultant: DRILL_COMPANY
+    county: COUNTY
+  report_key: [REPORT_LINK]
+
+# Generic CSV import (USGS data releases, manual additions, exports). Disabled until a file exists.
+# - id: usgs_cpt
+#   name: USGS CPT data release
+#   adapter: csv
+#   path: data/manual/usgs_cpt.csv
+#   tier: 1
+#   kind: geotechnical
+#   license: US federal work, public domain.
+
+# Optional, needs GEOSETTA_API_KEY. Read https://geosetta.org/api_docs/ before enabling.
+# - id: geosetta
+#   adapter: geosetta
+#   tier: 4
+#   kind: geotechnical
+#   disclaimer: "<copy Geosetta's required disclaimer here>"

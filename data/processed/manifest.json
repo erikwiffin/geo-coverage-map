@@ -1,0 +1,70 @@
+{
+ "area": "gainesville",
+ "generated": "2026-11-15T00:35:55+00:00",
+ "bbox_fetch": [
+  -82.4411445007918,
+  29.5777197965482,
+  -82.21203749891896,
+  29.78733820361553
+ ],
+ "boundary": {
+  "url": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer/4",
+  "where": "GEOID='1225175'",
+  "license": "US Census Bureau TIGER data, public domain.",
+  "fetched": "2026-11-15T00:35:55+00:00",
+  "attributes": {
+   "AREALAND": 165788850,
+   "AREAWATER": 3045506,
+   "BASENAME": "Gainesville",
+   "CBSAPCI": "Y",
+   "CENTLAT": "+29.6793488",
+   "CENTLON": "-082.3464437",
+   "FUNCSTAT": "A",
+   "GEOID": "1225175",
+   "INTPTLAT": "+29.6788873",
+   "INTPTLON": "-082.3462120",
+   "LSADC": "25",
+   "MTFCC": "G4110",
+   "NAME": "Gainesville city",
+   "NECTAPCI": "N",
+   "OBJECTID": 32349,
+   "OID": "27890267523186",
+   "PLACE": "25175",
+   "PLACECC": "C1",
+   "PLACENS": "02403676",
+   "STATE": "12",
+   "DISP_CLR": 5
+  }
+ },
+ "sources": {
+  "fdot_d2": {
+   "name": "FDOT District 2 Soil Borings",
+   "url": "https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soil_Boring_viewer/MapServer/0",
+   "homepage": "https://www.fdot.gov/geotechnical",
+   "tier": 2,
+   "kind": "geotechnical",
+   "license": "Florida agency public record (FDOT). See Microdecisions v. Skinner (Fla. 2d DCA 2004). Consultant-authored reports may still carry the consultant's copyright.",
+   "disclaimer": null,
+   "default_on": true,
+   "status": "failed",
+   "reason": "gis.fdot.gov refused the request (HTTP 403; looks like the host's own firewall/WAF, not the sandbox)"
+  },
+  "fgs_wells": {
+   "name": "Florida Geological Survey Wells",
+   "url": "https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/FGS_WELLS/MapServer/0",
+   "homepage": "https://floridadep.gov/fgs",
+   "tier": 2,
+   "kind": "geologic_well",
+   "license": "Florida agency public record (FDEP / Florida Geological Survey).",
+   "disclaimer": null,
+   "default_on": false,
+   "status": "ok",
+   "fetched": "2026-11-15T00:35:56+00:00",
+   "n_raw": 157,
+   "n_in_area": 157,
+   "n_after_dedupe": 157
+  }
+ },
+ "built": "2026-11-15T00:35:56+00:00",
+ "basemap_style": "https://tiles.openfreemap.org/styles/positron"
+}
