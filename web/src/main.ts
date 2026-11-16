@@ -11,7 +11,7 @@ type FC = GeoJSON.FeatureCollection;
 interface SourceEntry {
   name?: string; url?: string; homepage?: string; tier: number; kind: string; license?: string;
   disclaimer?: string; status: string; reason?: string; fetched?: string; n_raw?: number;
-  n_in_area?: number; n_after_dedupe?: number; default_on?: boolean;
+  n_in_area?: number; n_after_dedupe?: number; default_on?: boolean; doc_label?: string;
 }
 interface Manifest {
   area: string; generated: string; built?: string; basemap_style?: string;
@@ -25,9 +25,10 @@ interface Stats {
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const DATA = "./data/";
-const TYPES = ["SPT", "CPT", "Auger", "Well", "Other"];
+const TYPES = ["SPT", "CPT", "Auger", "Well", "Other", "Site"];
+const TYPE_LABEL: Record<string, string> = { Site: "Cleanup site (FDEP)" };
 const TYPE_COLOR: Record<string, string> = {
-  SPT: "#2a78d6", CPT: "#eb6834", Auger: "#1baf7a", Well: "#52514e", Other: "#a3a29c",
+  SPT: "#2a78d6", CPT: "#eb6834", Auger: "#1baf7a", Well: "#52514e", Other: "#a3a29c", Site: "#c98500",
 };
 const DIST_BINS = [50, 100, 250, 500, 1000];
 const DIST_COLORS = ["#104281", "#1c5cab", "#2a78d6", "#5598e7", "#86b6ef", "#cde2fb"]; // near = dark
@@ -203,6 +204,8 @@ async function main() {
     const msgs: string[] = [];
     if (failed.length) msgs.push(`Unavailable: ${failed.map(([id, s]) => `${s.name ?? id} (${s.status})`).join(", ")}.`);
     if (!filtered.length) msgs.push("No borings match the current filters.");
+    if (filtered.some((b) => b.kind === "environmental_site"))
+      msgs.push("Cleanup sites are facilities, not borings: coverage with them on counts sites whose public files usually contain shallow boring logs.");
     // Disclaimers travel with the data: a source is "in use" when it is switched on or when its
     // parsed logs enrich borings from another source (e.g. Geosetta logs on FDOT borings).
     const inUse = new Set([...state.filters.sources, ...filtered.map((b) => b.log_from as string).filter(Boolean)]);
@@ -258,7 +261,7 @@ async function main() {
       <h3>${state.colorBy === "distance" ? "Distance to nearest boring" : `Reports within ${state.radius} m`}</h3>
       <div class="bins">${bins.map(([c, l]) => `<span class="bin" style="background:${c}"></span><span>${l}</span>`).join("")}</div>
       <h3>Borings</h3>
-      <div class="bins">${typesShown.map((t) => `<span class="swatch" style="background:${TYPE_COLOR[t]}"></span><span>${t}</span>`).join("")}
+      <div class="bins">${typesShown.map((t) => `<span class="swatch" style="background:${TYPE_COLOR[t]}"></span><span>${TYPE_LABEL[t] ?? t}</span>`).join("")}
         <span class="swatch" style="border:2px solid #52514e"></span><span>Hollow: tier 3–4</span></div>
       <div class="bins"><span class="bin" style="background:#6250d633;border-color:#6250d6"></span><span>Report footprint</span>
         <span class="bin" style="border:2px dashed #d03b3b"></span><span>Largest gaps at R</span></div></details>`;
@@ -279,13 +282,14 @@ async function main() {
     } else if (f.layer.id === "borings") {
       const src = manifest.sources[p.source_id as string];
       const url = safeUrl(p.doc_url);
-      html = table([
-        ["Boring", p.boring_name], ["Type", p.boring_type], ["Date", p.date ?? p.year ?? p.date_raw ?? "undated"],
+      html = table((<[string, unknown][]>[
+        [p.boring_type === "Site" ? "Site" : "Boring", p.boring_name], ["Type", TYPE_LABEL[p.boring_type as string] ?? p.boring_type], [p.boring_type === "Site" ? "Discharge date" : "Date", p.date ?? p.year ?? p.date_raw ?? "undated"],
         ["Source", src?.name ?? p.source_id], ["Tier", p.tier], ["Depth", p.depth_ft != null ? `${p.depth_ft} ft${p.log_from && p.log_from !== p.source_id ? " (from parsed log)" : ""}` : null],
         ["Elevation", p.elev], ["Water level", p.gw], ["FDOT project (FIN)", p.fin],
         ["Project", p.source_id !== "fdot_d2" ? p.doc_name : null],
         ["Location", String(p.flags ?? "").includes("approx_location") ? "approximate: placed at a geocoded report site, may be far off" : null],
-      ]) + logHtml(p.log, p.log_from) + docLine(url, p.doc_internal);
+      ]).concat(detailRows(p.details))) + logHtml(p.log, p.log_from) + docLine(url, p.doc_internal, src?.doc_label)
+        + (p.boring_type === "Site" ? `<p class="muted">A cleanup site, not a boring: its public file usually holds site assessment reports with shallow soil-boring and monitoring-well logs. Point = facility location.</p>` : "");
     } else if (f.layer.id === "reports-fill") {
       const src = manifest.sources[p.source_id as string];
       const url = safeUrl(p.doc_url);
@@ -295,16 +299,20 @@ async function main() {
         ["Dates", dr.length ? [...new Set(dr)].join(" – ") : "undated"], ["Source", src?.name ?? p.source_id],
         ["FDOT project (FIN)", p.fin], ["Log sheets", p.n_documents],
         ["Licence", src?.license], ["Span", p.flag_span ? `${fmtM(p.span_m as number)} (wide: corridor or key issue)` : null],
-      ]) + docLine(url, p.doc_internal);
+      ]) + docLine(url, p.doc_internal, src?.doc_label);
     } else if (f.layer.id === "hexes" && last) {
       const i = p.i as number;
       html = table([["Distance to nearest boring", fmtM(last.ddist[i])], [`Reports within ${state.radius} m`, last.drc[i]]]);
     }
     new maplibregl.Popup({ maxWidth: "320px" }).setLngLat(e.lngLat).setHTML(html).addTo(map);
   }
-  const docLine = (url: string | null, internal: unknown) => url
+  const detailRows = (raw: unknown): [string, unknown][] => {
+    if (typeof raw !== "string") return [];
+    try { return Object.entries(JSON.parse(raw) as Record<string, unknown>); } catch { return []; }
+  };
+  const docLine = (url: string | null, internal: unknown, label?: string) => url
     ? `<p><a href="${esc(url)}" target="_blank" rel="noopener">${
-        /\/attachments\/\d+$/.test(url) ? "Open boring log (PDF) ↗"
+        label ? esc(label) + " ↗" : /\/attachments\/\d+$/.test(url) ? "Open boring log (PDF) ↗"
         : /\/attachments$/.test(url) ? "View attached documents ↗" : "Open document ↗"}</a></p>`
     : internal ? `<p class="muted">Document exists only on an internal agency network (not public). File: <code>${esc(String(internal).split(/[\\/]/).pop())}</code>. Request it as a public record.</p>` : "";
   function logHtml(raw: unknown, from: unknown): string {
@@ -348,12 +356,12 @@ async function main() {
     $("tiers").addEventListener("change", (e) => { state.filters.maxTier = Number((e.target as HTMLInputElement).value); recompute(); });
 
     const tcount = (t: string) => borings.filter((b) => b.boring_type === t).length;
-    $("types").innerHTML = TYPES.map((t) => `<label class="check"><input type="checkbox" value="${t}" checked/> <span class="swatch" style="background:${TYPE_COLOR[t]}"></span>${t} <span class="hint">${tcount(t)}</span></label>`).join("");
+    $("types").innerHTML = TYPES.map((t) => `<label class="check"><input type="checkbox" value="${t}" checked/> <span class="swatch" style="background:${TYPE_COLOR[t]}"></span>${TYPE_LABEL[t] ?? t} <span class="hint">${tcount(t)}</span></label>`).join("");
     $("types").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; i.checked ? state.filters.types.add(i.value) : state.filters.types.delete(i.value); recompute(); });
 
     $("sources").innerHTML = sources.map(([id, s]) => {
       const ok = s.status === "ok";
-      const hint = ok ? `${s.n_after_dedupe ?? 0} · tier ${s.tier}${s.kind === "geologic_well" ? " · deep wells" : ""}` : `${s.status}: ${s.reason ?? ""}`;
+      const hint = ok ? `${s.n_after_dedupe ?? 0} · tier ${s.tier}${s.kind === "geologic_well" ? " · deep wells" : s.kind === "environmental_site" ? " · cleanup sites" : ""}` : `${s.status}: ${s.reason ?? ""}`;
       return `<label class="check ${ok ? "" : "disabled"}" title="${esc(s.reason ?? s.license ?? "")}"><input type="checkbox" value="${esc(id)}" ${state.filters.sources.has(id) ? "checked" : ""} ${ok ? "" : "disabled"}/> ${esc(s.name ?? id)} <span class="hint">${esc(hint.slice(0, 90))}</span></label>`;
     }).join("");
     $("sources").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; i.checked ? state.filters.sources.add(i.value) : state.filters.sources.delete(i.value); recompute(); });
@@ -418,6 +426,10 @@ async function main() {
       <h3>Sources</h3>
       <table><colgroup><col class="src"><col><col><col></colgroup><tr><th>Source</th><th>Tier</th><th>Status</th><th>Borings</th></tr>${rows}
       <tr><td>City boundary: US Census TIGERweb<br><small>${esc(manifest.boundary.url)}</small></td><td>1</td><td>${esc(manifest.boundary.fetched?.slice(0, 10) ?? "")}</td><td></td></tr></table>
+      <h3>Cleanup sites</h3>
+      <p>FDEP cleanup sites (petroleum discharges, dry cleaners, other cleanup programs) are shown as facilities, not borings, and are off by default.
+      Their public files in DEP Nexus usually contain site assessment reports with shallow soil-boring and monitoring-well logs, so they mark places where
+      some subsurface information exists. They are excluded from the default coverage figure.</p>
       <h3>License tiers (cumulative)</h3>
       <ol><li>US federal work (public domain).</li>
       <li>Florida agency public record. In <em>Microdecisions v. Skinner</em> (Fla. 2d DCA 2004) the court held an agency can't claim copyright in a public record without legislative authorization.</li>

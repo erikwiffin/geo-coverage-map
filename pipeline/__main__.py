@@ -62,7 +62,7 @@ def check_network(ctx) -> int:
 
 def _source_entry(src: dict) -> dict:
     entry = {k: src.get(k) for k in ("name", "url", "homepage", "tier", "kind", "license",
-                                     "disclaimer")}
+                                     "disclaimer", "doc_label")}
     entry["default_on"] = src.get("default_on", True)
     df = src.get("disclaimer_file")
     if df:

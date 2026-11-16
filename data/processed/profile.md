@@ -1,6 +1,6 @@
 # Data profile: Gainesville, FL
 
-Generated 2026-11-16T01:38:18+00:00.
+Generated 2026-11-16T01:52:32+00:00.
 
 ## FDOT District 2 Soil Borings (`fdot_d2`)
 
@@ -243,8 +243,8 @@ Examples: <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18576>
 
 - URL: None
 - Tier 4, kind `geotechnical`
-- Raw records in envelope: **47**; after cleaning: **47**
-- Flags: {'approx_location': 20}
+- Raw records in envelope: **57**; after cleaning: **57**
+- Flags: {'approx_location': 30}
 
 ### Null rate per field
 
@@ -261,7 +261,7 @@ Examples: <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18576>
 | n_values | 0.0 |
 | lithology | 0.0 |
 | lab | 0.0 |
-| groundwater_depth_ft | 76.6 |
+| groundwater_depth_ft | 73.7 |
 | test_types | 0.0 |
 | depth_ft | 0.0 |
 | test_type | 0.0 |
@@ -273,7 +273,7 @@ Examples: <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18576>
 
 | test_type | n |
 |---|---|
-| SPT | 45 |
+| SPT | 55 |
 | Depth to groundwater table observation | 1 |
 | Depth to groundwater table observation,The percentage of par | 1 |
 
@@ -281,16 +281,16 @@ Examples: <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18576>
 
 | type | n |
 |---|---|
-| SPT | 45 |
+| SPT | 55 |
 | Other | 2 |
 
 ### Date formats (field `None`)
 
-Share with a parsed year: **0.0%**; undated: **47**.
+Share with a parsed year: **0.0%**; undated: **57**.
 
 | format | n |
 |---|---|
-| null | 47 |
+| null | 57 |
 
 ### Report-key candidates
 
@@ -298,7 +298,7 @@ Normalized before keying: nothing.
 
 | key | non_null_pct | distinct |
 |---|---|---|
-| project | 100.0 | 10 |
+| project | 100.0 | 11 |
 
 ### Sample rows (10)
 
@@ -316,9 +316,303 @@ Normalized before keying: nothing.
 | geosetta_diggs:29.65426943;-82.41413128#dfc05192 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.414131 | 29.654269 |
 
 
+## FDEP Cleanup Sites (active, all programs) (`fdep_cleanup`)
+
+- URL: https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/CLEANUP_SP/MapServer/0
+- Tier 2, kind `environmental_site`
+- Raw records in envelope: **131**; after cleaning: **126**
+- Flags: none
+
+### Null rate per field
+
+| field | null_% |
+|---|---|
+| DEP_CLEANUP_SITE_KEY | 0.0 |
+| SOURCE_DATABASE_NAME | 0.0 |
+| SOURCE_DATABASE_ID | 0.0 |
+| CPAC_PROGRAM_AREA_ID | 0.0 |
+| CLCC_CLEANUP_CATEGORY_KEY | 0.0 |
+| RSC2_REMEDIATION_STATUS_KEY | 0.0 |
+| DATA_LOAD_DATE | 0.0 |
+| CC2_COUNTY_ID | 0.0 |
+| OC3_OFFICE_ID | 0.0 |
+| BUSINESS_NAME | 0.0 |
+| ADDRESS1 | 0.0 |
+| ADDRESS2 | 90.8 |
+| CITY | 0.0 |
+| STCD1_STATE_ID | 0.0 |
+| ZIP5 | 0.0 |
+| ZIP4 | 29.0 |
+| OIC_OBJECT_OF_INTEREST_ID | 0.0 |
+| PC2_PROXIMITY_ID | 0.0 |
+| CALC_COORD_ACCURACY_LEVEL_ID | 1.5 |
+| CMC2_COORDINATE_METHOD_ID | 1.5 |
+| DC4_DATUM_ID | 0.0 |
+| VSC1_VERIFICATION_STATUS_ID | 19.8 |
+| COLLECT_USERNAME | 0.0 |
+| COLLECT_DATE | 8.4 |
+| COLLECT_AFFILIATION | 44.3 |
+| LATITUDE_DD | 0.0 |
+| LATITUDE_MM | 0.0 |
+| LATITUDE_SS | 0.0 |
+| LONGITUDE_DD | 0.0 |
+| LONGITUDE_MM | 0.0 |
+| LONGITUDE_SS | 0.0 |
+| MAP_SOURCE | 16.0 |
+| MAP_SOURCE_SCALE | 16.0 |
+| INTERPOLATION_SCALE | 86.3 |
+| VERIFIER_USERNAME | 3.1 |
+| VERIFIER_AFFILIATION | 45.0 |
+| VERIFICATION_DATE | 3.1 |
+| VERIFIED_COORDINATE_METHOD_ID | 5.3 |
+| COMMENTS | 57.3 |
+| DOCUMENTS | 0.0 |
+| OBJECTID | 0.0 |
+
+### Normalized boring_type
+
+| type | n |
+|---|---|
+| Site | 126 |
+
+### Date formats (field `None`)
+
+Share with a parsed year: **0.0%**; undated: **126**.
+
+| format | n |
+|---|---|
+| null | 126 |
+
+### Report-key candidates
+
+Normalized before keying: nothing.
+
+| key | non_null_pct | distinct |
+|---|---|---|
+| SOURCE_DATABASE_ID | 100.0 | 126 |
+
+### Hostnames in `DOCUMENTS`
+
+| host | n |
+|---|---|
+| prodenv.dep.state.fl.us | 131 |
+
+Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/9401874/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/9818287/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/FLD980711071/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/FLD000823393/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/ERIC_3780/facility!search>
+
+### Layer attachments
+
+```
+{
+ "hasAttachments": false
+}
+```
+
+### Sample rows (10)
+
+| boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
+|---|---|---|---|---|---|---|---|---|---|
+| fdep_cleanup:507 | Site | JOONS BEAUTY SUPPLY & WIGS INC |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=9401874 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.329108 | 29.659662 |
+| fdep_cleanup:1045 | Site | SANTA FE COLLEGE BLOUNT HALL - E PARKING LOT |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=9818287 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.329538 | 29.652159 |
+| fdep_cleanup:1079 | Site | Processing and Storage Building (PSB) - SWMU 4 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_16399 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.349931 | 29.716815 |
+| fdep_cleanup:1118 | Site | 3,000-Gallon Waste Liquids Tank - SWMU 6 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_16401 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.349931 | 29.716815 |
+| fdep_cleanup:1162 | Site | Former Landfill - SWMU 1 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_16228 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.368031 | 29.63182 |
+| fdep_cleanup:1180 | Site | Decommissioned Outdoor Rifle Range - SWMU 30 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_18906 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.345728 | 29.643589 |
+| fdep_cleanup:1235 | Site | Cabot - Koppers |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_3780 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.326671 | 29.678175 |
+| fdep_cleanup:1275 | Site | PCB Commercial Storage Area - SWMU 42 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_18936 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.349423 | 29.716968 |
+| fdep_cleanup:1287 | Site | Tacachale Part A-2002 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_6137 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.301392 | 29.666672 |
+| fdep_cleanup:1342 | Site | IFAS Building 63 University of Florida Campus Part B-2010 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_6205 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.357329 | 29.638744 |
+
+
+## FDEP Petroleum Discharges (incl. closed) (`fdep_petroleum`)
+
+- URL: https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/DWM_STCM/MapServer/2
+- Tier 2, kind `environmental_site`
+- Raw records in envelope: **362**; after cleaning: **309**
+- Flags: none
+
+### Null rate per field
+
+| field | null_% |
+|---|---|
+| FACILITY_ID | 0.0 |
+| COUNTY | 0.0 |
+| FACILITY_NAME | 0.0 |
+| DISCHARGE_ID | 0.0 |
+| DISCHARGE_DATE | 0.0 |
+| DISCHARGE_SCORE | 23.5 |
+| ELIGIBILITY | 0.0 |
+| ELIGIBILITY_PROGRAM | 37.0 |
+| GENERAL_CLEANUP_STATUS | 0.0 |
+| DISCHARGE_CLEANUP_STATUS | 0.0 |
+| DISCH_CLEANUP_STATUS_EFF_DATE | 0.3 |
+| REPORT_PHASE | 1.4 |
+| REPORT_SUBPHASE | 1.4 |
+| REPORT_SUBPHASE_DATE | 1.4 |
+| TANK_OFFICE | 28.2 |
+| STAFF_ASSIGNED | 78.2 |
+| ADDRESS | 0.0 |
+| CITY | 0.0 |
+| ZIP5 | 0.0 |
+| FACILITY_TYPE | 0.0 |
+| FACILITY_STATUS | 0.0 |
+| LAT_DD | 0.0 |
+| LAT_MM | 0.0 |
+| LAT_SS | 0.0 |
+| LONG_DD | 0.0 |
+| LONG_MM | 0.0 |
+| LONG_SS | 0.0 |
+| DATUM | 0.0 |
+| REL_FEAT | 0.0 |
+| COLLECTION_METHOD | 0.0 |
+| COLLECTOR_NAME | 0.0 |
+| COLLECTION_DATE | 0.0 |
+| DOCUMENT_LINK | 0.0 |
+| OBJECTID | 0.0 |
+
+### Normalized boring_type
+
+| type | n |
+|---|---|
+| Site | 309 |
+
+### Date formats (field `DISCHARGE_DATE`)
+
+Share with a parsed year: **100.0%**; undated: **0**.
+
+| format | n |
+|---|---|
+| epoch_ms | 309 |
+
+Year range: 1977–2025, median 1988.
+
+### Report-key candidates
+
+Normalized before keying: nothing.
+
+| key | non_null_pct | distinct |
+|---|---|---|
+| FACILITY_ID | 100.0 | 309 |
+
+### Hostnames in `DOCUMENT_LINK`
+
+| host | n |
+|---|---|
+| prodenv.dep.state.fl.us | 362 |
+
+Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500032/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500035/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500038/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500039/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500049/facility!search>
+
+### Layer attachments
+
+```
+{
+ "hasAttachments": false
+}
+```
+
+### Sample rows (10)
+
+| boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
+|---|---|---|---|---|---|---|---|---|---|
+| fdep_petroleum:358 | Site | ALACHUA CNTY- PUBLIC WORKS GARAGE | 220924800000 | 1977 |  | fdep_petroleum:FACILITY_ID=8626841 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.404779 | 29.766328 |
+| fdep_petroleum:249 | Site | DIXON OIL CORP | 358300800000 | 1981 |  | fdep_petroleum:FACILITY_ID=8626921 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.322415 | 29.682089 |
+| fdep_petroleum:194 | Site | GAINESVILLE REGIONAL AIRPORT RENTAL CAR FAC | 399686400000 | 1982 |  | fdep_petroleum:FACILITY_ID=8500204 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.278926 | 29.685828 |
+| fdep_petroleum:247 | Site | UNITED RENTAL | 403660800000 | 1982 |  | fdep_petroleum:FACILITY_ID=8626910 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.327671 | 29.659604 |
+| fdep_petroleum:521 | Site | HANRAHAN ROBERT & MARY ELLEN RESIDENCE | 412905600000 | 1983 |  | fdep_petroleum:FACILITY_ID=9047510 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.379859 | 29.667326 |
+| fdep_petroleum:95 | Site | TEXACO #110-0018 | 415324800000 | 1983 |  | fdep_petroleum:FACILITY_ID=8500296 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.372136 | 29.628265 |
+| fdep_petroleum:221 | Site | ARCHER SHELL | 432345600000 | 1983 |  | fdep_petroleum:FACILITY_ID=8500252 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.372069 | 29.627611 |
+| fdep_petroleum:222 | Site | SHELL-THOMAS | 460339200000 | 1984 |  | fdep_petroleum:FACILITY_ID=8500253 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.338823 | 29.653781 |
+| fdep_petroleum:303 | Site | UNIV OF FL STRUCTURES & MATERIALS LAB #1626 | 463881600000 | 1984 |  | fdep_petroleum:FACILITY_ID=8732506 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.299679 | 29.672251 |
+| fdep_petroleum:459 | Site | TURKEY CREEK INC | 483753600000 | 1985 |  | fdep_petroleum:FACILITY_ID=8943125 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.412108 | 29.755164 |
+
+
+## FDEP Drycleaning Solvent Cleanup Sites (`fdep_drycleaning`)
+
+- URL: https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/DWM_STCM/MapServer/4
+- Tier 2, kind `environmental_site`
+- Raw records in envelope: **18**; after cleaning: **18**
+- Flags: none
+
+### Null rate per field
+
+| field | null_% |
+|---|---|
+| ERIC_ID | 0.0 |
+| NAME | 0.0 |
+| ADDRESS | 0.0 |
+| CITY | 0.0 |
+| COUNTY | 0.0 |
+| DISTRICT | 0.0 |
+| PROGRAM | 0.0 |
+| STATUS | 0.0 |
+| MANAGER | 0.0 |
+| LAT_DD | 0.0 |
+| LAT_MM | 0.0 |
+| LAT_SS | 0.0 |
+| LONG_DD | 0.0 |
+| LONG_MM | 0.0 |
+| LONG_SS | 0.0 |
+| DATUM | 0.0 |
+| HAZ_ARC_ID | 0.0 |
+| DOCUMENTS | 0.0 |
+| OBJECTID | 0.0 |
+
+### Normalized boring_type
+
+| type | n |
+|---|---|
+| Site | 18 |
+
+### Date formats (field `None`)
+
+Share with a parsed year: **0.0%**; undated: **18**.
+
+| format | n |
+|---|---|
+| null | 18 |
+
+### Report-key candidates
+
+Normalized before keying: nothing.
+
+| key | non_null_pct | distinct |
+|---|---|---|
+| ERIC_ID | 100.0 | 18 |
+
+### Hostnames in `DOCUMENTS`
+
+| host | n |
+|---|---|
+| prodenv.dep.state.fl.us | 18 |
+
+Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/ERIC_3980/gis-facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/ERIC_3985/gis-facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/ERIC_3987/gis-facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/ERIC_3998/gis-facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/ERIC_3983/gis-facility!search>
+
+### Layer attachments
+
+```
+{
+ "hasAttachments": false
+}
+```
+
+### Sample rows (10)
+
+| boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
+|---|---|---|---|---|---|---|---|---|---|
+| fdep_drycleaning:190 | Site | Custom Care Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3980 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.379732 | 29.651514 |
+| fdep_drycleaning:191 | Site | Town & Country Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3985 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.423195 | 29.661713 |
+| fdep_drycleaning:246 | Site | Alpine Dry Cleaners Inc |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3987 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.365985 | 29.702789 |
+| fdep_drycleaning:412 | Site | Rips Cleaners - One Hour |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3998 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.329067 | 29.661228 |
+| fdep_drycleaning:431 | Site | Plaza Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3983 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.339424 | 29.653612 |
+| fdep_drycleaning:552 | Site | Robinsons Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3984 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.322595 | 29.666299 |
+| fdep_drycleaning:557 | Site | Suburban Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3995 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.369228 | 29.699997 |
+| fdep_drycleaning:813 | Site | Cranes One Hour Dry Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3979 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.320458 | 29.673611 |
+| fdep_drycleaning:957 | Site | Suburban Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3996 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.373095 | 29.632793 |
+| fdep_drycleaning:966 | Site | Quality Cleaners of Gainesville Inc |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3976 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.386848 | 29.674189 |
+
+
 ## Reports (M2)
 
-- Reports built: **184**; borings in reports: **589** (= sum of n_borings: 589); borings without a key: **0**.
+- Reports built: **549**; borings in reports: **963** (= sum of n_borings: 963); borings without a key: **0**.
 - Reports spanning > 5 km (corridor project or bad key): **1**
 
   - `fdot_d2:FIN=44703215201` — 26 borings, 5042 m

@@ -14,7 +14,7 @@ SCHEMA = [
     "boring_uid", "source_id", "tier", "kind", "boring_type", "boring_name",
     "date_raw", "date", "year", "date_format", "depth_ft", "elev", "gw", "report_key",
     "doc_url", "doc_internal", "doc_name", "n_attachments", "project", "fin", "consultant",
-    "lon", "lat", "flags", "also_in", "log", "log_from", "attrs",
+    "lon", "lat", "flags", "also_in", "log", "log_from", "site_id", "details", "attrs",
 ]
 # Filled from a merged duplicate when the kept record lacks them (e.g. Geosetta's parsed log
 # depth/N-values attached to the matching FDOT boring).
@@ -68,6 +68,7 @@ def parse_date(raw) -> tuple[str | None, int | None, str | None]:
 
 
 TYPE_RULES = [
+    ("Site", re.compile(r"^SITE$", re.I)),
     ("CPT", re.compile(r"\bCPT|CONE", re.I)),
     ("SPT", re.compile(r"\bSPT|STANDARD\s*PEN", re.I)),
     ("Auger", re.compile(r"AUG", re.I)),
@@ -193,9 +194,18 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
             "also_in": [],
             "log": json.dumps(get(a, "log"), default=str) if get(a, "log") else None,
             "log_from": src["id"] if get(a, "log") else None,
+            "site_id": None if get(a, "site_id") is None else _fmt(get(a, "site_id")),
+            "details": json.dumps({k: _fmt(a[f]) for k, f in (src.get("details") or {}).items()
+                                   if _clean(a.get(f)) is not None}) if src.get("details")
+            else None,
             "attrs": json.dumps(a, default=str),
         })
     df = pd.DataFrame(rows, columns=SCHEMA)
+    if src.get("collapse_on_site_id") and not df.empty:
+        # several records per facility (e.g. discharges): keep the earliest-dated one
+        df = (df.sort_values("date", na_position="last")
+              .drop_duplicates("site_id", keep="first") if df["site_id"].notna().all()
+              else df)
     return clean(df, county_bbox, collapse_colocated=not src.get("keep_colocated"))
 
 
@@ -236,6 +246,16 @@ def dedupe_across_sources(df: pd.DataFrame, radius_m: float,
     order = sorted(df.index, key=lambda i: (df.at[i, "tier"], rank.get(df.at[i, "source_id"], 99)))
     idx = SphereIndex(df["lon"].to_numpy(), df["lat"].to_numpy())
     neigh = idx.within(df["lon"].to_numpy(), df["lat"].to_numpy(), radius_m)
+    # records from different sources that share an agency site id are the same site, wherever
+    # each source put the point
+    if "site_id" in df:
+        by_site: dict[str, list[int]] = {}
+        for i, sid in df["site_id"].items():
+            if sid is not None and not pd.isna(sid):
+                by_site.setdefault(str(sid), []).append(i)
+        for members in by_site.values():
+            for i in members:
+                neigh[i] = list(neigh[i]) + [j for j in members if j != i]
     dropped: set[int] = set()
     also = {i: [] for i in df.index}
     for i in order:

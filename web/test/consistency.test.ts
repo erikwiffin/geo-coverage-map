@@ -14,7 +14,7 @@ describe.skipIf(!have)("web vs pipeline consistency", () => {
   const borings: Boring[] = fc.features.map((f: { properties: Boring }) => f.properties);
   const grid = makeGrid(boundary.features[0].geometry, stats.h3_resolution);
   const ok = Object.entries(man.sources as Record<string, { status: string; default_on?: boolean }>).filter(([, s]) => s.status === "ok");
-  const base = { maxTier: 4, types: new Set(["SPT", "CPT", "Auger", "Well", "Other"]), yearMin: -1e9, yearMax: 1e9, includeUndated: true };
+  const base = { maxTier: 4, types: new Set(["SPT", "CPT", "Auger", "Well", "Other", "Site"]), yearMin: -1e9, yearMax: 1e9, includeUndated: true };
 
   it("uses the same H3 cell count", () => expect(grid.cells.length).toBe(stats.n_cells));
 

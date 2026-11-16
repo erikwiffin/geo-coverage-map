@@ -66,6 +66,85 @@
     county: COUNTY
   report_key: [REPORT_LINK]
 
+# FDEP contamination cleanup sites. Not borings: each point is a facility whose public cleanup
+# file (site assessment reports, usually with soil-boring and monitoring-well logs) is in DEP
+# Nexus. kind environmental_site is hidden by default and kept out of the headline stats.
+# The three layers overlap; site_id (facility / ERIC id) de-duplicates them across sources.
+- id: fdep_cleanup
+  name: FDEP Cleanup Sites (active, all programs)
+  adapter: arcgis
+  url: https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/CLEANUP_SP/MapServer/0
+  homepage: https://floridadep.gov/waste/waste-cleanup
+  where: "1=1"
+  tier: 2
+  kind: environmental_site
+  default_on: false
+  license: Florida agency public record (FDEP).
+  fixed_type: Site
+  doc_label: FDEP cleanup documents (site assessment reports)
+  field_map:
+    native_id: OBJECTID
+    site_id: SOURCE_DATABASE_ID
+    boring_name: BUSINESS_NAME
+    doc_url: DOCUMENTS
+  details:
+    Address: ADDRESS1
+    Program: CLCC_CLEANUP_CATEGORY_KEY
+    Status: RSC2_REMEDIATION_STATUS_KEY
+    Facility ID: SOURCE_DATABASE_ID
+  report_key: [SOURCE_DATABASE_ID]
+
+- id: fdep_petroleum
+  name: FDEP Petroleum Discharges (incl. closed)
+  adapter: arcgis
+  url: https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/DWM_STCM/MapServer/2
+  homepage: https://floridadep.gov/waste/petroleum-restoration
+  where: "1=1"
+  tier: 2
+  kind: environmental_site
+  default_on: false
+  license: Florida agency public record (FDEP).
+  fixed_type: Site
+  doc_label: FDEP cleanup documents (site assessment reports)
+  collapse_on_site_id: true     # one point per facility; a facility can have several discharges
+  field_map:
+    native_id: OBJECTID
+    site_id: FACILITY_ID
+    boring_name: FACILITY_NAME
+    date: DISCHARGE_DATE
+    doc_url: DOCUMENT_LINK
+  details:
+    Address: ADDRESS
+    Facility type: FACILITY_TYPE
+    Cleanup status: GENERAL_CLEANUP_STATUS
+    Discharge status: DISCHARGE_CLEANUP_STATUS
+    Facility ID: FACILITY_ID
+  report_key: [FACILITY_ID]
+
+- id: fdep_drycleaning
+  name: FDEP Drycleaning Solvent Cleanup Sites
+  adapter: arcgis
+  url: https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/DWM_STCM/MapServer/4
+  homepage: https://floridadep.gov/waste/waste-cleanup/content/drycleaning-solvent-cleanup-program
+  where: "1=1"
+  tier: 2
+  kind: environmental_site
+  default_on: false
+  license: Florida agency public record (FDEP).
+  fixed_type: Site
+  doc_label: FDEP cleanup documents (site assessment reports)
+  field_map:
+    native_id: OBJECTID
+    site_id: ERIC_ID
+    boring_name: NAME
+    doc_url: DOCUMENTS
+  details:
+    Address: ADDRESS
+    Program: PROGRAM
+    Status: STATUS
+    ERIC ID: ERIC_ID
+  report_key: [ERIC_ID]
+
 # Generic CSV import (USGS data releases, manual additions, exports). Disabled until a file exists.
 # - id: usgs_cpt
 #   name: USGS CPT data release

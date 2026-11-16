@@ -32,7 +32,7 @@ class Filters:
     max_tier: int = 4
     types: tuple[str, ...] | None = None          # None = all
     sources: tuple[str, ...] | None = None        # None = all default-on sources
-    exclude_kinds: tuple[str, ...] = ("geologic_well",)
+    exclude_kinds: tuple[str, ...] = ("geologic_well", "environmental_site")
     min_year: int | None = None
     include_undated: bool = True
 
@@ -150,6 +150,11 @@ def compute_stats(grid: Grid, borings: pd.DataFrame, area_cfg: dict,
     # even when the default-on sources are empty.
     all_src = Filters(sources=None, exclude_kinds=())
     dist_all = nearest_distance(grid, borings[all_src.mask(borings)])
+    # default sources plus environmental cleanup sites: how much do FDEP files add?
+    env_ids = tuple(borings.loc[borings["kind"] == "environmental_site", "source_id"].unique())
+    with_env = Filters(sources=tuple(default_sources) + env_ids,
+                       exclude_kinds=("geologic_well",))
+    dist_env = nearest_distance(grid, borings[with_env.mask(borings)])
 
     finite = dist[np.isfinite(dist)]
     stats = {
@@ -160,12 +165,14 @@ def compute_stats(grid: Grid, borings: pd.DataFrame, area_cfg: dict,
         "radii_m": radii,
         "default_radius_m": area_cfg.get("default_radius_m", 250),
         "default_filters": {"max_tier": 4, "types": "all", "sources": default_sources,
-                            "exclude_kinds": ["geologic_well"], "years": "all, incl. undated"},
+                            "exclude_kinds": ["geologic_well", "environmental_site"],
+                            "years": "all, incl. undated"},
         "n_borings_default": int(len(default_df)),
         "n_reports_default": int(default_df["report_key"].nunique()),
         "median_nearest_m": round(float(np.median(finite)), 1) if len(finite) else None,
         "pct_covered": curve(dist, grid.area_m2, radii),
         "pct_covered_all_sources": curve(dist_all, grid.area_m2, radii),
+        "pct_covered_with_environmental_sites": curve(dist_env, grid.area_m2, radii),
         "pct_covered_by_tier": by_tier,
         "pct_covered_by_type": by_type,
         "pct_covered_by_recency": by_recency,

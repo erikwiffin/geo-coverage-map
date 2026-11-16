@@ -410,3 +410,19 @@ When a request is blocked, the error names the host; add it to the allowlist and
     or no more than 4 decimal places) and the popup says so. They still count toward coverage.
   - Co-located boreholes are kept apart (`keep_colocated`); identity = Geosetta functional key
     `lat;lon` + content hash, so overlapping exports don't double count.
+- **More Geosetta exports (2026-11-16):** export 2 is an FDOT bridge (SR 26 over US 301, near
+  Hawthorne), about 7 km outside the fetch envelope, so it's correctly excluded. Export 3 adds 10
+  boreholes for "Alachua County Mill Creek Sink", inside the envelope but outside the city limits,
+  all at one approximate site. Geosetta total now: 63 boreholes read, 57 in the envelope, 27
+  enriching FDOT borings, 30 new (all `approx_location`).
+- **FDEP contamination cleanup sites (2026-11-16), new kind `environmental_site`:** three layers
+  on `ca.dep.state.fl.us` (scripted access works):
+  `CLEANUP_SP/0` DEP Cleanup Sites (131 active/open/on-hold, all programs), `DWM_STCM/2`
+  petroleum discharges (362 discharges at 309 facilities, incl. closed), `DWM_STCM/4` drycleaning
+  (18). They overlap, so a new `site_id` column (facility ID or ERIC ID) merges records across
+  sources regardless of distance, and `collapse_on_site_id` keeps one point per facility (the
+  earliest discharge). Result: 364 facilities (126 + 236 + 2). Each links to its public DEP
+  Nexus document search, where site assessment reports with shallow boring and monitoring-well
+  logs live. Facilities aren't borings, so the kind is off by default and excluded from the
+  headline stats. `stats.json` gains `pct_covered_with_environmental_sites`: 4.7% → 18.1% at
+  250 m, and 29.7% → 73.1% at 1 km.

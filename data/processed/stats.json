@@ -19,26 +19,34 @@
    "geosetta_diggs"
   ],
   "exclude_kinds": [
-   "geologic_well"
+   "geologic_well",
+   "environmental_site"
   ],
   "years": "all, incl. undated"
  },
- "n_borings_default": 432,
- "n_reports_default": 27,
- "median_nearest_m": 1599.8,
+ "n_borings_default": 442,
+ "n_reports_default": 28,
+ "median_nearest_m": 1571.5,
  "pct_covered": {
   "50": 0.533,
   "100": 1.3,
   "250": 4.716,
-  "500": 12.59,
-  "1000": 29.392
+  "500": 12.617,
+  "1000": 29.712
  },
  "pct_covered_all_sources": {
-  "50": 0.877,
-  "100": 2.616,
-  "250": 11.439,
-  "500": 30.936,
-  "1000": 64.631
+  "50": 2.039,
+  "100": 6.23,
+  "250": 23.012,
+  "500": 48.689,
+  "1000": 82.013
+ },
+ "pct_covered_with_environmental_sites": {
+  "50": 1.716,
+  "100": 5.073,
+  "250": 18.115,
+  "500": 39.793,
+  "1000": 73.057
  },
  "pct_covered_by_tier": {
   "<=1": {
@@ -66,8 +74,8 @@
    "50": 0.533,
    "100": 1.3,
    "250": 4.716,
-   "500": 12.59,
-   "1000": 29.392
+   "500": 12.617,
+   "1000": 29.712
   }
  },
  "pct_covered_by_type": {
@@ -75,22 +83,22 @@
    "50": 0.533,
    "100": 1.3,
    "250": 4.716,
-   "500": 12.59,
-   "1000": 29.392
+   "500": 12.617,
+   "1000": 29.712
   },
   "spt_cpt": {
    "50": 0.416,
    "100": 1.08,
    "250": 4.232,
-   "500": 11.853,
-   "1000": 27.631
+   "500": 11.88,
+   "1000": 27.951
   },
   "excluding_wells": {
    "50": 0.533,
    "100": 1.3,
    "250": 4.716,
-   "500": 12.59,
-   "1000": 29.392
+   "500": 12.617,
+   "1000": 29.712
   }
  },
  "pct_covered_by_recency": {
@@ -98,8 +106,8 @@
    "50": 0.533,
    "100": 1.3,
    "250": 4.716,
-   "500": 12.59,
-   "1000": 29.392
+   "500": 12.617,
+   "1000": 29.712
   },
   "2000_and_later": {
    "50": 0.128,
@@ -126,11 +134,11 @@
   "radius_m": 500,
   "top": [
    {
-    "area_km2": 146.0401,
-    "n_cells": 73112,
-    "centroid_lon": -82.348378,
-    "centroid_lat": 29.683544,
-    "max_distance_m": 9980.7,
+    "area_km2": 145.9942,
+    "n_cells": 73089,
+    "centroid_lon": -82.348361,
+    "centroid_lat": 29.683529,
+    "max_distance_m": 6442.9,
     "rank": 1
    },
    {
@@ -200,17 +208,20 @@
    {
     "area_km2": 0.002,
     "n_cells": 1,
-    "centroid_lon": -82.33723,
-    "centroid_lat": 29.615929,
-    "max_distance_m": 517.6,
+    "centroid_lon": -82.337448,
+    "centroid_lat": 29.616686,
+    "max_distance_m": 502.8,
     "rank": 10
    }
   ]
  },
- "generated": "2026-11-16T01:38:21+00:00",
+ "generated": "2026-11-16T01:55:04+00:00",
  "sources_status": {
   "fdot_d2": "ok",
   "fgs_wells": "ok",
-  "geosetta_diggs": "ok"
+  "geosetta_diggs": "ok",
+  "fdep_cleanup": "ok",
+  "fdep_petroleum": "ok",
+  "fdep_drycleaning": "ok"
  }
 }
