@@ -474,3 +474,9 @@ When a request is blocked, the error names the host; add it to the allowlist and
   110–200 ms. The map update adds up to about 250 ms when almost every hex changes colour (e.g.
   toggling permits). The "colour hexes by report count" option was removed at the owner's
   request; hexes are always coloured by distance.
+- **Source write-ups (2026-11-16):** `config/source_about.yaml` holds, for each source, where the
+  data came from, what it contains, its use for a first-pass structural design (bearing,
+  over-excavation, backfill, deep foundations, design groundwater for pools), and its limits.
+  `build` copies each write-up into `manifest.json`. The About panel opens with a "what to look
+  for, and where" table and shows each write-up as a card; the "i" button next to each source
+  opens its card.

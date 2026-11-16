@@ -123,3 +123,18 @@ dialog td, dialog th { border-bottom: 1px solid var(--border); padding: 4px 6px;
 .maplibregl-popup-content .log-body td, .maplibregl-popup-content .log-body th { padding: 1px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
 .maplibregl-popup-content .num { text-align: right; font-variant-numeric: tabular-nums; }
 .maplibregl-popup-content .log-body td:first-child { white-space: nowrap; color: var(--text-secondary); }
+dialog { width: min(760px, 94vw); max-height: 88vh; }
+dialog h3 { margin: 18px 0 6px; font-size: 15px; }
+dialog h4 { margin: 10px 0 2px; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .03em; }
+dialog p { margin: 4px 0 8px; }
+dialog .muted { color: var(--text-secondary); font-size: 12px; }
+dialog .warn-box { background: var(--warn-bg); color: var(--warn-ink); padding: 8px 10px; border-radius: 6px; }
+dialog table.guide td:first-child { font-weight: 600; width: 22%; }
+.src-card { border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin: 6px 0; }
+.src-card summary { cursor: pointer; }
+.src-card summary .muted { display: block; margin-top: 2px; }
+.src-card[open] summary { margin-bottom: 4px; }
+.src-row { display: flex; align-items: flex-start; gap: 4px; }
+.src-row label { flex: 1; }
+button.info { flex: none; width: 22px; height: 22px; padding: 0; border-radius: 50%; font: italic 600 12px/20px Georgia, serif; }
+

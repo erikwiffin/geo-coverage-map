@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 import geopandas as gpd
 import pandas as pd
 import requests
+import yaml
 from shapely.geometry import shape
 
 from . import config as cfgmod
@@ -61,9 +62,15 @@ def check_network(ctx) -> int:
     return worst
 
 
+def _source_about() -> dict:
+    p = cfgmod.ROOT / "config" / "source_about.yaml"
+    return yaml.safe_load(p.read_text()) if p.exists() else {}
+
+
 def _source_entry(src: dict) -> dict:
     entry = {k: src.get(k) for k in ("name", "url", "homepage", "tier", "kind", "license",
                                      "disclaimer", "doc_label")}
+    entry["about"] = _source_about().get(src["id"])
     entry["default_on"] = src.get("default_on", True)
     df = src.get("disclaimer_file")
     if df:

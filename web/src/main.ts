@@ -13,6 +13,7 @@ interface SourceEntry {
   name?: string; url?: string; homepage?: string; tier: number; kind: string; license?: string;
   disclaimer?: string; status: string; reason?: string; fetched?: string; n_raw?: number;
   n_in_area?: number; n_after_dedupe?: number; default_on?: boolean; doc_label?: string;
+  about?: { origin?: string; contents?: string; design_use?: string; limits?: string };
 }
 interface Manifest {
   area: string; generated: string; built?: string; basemap_style?: string;
@@ -399,8 +400,13 @@ async function main() {
     $("sources").innerHTML = sources.map(([id, s]) => {
       const ok = s.status === "ok";
       const hint = ok ? `${s.n_after_dedupe ?? 0} · tier ${s.tier}${s.kind === "geologic_well" ? " · deep wells" : s.kind === "environmental_site" ? " · cleanup sites" : ""}` : `${s.status}: ${s.reason ?? ""}`;
-      return `<label class="check ${ok ? "" : "disabled"}" title="${esc(s.reason ?? s.license ?? "")}"><input type="checkbox" value="${esc(id)}" ${state.filters.sources.has(id) ? "checked" : ""} ${ok ? "" : "disabled"}/> ${esc(s.name ?? id)} <span class="hint">${esc(hint.slice(0, 90))}</span></label>`;
+      return `<div class="src-row"><label class="check ${ok ? "" : "disabled"}" title="${esc(s.reason ?? s.license ?? "")}"><input type="checkbox" value="${esc(id)}" ${state.filters.sources.has(id) ? "checked" : ""} ${ok ? "" : "disabled"}/> ${esc(s.name ?? id)} <span class="hint">${esc(hint.slice(0, 90))}</span></label>
+        <button type="button" class="info" data-about="${esc(id)}" aria-label="About ${esc(s.name ?? id)}" title="About this source">i</button></div>`;
     }).join("");
+    $("sources").addEventListener("click", (e) => {
+      const id = (e.target as HTMLElement).dataset?.about;
+      if (id) { renderAbout(id); $<HTMLDialogElement>("about").showModal(); }
+    });
     $("sources").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; i.checked ? state.filters.sources.add(i.value) : state.filters.sources.delete(i.value); recompute(); });
 
     const ymin = $<HTMLInputElement>("year-min"), ymax = $<HTMLInputElement>("year-max");
@@ -447,33 +453,70 @@ async function main() {
     download("coverage_stats.csv", "text/csv", rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n"));
   }
 
-  function renderAbout() {
-    const rows = sources.map(([id, s]) => `<tr><td>${s.homepage && safeUrl(s.homepage) ? `<a href="${esc(s.homepage)}" target="_blank" rel="noopener">${esc(s.name ?? id)}</a>` : esc(s.name ?? id)}<br><small>${esc(s.url ?? "")}</small></td>
-      <td>${esc(s.tier)}</td><td>${esc(s.status)}${s.fetched ? `<br><small>${esc(s.fetched.slice(0, 10))}</small>` : ""}${s.reason ? `<br><small>${esc(s.reason)}</small>` : ""}</td>
-      <td>${esc(s.n_after_dedupe ?? "–")}</td></tr>`).join("");
-    const disclaimers = sources.filter(([, s]) => s.disclaimer).map(([, s]) => `<p><strong>${esc(s.name)}:</strong> ${esc(s.disclaimer)}</p>`).join("");
+  function renderAbout(focus?: string) {
+    const para = (t?: string) => (t ?? "").split(/\n+/).filter(Boolean).map((x) => `<p>${esc(x)}</p>`).join("");
+    const count = (s: SourceEntry) => s.n_after_dedupe ?? s.n_in_area ?? s.n_raw;
+    const cards = sources.map(([id, s]) => {
+      const a = s.about ?? {};
+      const links = [s.homepage && safeUrl(s.homepage) ? `<a href="${esc(s.homepage)}" target="_blank" rel="noopener">Publisher page</a>` : "",
+        s.url && safeUrl(s.url) ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">Data service</a>` : ""].filter(Boolean).join(" · ");
+      const status = s.status === "ok"
+        ? `${count(s)?.toLocaleString() ?? "–"} records · tier ${s.tier} · ${s.default_on === false ? "off by default" : "on by default"} · updated ${esc((s.fetched ?? "").slice(0, 10))}`
+        : `${esc(s.status)}: ${esc(s.reason ?? "")}`;
+      return `<details class="src-card" id="about-${esc(id)}" ${focus === id ? "open" : ""}>
+        <summary><strong>${esc(s.name ?? id)}</strong> <span class="muted">${status}</span></summary>
+        ${a.origin ? `<h4>Where we got it</h4>${para(a.origin)}` : ""}
+        ${a.contents ? `<h4>What it contains</h4>${para(a.contents)}` : ""}
+        ${a.design_use ? `<h4>Use for a first-pass design</h4>${para(a.design_use)}` : ""}
+        ${a.limits ? `<h4>Limits</h4>${para(a.limits)}` : ""}
+        <p class="muted">${esc(s.license ?? "")}${links ? ` · ${links}` : ""}</p>
+        ${s.disclaimer ? `<p class="muted"><strong>Disclaimer:</strong> ${esc(s.disclaimer)}</p>` : ""}
+      </details>`;
+    }).join("");
     $("about-body").innerHTML = `
-      <p>This map shows where publicly available geotechnical borings and reports exist, and how much of the city's
-      area lies within a chosen distance of at least one. Coverage is <em>area-based</em> on an H3 grid
-      (resolution ${grid.resolution}, ${grid.cells.length.toLocaleString()} cells).</p>
-      <p><strong>Not for design use.</strong> Locations are approximate and records may be incomplete or out of date.
-      Always obtain site-specific investigation.</p>
+      <p>This map shows where public subsurface information exists around ${esc(bprops.BASENAME ?? "the city")}, and how far any point is from it.
+      The aim is a <strong>first pass at the soil parameters structural design needs</strong>, so you know what a site-specific geotechnical report is likely
+      to recommend: suitable backfill, over-excavation of poor soils, or deep foundations such as piles. It never replaces that report.</p>
+      <p class="warn-box"><strong>Not for design use.</strong> Locations are approximate, records may be incomplete or outdated, and conditions in
+      karst terrain change over short distances.</p>
+
+      <h3>What to look for, and where</h3>
+      <table class="guide">
+        <tr><th>Design question</th><th>What to look for</th><th>Best sources here</th></tr>
+        <tr><td>Soil profile</td><td>Layer sequence and USCS/AASHTO classes in the upper 20–30 ft</td><td>FDOT boring logs, Geosetta parsed logs, geotech reports in recent ERP permits; FDEP site assessments for shallow layers</td></tr>
+        <tr><td>Bearing and settlement</td><td>SPT N-values with depth (very loose/soft: N &lt; 4; loose: 4–10)</td><td>FDOT SPT logs, Geosetta N-values, ERP geotech reports</td></tr>
+        <tr><td>Over-excavation</td><td>Clays (CL, CH; Hawthorn Group), organics (OL, PT, muck) or very loose sands near the surface</td><td>Geosetta soil layers, FDOT logs, ERP reports</td></tr>
+        <tr><td>Backfill</td><td>Clean sands (SP, SP-SM; AASHTO A-3) suit compacted fill; clayey on-site soils (SC, CL, CH) usually don't</td><td>Same as soil profile</td></tr>
+        <tr><td>Piles or ground improvement</td><td>Low N-values to depth, depth to limestone, voids or weathered rock (karst)</td><td>Deep FDOT SPT borings, FGS lithologic logs, SJRWMD casing depths (rough depth to rock)</td></tr>
+        <tr><td>Groundwater (pools, excavations)</td><td>Seasonal high water table; for a pool, uplift and the need for hydrostatic relief</td><td>ERP geotech reports (seasonal high water), FDOT logs, SJRWMD static water levels, FDEP monitoring wells; USGS for the deep aquifer</td></tr>
+      </table>
+      <p class="muted">The headline coverage counts only geotechnical borings (FDOT and Geosetta). Wells, cleanup sites and permit areas are off by default;
+      turn them on under Sources to see where else information may exist. Coverage is area-based on an H3 grid
+      (resolution ${grid.resolution}, ${grid.cells.length.toLocaleString()} cells): the share of the city within R of qualifying data.</p>
+
       <h3>Sources</h3>
-      <table><colgroup><col class="src"><col><col><col></colgroup><tr><th>Source</th><th>Tier</th><th>Status</th><th>Borings</th></tr>${rows}
-      <tr><td>City boundary: US Census TIGERweb<br><small>${esc(manifest.boundary.url)}</small></td><td>1</td><td>${esc(manifest.boundary.fetched?.slice(0, 10) ?? "")}</td><td></td></tr></table>
-      <h3>Cleanup sites</h3>
-      <p>FDEP cleanup sites (petroleum discharges, dry cleaners, other cleanup programs) are shown as facilities, not borings, and are off by default.
-      Their public files in DEP Nexus usually contain site assessment reports with shallow soil-boring and monitoring-well logs, so they mark places where
-      some subsurface information exists. They are excluded from the default coverage figure.</p>
+      ${cards}
+      <details class="src-card"><summary><strong>City boundary: US Census TIGERweb</strong> <span class="muted">tier 1</span></summary>
+        <p>Incorporated place boundary (GEOID 1225175) from the Census Bureau's TIGERweb service, public domain. Used only to define the area being measured.</p>
+        <p class="muted">${esc(manifest.boundary.url)}</p></details>
+      <details class="src-card"><summary><strong>Checked, not used</strong></summary>
+        <p>USGS CPT data release (doi:10.5066/P13M3WVY): 1,823 cone soundings in 14 states, none in Florida.
+        FDOT's ArcGIS Online organisation: no soil-boring layer, and its project lines don't match the boring projects.
+        Suwannee River WMD: no public well-permit layer found (the SJRWMD well layer covers all of Gainesville anyway).</p></details>
+
       <h3>License tiers (cumulative)</h3>
       <ol><li>US federal work (public domain).</li>
       <li>Florida agency public record. In <em>Microdecisions v. Skinner</em> (Fla. 2d DCA 2004) the court held an agency can't claim copyright in a public record without legislative authorization.</li>
       <li>Open licence that requires attribution (CC BY, OGL).</li><li>Accessible under terms of use or a disclaimer.</li></ol>
-      <p>Caveats: reports written by private consultants and hosted by an agency may still carry the consultant's copyright.
-      University-held reports are excluded. This is not legal advice.</p>
-      ${disclaimers}
+      <p>Reports written by private consultants and hosted by an agency may still carry the consultant's copyright. University-held reports are excluded. This is not legal advice.</p>
       <p>Basemap: © <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>, © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors.</p>`;
+    setTimeout(() => {
+      const dlg = $<HTMLDialogElement>("about");
+      if (focus) document.getElementById(`about-${focus}`)?.scrollIntoView({ block: "start" });
+      else { dlg.scrollTop = 0; $("about-title").focus({ preventScroll: true }); }
+    }, 0);
   }
+
 }
 
 function binOf(v: number, bins: number[]) { let i = 0; while (i < bins.length && v >= bins[i]) i++; return i; }
