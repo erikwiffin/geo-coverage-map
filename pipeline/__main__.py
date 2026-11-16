@@ -153,8 +153,10 @@ def build(ctx) -> None:
     man = json.loads((ctx.raw_dir / "fetch_manifest.json").read_text())
     frames, profiles = [], []
     for src in ctx.sources:
-        entry = man["sources"].setdefault(src["id"], _source_entry(src))
-        entry["disclaimer"] = _source_entry(src)["disclaimer"]  # file may appear after fetch
+        entry = man["sources"].setdefault(src["id"], {})
+        # config-derived fields (homepage, licence, disclaimer, ...) always come from the current
+        # config, so edits reach the site without a refetch; fetch status fields are kept
+        entry.update(_source_entry(src))
         path = ctx.raw_dir / f"{src['id']}.records.json"
         if src["adapter"] == "diggs":  # folder-only source: always re-read on build
             try:

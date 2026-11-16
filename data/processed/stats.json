@@ -200,22 +200,22 @@
    {
     "area_km2": 0.002,
     "n_cells": 1,
-    "centroid_lon": -82.33723,
-    "centroid_lat": 29.615929,
-    "max_distance_m": 517.6,
+    "centroid_lon": -82.416302,
+    "centroid_lat": 29.643006,
+    "max_distance_m": 1242.7,
     "rank": 9
    },
    {
     "area_km2": 0.002,
     "n_cells": 1,
-    "centroid_lon": -82.416302,
-    "centroid_lat": 29.643006,
-    "max_distance_m": 1242.7,
+    "centroid_lon": -82.337448,
+    "centroid_lat": 29.616686,
+    "max_distance_m": 502.8,
     "rank": 10
    }
   ]
  },
- "generated": "2026-11-16T02:27:54+00:00",
+ "generated": "2026-11-16T02:29:16+00:00",
  "sources_status": {
   "fdot_d2": "ok",
   "fgs_wells": "ok",
