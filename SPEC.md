@@ -370,3 +370,24 @@ When a request is blocked, the error names the host; add it to the allowlist and
   1,605 services) has no soil-boring, geotech or drilling layer; the Soil Boring viewer data is
   only on `gis.fdot.gov`. `www.arcgis.com` (portal search) was not reachable, so other orgs
   weren't searched.
+- **FDOT D2, first real data (2026-11-16, browser-saved query, 418 records in the envelope; 412
+  inside the client-side bbox):** answers to §10 Q1–Q4:
+  1. **`DOC_LINK` is not public.** 277 links point to `http://dotsd2ww01.dot.state.fl.us/intranet/...`,
+     a host that doesn't resolve publicly. 141 are Windows UNC paths
+     (`\\dotad2cohesity\Static Data\219\MR\<FIN>\<sheet>.pdf`). The adapter moves them to
+     `doc_internal` (config `internal_doc_patterns`) and leaves `doc_url` null; the map says
+     the document is internal and must be requested as a public record. The layer reports
+     `hasAttachments: true`; whether attachments are populated is still unchecked, because the
+     WAF blocks scripted probes.
+  2. **`DOC_ID` is always null and `DOC_LINK` points at individual log sheets** (71 distinct).
+     The report key is now **`FIN`** (FDOT financial project number), normalized to digits
+     because it appears both as `447962-1-52-01` and `44796215201`. Order: `[DOC_ID, FIN,
+     DOC_LINK]`. Result: 22 reports, one spanning more than 5 km (`44703215201`, 5.04 km, a
+     corridor project).
+  3. **`BOREDATE`:** 81% null; the rest are all `MM/DD/YYYY`, from 2018 to 2025.
+  4. **No depth.** `NOTES` holds a sequence number and `CONSULTANT` the log PDF's file name, so
+     neither is mapped. `depth_ft` stays null.
+  - `TYPE`: 271 SPT, 141 Auger, 0 CPT. For Auger records `BORENUM` is the station (e.g. `150+35`).
+- **Coverage, default filters (FDOT only), 2026-11-16:** 0.5% / 1.2% / 4.4% / 11.8% / 27.2% of
+  city area within 50 / 100 / 250 / 500 / 1000 m. With borings from 2000 onward only: 12.8% at 1 km.
+  The median distance from a city cell to the nearest boring is 1.77 km.

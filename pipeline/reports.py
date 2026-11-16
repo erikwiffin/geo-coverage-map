@@ -24,10 +24,17 @@ def _max_span_m(lon: np.ndarray, lat: np.ndarray) -> float:
     return float(haversine_m(pts[a, 0], pts[a, 1], pts[b, 0], pts[b, 1]).max())
 
 
+def _first(g, col):
+    if col not in g or not g[col].notna().any():
+        return None
+    return g[col].dropna().iloc[0]
+
+
 def build_reports(borings: pd.DataFrame, buffer_m: float = 30,
                   span_flag_km: float = 5) -> gpd.GeoDataFrame:
     keyed = borings[borings["report_key"].notna()]
-    cols = ["report_key", "source_id", "tier", "kind", "doc_name", "doc_url", "n_borings",
+    cols = ["report_key", "source_id", "tier", "kind", "doc_name", "doc_url", "doc_internal",
+            "fin", "n_documents", "n_borings",
             "types", "date_min", "date_max", "year_min", "year_max", "span_m", "flag_span",
             "centroid_lon", "centroid_lat", "hull", "geometry"]
     if keyed.empty:
@@ -52,6 +59,11 @@ def build_reports(borings: pd.DataFrame, buffer_m: float = 30,
             "kind": g["kind"].iloc[0],
             "doc_name": g["doc_name"].dropna().iloc[0] if g["doc_name"].notna().any() else None,
             "doc_url": g["doc_url"].dropna().iloc[0] if g["doc_url"].notna().any() else None,
+            "doc_internal": _first(g, "doc_internal"),
+            "fin": _first(g, "fin"),
+            "n_documents": int(pd.concat([g.get("doc_url", pd.Series(dtype=object)),
+                                          g.get("doc_internal", pd.Series(dtype=object))])
+                               .dropna().nunique()),
             "n_borings": int(len(g)),
             "types": sorted(g["boring_type"].unique().tolist()),
             "date_min": dates.min() if len(dates) else None,

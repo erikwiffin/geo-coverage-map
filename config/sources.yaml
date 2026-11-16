@@ -26,11 +26,18 @@
     doc_id: DOC_ID
     project: PROJNUM
     fin: FIN
-    consultant: CONSULTANT
+    # CONSULTANT holds the log PDF's file name and NOTES a sequence number in this layer
+    # (profiled 2026-11-16), so neither is mapped.
     elev: ELEV
     gw: GR_WTR
     county: COUNTY
-  report_key: [DOC_ID, DOC_LINK, [FIN, PROJNUM, DOC_NAME]]
+  # DOC_ID is always null and DOC_LINK points at individual log sheets, so the financial
+  # project number (FIN) is the report key. FIN appears both as 447962-1-52-01 and
+  # 44796215201; normalize to digits.
+  report_key: [DOC_ID, FIN, DOC_LINK]
+  normalize_fields: {FIN: digits}
+  # DOC_LINK targets FDOT's intranet and internal file shares, which are not reachable publicly.
+  internal_doc_patterns: ['^https?://dotsd2ww01\.dot\.state\.fl\.us/', '^\\\\']
 
 - id: fgs_wells
   name: Florida Geological Survey Wells

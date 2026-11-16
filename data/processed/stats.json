@@ -22,22 +22,22 @@
   ],
   "years": "all, incl. undated"
  },
- "n_borings_default": 0,
- "n_reports_default": 0,
- "median_nearest_m": null,
+ "n_borings_default": 412,
+ "n_reports_default": 22,
+ "median_nearest_m": 1773.9,
  "pct_covered": {
-  "50": 0.0,
-  "100": 0.0,
-  "250": 0.0,
-  "500": 0.0,
-  "1000": 0.0
+  "50": 0.521,
+  "100": 1.249,
+  "250": 4.421,
+  "500": 11.79,
+  "1000": 27.154
  },
  "pct_covered_all_sources": {
-  "50": 0.345,
-  "100": 1.358,
-  "250": 7.497,
-  "500": 23.65,
-  "1000": 57.56
+  "50": 0.866,
+  "100": 2.583,
+  "250": 11.292,
+  "500": 30.453,
+  "1000": 63.412
  },
  "pct_covered_by_tier": {
   "<=1": {
@@ -48,167 +48,167 @@
    "1000": 0.0
   },
   "<=2": {
-   "50": 0.0,
-   "100": 0.0,
-   "250": 0.0,
-   "500": 0.0,
-   "1000": 0.0
+   "50": 0.521,
+   "100": 1.249,
+   "250": 4.421,
+   "500": 11.79,
+   "1000": 27.154
   },
   "<=3": {
-   "50": 0.0,
-   "100": 0.0,
-   "250": 0.0,
-   "500": 0.0,
-   "1000": 0.0
+   "50": 0.521,
+   "100": 1.249,
+   "250": 4.421,
+   "500": 11.79,
+   "1000": 27.154
   },
   "<=4": {
-   "50": 0.0,
-   "100": 0.0,
-   "250": 0.0,
-   "500": 0.0,
-   "1000": 0.0
+   "50": 0.521,
+   "100": 1.249,
+   "250": 4.421,
+   "500": 11.79,
+   "1000": 27.154
   }
  },
  "pct_covered_by_type": {
   "all": {
-   "50": 0.0,
-   "100": 0.0,
-   "250": 0.0,
-   "500": 0.0,
-   "1000": 0.0
+   "50": 0.521,
+   "100": 1.249,
+   "250": 4.421,
+   "500": 11.79,
+   "1000": 27.154
   },
   "spt_cpt": {
-   "50": 0.0,
-   "100": 0.0,
-   "250": 0.0,
-   "500": 0.0,
-   "1000": 0.0
+   "50": 0.401,
+   "100": 1.011,
+   "250": 3.82,
+   "500": 10.492,
+   "1000": 24.301
   },
   "excluding_wells": {
-   "50": 0.0,
-   "100": 0.0,
-   "250": 0.0,
-   "500": 0.0,
-   "1000": 0.0
+   "50": 0.521,
+   "100": 1.249,
+   "250": 4.421,
+   "500": 11.79,
+   "1000": 27.154
   }
  },
  "pct_covered_by_recency": {
   "all_years": {
-   "50": 0.0,
-   "100": 0.0,
-   "250": 0.0,
-   "500": 0.0,
-   "1000": 0.0
+   "50": 0.521,
+   "100": 1.249,
+   "250": 4.421,
+   "500": 11.79,
+   "1000": 27.154
   },
   "2000_and_later": {
-   "50": 0.0,
-   "100": 0.0,
-   "250": 0.0,
-   "500": 0.0,
-   "1000": 0.0
+   "50": 0.128,
+   "100": 0.347,
+   "250": 1.375,
+   "500": 4.293,
+   "1000": 12.783
   },
   "2015_and_later": {
-   "50": 0.0,
-   "100": 0.0,
-   "250": 0.0,
-   "500": 0.0,
-   "1000": 0.0
+   "50": 0.128,
+   "100": 0.347,
+   "250": 1.375,
+   "500": 4.293,
+   "1000": 12.783
   }
  },
  "reports_within_radius": {
   "radius_m": 250,
   "median": 0.0,
   "p90": 0.0,
-  "pct_cells_zero": 100.0
+  "pct_cells_zero": 95.58
  },
  "gaps": {
   "radius_m": 500,
   "top": [
    {
-    "area_km2": 168.2125,
-    "n_cells": 84215,
-    "centroid_lon": -82.346147,
-    "centroid_lat": 29.679648,
-    "max_distance_m": null,
+    "area_km2": 147.3924,
+    "n_cells": 73789,
+    "centroid_lon": -82.348352,
+    "centroid_lat": 29.683462,
+    "max_distance_m": 9980.7,
     "rank": 1
+   },
+   {
+    "area_km2": 0.6509,
+    "n_cells": 326,
+    "centroid_lon": -82.319971,
+    "centroid_lat": 29.616143,
+    "max_distance_m": 1626.7,
+    "rank": 2
    },
    {
     "area_km2": 0.5941,
     "n_cells": 297,
     "centroid_lon": -82.414629,
     "centroid_lat": 29.618891,
-    "max_distance_m": null,
-    "rank": 2
+    "max_distance_m": 4275.1,
+    "rank": 3
+   },
+   {
+    "area_km2": 0.242,
+    "n_cells": 121,
+    "centroid_lon": -82.412496,
+    "centroid_lat": 29.663744,
+    "max_distance_m": 848.1,
+    "rank": 4
    },
    {
     "area_km2": 0.152,
     "n_cells": 76,
     "centroid_lon": -82.396645,
     "centroid_lat": 29.614851,
-    "max_distance_m": null,
-    "rank": 3
+    "max_distance_m": 2813.9,
+    "rank": 5
    },
    {
     "area_km2": 0.042,
     "n_cells": 21,
     "centroid_lon": -82.404828,
     "centroid_lat": 29.612713,
-    "max_distance_m": null,
-    "rank": 4
+    "max_distance_m": 3016.5,
+    "rank": 6
+   },
+   {
+    "area_km2": 0.008,
+    "n_cells": 4,
+    "centroid_lon": -82.421701,
+    "centroid_lat": 29.654458,
+    "max_distance_m": 578.4,
+    "rank": 7
    },
    {
     "area_km2": 0.006,
     "n_cells": 3,
     "centroid_lon": -82.422059,
     "centroid_lat": 29.616111,
-    "max_distance_m": null,
-    "rank": 5
-   },
-   {
-    "area_km2": 0.004,
-    "n_cells": 2,
-    "centroid_lon": -82.321097,
-    "centroid_lat": 29.62386,
-    "max_distance_m": null,
-    "rank": 6
-   },
-   {
-    "area_km2": 0.002,
-    "n_cells": 1,
-    "centroid_lon": -82.322946,
-    "centroid_lat": 29.622606,
-    "max_distance_m": null,
-    "rank": 7
-   },
-   {
-    "area_km2": 0.002,
-    "n_cells": 1,
-    "centroid_lon": -82.320287,
-    "centroid_lat": 29.62446,
-    "max_distance_m": null,
+    "max_distance_m": 4305.2,
     "rank": 8
    },
    {
     "area_km2": 0.002,
     "n_cells": 1,
-    "centroid_lon": -82.422078,
-    "centroid_lat": 29.656188,
-    "max_distance_m": null,
+    "centroid_lon": -82.416302,
+    "centroid_lat": 29.643006,
+    "max_distance_m": 1242.7,
     "rank": 9
    },
    {
     "area_km2": 0.002,
     "n_cells": 1,
-    "centroid_lon": -82.322366,
-    "centroid_lat": 29.62315,
-    "max_distance_m": null,
+    "centroid_lon": -82.337448,
+    "centroid_lat": 29.616686,
+    "max_distance_m": 502.8,
     "rank": 10
    }
   ]
  },
- "generated": "2026-11-16T00:51:28+00:00",
+ "generated": "2026-11-16T01:00:28+00:00",
  "sources_status": {
-  "fdot_d2": "failed",
+  "fdot_d2": "ok",
   "fgs_wells": "ok"
  }
 }

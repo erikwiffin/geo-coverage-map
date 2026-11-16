@@ -90,6 +90,7 @@ async function main() {
     style: manifest.basemap_style || "https://tiles.openfreemap.org/styles/positron",
     attributionControl: { compact: matchMedia("(max-width: 760px)").matches, customAttribution: "Boundary: US Census TIGERweb · Borings: see About" },
   });
+  (window as unknown as { __map: maplibregl.Map }).__map = map; // handle for headless screenshots/tests
   map.addControl(new maplibregl.NavigationControl(), "top-left");
   map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
   const bb = bbox(bgeom);
@@ -278,8 +279,8 @@ async function main() {
       html = table([
         ["Boring", p.boring_name], ["Type", p.boring_type], ["Date", p.date ?? p.year ?? p.date_raw ?? "undated"],
         ["Source", src?.name ?? p.source_id], ["Tier", p.tier], ["Depth", p.depth_ft != null ? `${p.depth_ft} ft` : null],
-        ["Elevation", p.elev], ["Water level", p.gw],
-      ]) + (url ? `<p><a href="${esc(url)}" target="_blank" rel="noopener">Open document ↗</a></p>` : "");
+        ["Elevation", p.elev], ["Water level", p.gw], ["FDOT project (FIN)", p.fin],
+      ]) + docLine(url, p.doc_internal);
     } else if (f.layer.id === "reports-fill") {
       const src = manifest.sources[p.source_id as string];
       const url = safeUrl(p.doc_url);
@@ -287,14 +288,18 @@ async function main() {
       html = table([
         ["Report", p.doc_name ?? p.report_key], ["Borings", p.n_borings], ["Types", p.types],
         ["Dates", dr.length ? [...new Set(dr)].join(" – ") : "undated"], ["Source", src?.name ?? p.source_id],
+        ["FDOT project (FIN)", p.fin], ["Log sheets", p.n_documents],
         ["Licence", src?.license], ["Span", p.flag_span ? `${fmtM(p.span_m as number)} (wide: corridor or key issue)` : null],
-      ]) + (url ? `<p><a href="${esc(url)}" target="_blank" rel="noopener">Open document ↗</a></p>` : "");
+      ]) + docLine(url, p.doc_internal);
     } else if (f.layer.id === "hexes" && last) {
       const i = p.i as number;
       html = table([["Distance to nearest boring", fmtM(last.ddist[i])], [`Reports within ${state.radius} m`, last.drc[i]]]);
     }
     new maplibregl.Popup({ maxWidth: "320px" }).setLngLat(e.lngLat).setHTML(html).addTo(map);
   }
+  const docLine = (url: string | null, internal: unknown) => url
+    ? `<p><a href="${esc(url)}" target="_blank" rel="noopener">Open document ↗</a></p>`
+    : internal ? `<p class="muted">Document exists only on an internal agency network (not public). File: <code>${esc(String(internal).split(/[\\/]/).pop())}</code>. Request it as a public record.</p>` : "";
   const table = (rows: [string, unknown][]) =>
     `<table>${rows.filter(([, v]) => v != null && v !== "").map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</table>`;
   const layerKey = (id: string) => (id.startsWith("report") ? "reports" : id === "clusters" || id === "cluster-count" ? "borings" : id.startsWith("gaps") ? "gaps" : id);

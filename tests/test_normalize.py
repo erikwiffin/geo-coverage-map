@@ -48,6 +48,22 @@ def test_normalize_fdot_synthetic(sources, area):
     assert row.tier == 2 and row.kind == "geotechnical" and row.boring_type == "SPT"
     assert row.report_key == "fdot_d2:DOC_ID=501" and row.depth_ft is None
     assert row.elev == 152.3 and row.gw == 8.0
+    # example.invalid links are public-looking, so they stay as doc_url
+    assert row.doc_url.startswith("https://example.invalid/")
+
+
+def test_fin_normalized_and_internal_links(sources):
+    recs = [
+        {"attrs": {"OBJECTID": 1, "FIN": "447962-1-52-01", "TYPE": "SPT",
+                   "DOC_LINK": "http://dotsd2ww01.dot.state.fl.us/intranet/x/MR/44796215201/1.pdf"},
+         "lon": -82.3, "lat": 29.6},
+        {"attrs": {"OBJECTID": 2, "FIN": "44796215201", "TYPE": "Auger",
+                   "DOC_LINK": "\\\\dotad2cohesity\\Static Data\\219\\MR\\44796215201\\2.pdf"},
+         "lon": -82.31, "lat": 29.6},
+    ]
+    df = normalize_source(recs, sources["fdot_d2"])
+    assert df.report_key.nunique() == 1 and df.report_key.iloc[0] == "fdot_d2:FIN=44796215201"
+    assert df.doc_url.isna().all() and df.doc_internal.notna().all()
 
 
 def test_normalize_fgs_recorded(sources, area):

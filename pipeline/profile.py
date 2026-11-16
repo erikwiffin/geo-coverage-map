@@ -18,6 +18,14 @@ def _md_table(df: pd.DataFrame) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _joined(attrs: pd.DataFrame, fields: list[str]) -> pd.Series:
+    """'|'-joined key per row; null when every field is null. Robust to pandas' str dtype."""
+    parts = attrs[fields].apply(lambda col: col.map(lambda v: "" if pd.isna(v) else
+                                                    (str(int(v)) if isinstance(v, float)
+                                                     and v == int(v) else str(v))))
+    return parts.agg("|".join, axis=1).where(attrs[fields].notna().any(axis=1))
+
+
 def key_diagnostics(attrs: pd.DataFrame, candidates: list) -> list[dict]:
     """For each report-key candidate: distinct values, coverage, and how often one key value
     maps to several values of the other candidates (one doc = many projects, etc.)."""
@@ -27,14 +35,13 @@ def key_diagnostics(attrs: pd.DataFrame, candidates: list) -> list[dict]:
         if not set(fields) <= set(attrs.columns):
             out.append({"key": "+".join(fields), "note": "field(s) missing"})
             continue
-        k = attrs[fields].astype(str).agg("|".join, axis=1).where(attrs[fields].notna().any(axis=1))
+        k = _joined(attrs, fields)
         row = {"key": "+".join(fields), "non_null_pct": round(100 * k.notna().mean(), 1),
                "distinct": int(k.nunique())}
         for other in flat:
             if other == fields or not set(other) <= set(attrs.columns):
                 continue
-            o = attrs[other].astype(str).agg("|".join, axis=1).where(
-                attrs[other].notna().any(axis=1))
+            o = _joined(attrs, other)
             g = pd.DataFrame({"k": k, "o": o}).dropna().groupby("k")["o"].nunique()
             row[f"values_with_>1 {'+'.join(other)}"] = int((g > 1).sum())
         out.append(row)
@@ -79,12 +86,24 @@ def profile_source(src: dict, records: list[dict], norm: pd.DataFrame, extra: di
             s += [f"Year range: {yr.min()}–{yr.max()}, median {int(yr.median())}.", ""]
 
     if src.get("report_key"):
+        keyed_attrs = attrs.copy()
+        from .normalize import NORMALIZERS
+        for f, n in (src.get("normalize_fields") or {}).items():
+            if f in keyed_attrs:
+                keyed_attrs[f] = keyed_attrs[f].map(
+                    lambda v, fn=NORMALIZERS[n]: None if pd.isna(v) else fn(v))
         s += ["### Report-key candidates", "",
-              _md_table(pd.DataFrame(key_diagnostics(attrs, src["report_key"])))]
+              f"Normalized before keying: {src.get('normalize_fields') or 'nothing'}.", "",
+              _md_table(pd.DataFrame(key_diagnostics(keyed_attrs, src["report_key"])))]
 
     du = fm.get("doc_url")
     if du and du in attrs:
-        hosts = attrs[du].dropna().map(lambda u: urlparse(str(u)).netloc or "(relative/none)")
+        def host(u):
+            u = str(u)
+            if u.startswith("\\\\"):
+                return "UNC share \\\\" + u.lstrip("\\").split("\\")[0]
+            return urlparse(u).netloc or "(relative/none)"
+        hosts = attrs[du].dropna().map(host)
         vc = hosts.value_counts().rename_axis("host").reset_index(name="n")
         s += [f"### Hostnames in `{du}`", "", _md_table(vc)]
         ex = attrs[du].dropna().drop_duplicates().head(5).tolist()

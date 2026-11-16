@@ -13,7 +13,8 @@ from .geo import SphereIndex
 SCHEMA = [
     "boring_uid", "source_id", "tier", "kind", "boring_type", "boring_name",
     "date_raw", "date", "year", "date_format", "depth_ft", "elev", "gw", "report_key",
-    "doc_url", "doc_name", "project", "consultant", "lon", "lat", "flags", "also_in", "attrs",
+    "doc_url", "doc_internal", "doc_name", "project", "fin", "consultant", "lon", "lat",
+    "flags", "also_in", "attrs",
 ]
 
 DATE_FORMATS = [
@@ -119,8 +120,16 @@ def _num(v):
         return None
 
 
+NORMALIZERS = {
+    "digits": lambda v: re.sub(r"\D", "", str(v)) or None,
+    "upper": lambda v: str(v).strip().upper() or None,
+}
+
+
 def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.DataFrame:
     fm = src.get("field_map", {})
+    norms = {f: NORMALIZERS[n] for f, n in (src.get("normalize_fields") or {}).items()}
+    internal = [re.compile(p) for p in src.get("internal_doc_patterns") or []]
 
     def get(attrs, key):
         f = fm.get(key, key if src.get("adapter") == "csv" else None)
@@ -136,7 +145,13 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
             if y and 1850 <= y <= date.today().year + 1:
                 year, fmt = int(y), (fmt if fmt != "null" else "year_field")
         native_id = get(a, "native_id")
-        rk = report_key(a, src.get("report_key")) if src.get("report_key") else None
+        keyed = {k: (norms[k](v) if k in norms and _clean(v) is not None else v)
+                 for k, v in a.items()}
+        rk = report_key(keyed, src.get("report_key")) if src.get("report_key") else None
+        doc = get(a, "doc_url")
+        doc_internal = None
+        if doc is not None and any(rx.search(str(doc)) for rx in internal):
+            doc, doc_internal = None, str(doc)
         if src.get("adapter") == "csv" and get(a, "report_key") is not None:
             rk = f"report_key={get(a, 'report_key')}"
         rows.append({
@@ -155,9 +170,11 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
             "elev": _num(get(a, "elev")),
             "gw": _num(get(a, "gw")),
             "report_key": f"{src['id']}:{rk}" if rk else None,
-            "doc_url": get(a, "doc_url"),
+            "doc_url": doc,
+            "doc_internal": doc_internal,
             "doc_name": None if get(a, "doc_name") is None else str(get(a, "doc_name")),
             "project": None if get(a, "project") is None else str(get(a, "project")),
+            "fin": None if get(a, "fin") is None else str(get(a, "fin")),
             "consultant": get(a, "consultant"),
             "lon": _num(r.get("lon")),
             "lat": _num(r.get("lat")),

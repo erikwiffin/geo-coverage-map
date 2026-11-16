@@ -17,6 +17,6 @@ def test_reports_membership_and_footprints(sources, area):
     a = rep.to_crs(rep.estimate_utm_crs()).set_index("report_key").loc[
         "fdot_d2:DOC_ID=501"].geometry.area
     assert math.pi * 30**2 < a <= 3 * math.pi * 30**2 * 1.01
-    # FIN+PROJNUM+DOC_NAME report: two borings ~6.7 km apart -> flagged
-    fin = rep.set_index("report_key").loc["fdot_d2:FIN+PROJNUM+DOC_NAME=999||I-75 widening"]
+    # FIN-keyed report: two borings ~6.7 km apart -> flagged
+    fin = rep.set_index("report_key").loc["fdot_d2:FIN=999"]
     assert fin.n_borings == 2 and fin.flag_span and fin.hull is None
