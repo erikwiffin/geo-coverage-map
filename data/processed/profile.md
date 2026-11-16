@@ -1,6 +1,6 @@
 # Data profile: Gainesville, FL
 
-Generated 2026-11-16T02:10:09+00:00.
+Generated 2026-11-16T02:14:09+00:00.
 
 ## FDOT District 2 Soil Borings (`fdot_d2`)
 
@@ -346,6 +346,89 @@ Examples: <https://waterdata.usgs.gov/monitoring-location/293634082144901/>, <ht
 | usgs_nwis_gw:294104082171202 | Well | A-0702 SURF WELL ALACHUA CO FAIR NR GAINESVILLE,FL | 19950831 | 1995.0 | 22.0 | usgs_nwis_gw:site_no=294104082171202 | https://waterdata.usgs.gov/monitoring-location/2941040821712 | -82.286492 | 29.68469 |
 | usgs_nwis_gw:294105082171501 | Well | A-063 ALACHUA FAIRGROUNDS CF IN GAINESVILLE,FL | 19950301 | 1995.0 | 440.0 | usgs_nwis_gw:site_no=294105082171501 | https://waterdata.usgs.gov/monitoring-location/2941050821715 | -82.287326 | 29.684968 |
 | usgs_nwis_gw:294106082171501 | Well | A-0366 L FLORIDAN ALACHUA CO FAIR NR GAINSVILLE,FL | 20040812 | 2004.0 | 1810.0 | usgs_nwis_gw:site_no=294106082171501 | https://waterdata.usgs.gov/monitoring-location/2941060821715 | -82.287326 | 29.685245 |
+
+
+## SJRWMD Well Records (`sjrwmd_wells`)
+
+- URL: https://permitting.sjrwmd.com/arcgis02/rest/services/sjrRegMapICR/MapServer/13
+- Tier 2, kind `geologic_well`
+- Raw records in envelope: **4054**; after cleaning: **4054**
+- Flags: {'approx_location': 2401}
+
+### Null rate per field
+
+| field | null_% |
+|---|---|
+| OBJECTID | 0.0 |
+| STN_ID | 0.0 |
+| STN_NM | 0.0 |
+| STN_TP_CD | 0.0 |
+| LAT_NO | 0.0 |
+| LONG_NO | 0.0 |
+| LAT_NO_DD | 0.0 |
+| LONG_NO_DD | 0.0 |
+| DIV_ID | 0.0 |
+| STN_STTS_CD | 0.0 |
+| SFTWR_ID | 0.0 |
+| CTRL_DTM_CD | 0.3 |
+| MTHD_DTRMN_DSC | 41.2 |
+| FL_UNQ_WELL_ID | 97.5 |
+| WELL_DIAMETER | 36.9 |
+| WELL_CASING_DEPTH | 22.6 |
+| WELL_DEPTH | 16.9 |
+| WUP_NO | 99.6 |
+| WELL_USE_CD | 19.7 |
+| CUR_ID | 89.1 |
+| WELL_ADDR | 27.7 |
+| WELL_USE_DSC | 32.9 |
+| FULL_APP_NO | 89.1 |
+| INIT_STATIC_WTR_LVL_VAL | 45.5 |
+| CNTRCTR_NM | 34.9 |
+
+### Normalized boring_type
+
+| type | n |
+|---|---|
+| Well | 4054 |
+
+### Date formats (field `None`)
+
+Share with a parsed year: **0.0%**; undated: **4054**.
+
+| format | n |
+|---|---|
+| null | 4054 |
+
+### Report-key candidates
+
+Normalized before keying: nothing.
+
+| key | non_null_pct | distinct |
+|---|---|---|
+| FULL_APP_NO | 10.9 | 255 |
+
+### Layer attachments
+
+```
+{
+ "hasAttachments": false
+}
+```
+
+### Sample rows (10)
+
+| boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
+|---|---|---|---|---|---|---|---|---|---|
+| sjrwmd_wells:44754 | Well | OR908 |  |  |  |  |  | -82.337222 | 29.619444 |
+| sjrwmd_wells:44755 | Well | OR909 |  |  |  |  |  | -82.372778 | 29.6525 |
+| sjrwmd_wells:45228 | Well | KANA |  |  |  |  |  | -82.405 | 29.618889 |
+| sjrwmd_wells:45229 | Well | LHATSB |  |  |  |  |  | -82.253056 | 29.686111 |
+| sjrwmd_wells:44657 | Well | HOG30 |  |  |  |  |  | -82.392583 | 29.638194 |
+| sjrwmd_wells:45226 | Well | INDUSPL |  |  |  |  |  | -82.255556 | 29.695278 |
+| sjrwmd_wells:45284 | Well | LHAT26 |  |  |  |  |  | -82.23444 | 29.67941 |
+| sjrwmd_wells:45285 | Well | LHT26E |  |  |  |  |  | -82.220833 | 29.688017 |
+| sjrwmd_wells:45286 | Well | LHTNB |  |  |  |  |  | -82.2656 | 29.6933 |
+| sjrwmd_wells:45289 | Well | PCS20 |  |  |  |  |  | -82.248056 | 29.610833 |
 
 
 ## Geosetta (DIGGS area exports) (`geosetta_diggs`)
@@ -721,7 +804,7 @@ Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/
 
 ## Reports (M2)
 
-- Reports built: **577**; borings in reports: **991** (= sum of n_borings: 991); borings without a key: **0**.
+- Reports built: **831**; borings in reports: **1432** (= sum of n_borings: 1432); borings without a key: **3596**.
 - Reports spanning > 5 km (corridor project or bad key): **1**
 
   - `fdot_d2:FIN=44703215201` — 26 borings, 5042 m

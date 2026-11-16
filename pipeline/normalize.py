@@ -190,7 +190,9 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
             "consultant": get(a, "consultant"),
             "lon": _num(r.get("lon")),
             "lat": _num(r.get("lat")),
-            "flags": list(a.get("flags") or []) if src.get("adapter") == "diggs" else [],
+            "flags": (list(a.get("flags") or []) if src.get("adapter") == "diggs" else [])
+            + (["approx_location"] if any(_clean(a.get(f)) in vals for f, vals in
+                                          (src.get("approx_when") or {}).items()) else []),
             "also_in": [],
             "log": json.dumps(get(a, "log"), default=str) if get(a, "log") else None,
             "log_from": src["id"] if get(a, "log") else None,
@@ -207,6 +209,11 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
         df = (df.sort_values("date", na_position="last")
               .drop_duplicates("site_id", keep="first") if df["site_id"].notna().all()
               else df)
+    if src.get("flag_colocated") and not df.empty:
+        key = df["lon"].round(7).astype(str) + "," + df["lat"].round(7).astype(str)
+        shared = key.duplicated(keep=False)
+        df["flags"] = [f + ["approx_location"] if sh and "approx_location" not in f else f
+                       for f, sh in zip(df["flags"], shared, strict=True)]
     return clean(df, county_bbox, collapse_colocated=not src.get("keep_colocated"))
 
 

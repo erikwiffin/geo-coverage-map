@@ -32,3 +32,16 @@ def test_same_facility_in_two_layers_merges_even_when_far_apart(sources):
     out = dedupe_across_sources(pd.concat([pet, cln]), 5, ["fdep_cleanup", "fdep_petroleum"])
     assert list(out.source_id) == ["fdep_cleanup"]
     assert out.also_in.iloc[0] == ["fdep_petroleum:1"]
+
+
+def test_colocated_wells_kept_and_flagged(sources):
+    def w(stn, lon, method=None):
+        return {"attrs": {"STN_ID": stn, "STN_NM": "1", "WELL_DEPTH": 28.0,
+                          "MTHD_DTRMN_DSC": method}, "lon": lon, "lat": 29.66}
+    df = normalize_source([w(1, -82.30), w(2, -82.30), w(3, -82.31, "STR Centroid"),
+                           w(4, -82.32, "GPS")], sources["sjrwmd_wells"])
+    flags = df.set_index("boring_uid")["flags"].to_dict()
+    assert len(df) == 4
+    assert flags["sjrwmd_wells:1"] == ["approx_location"]  # shares a coordinate
+    assert flags["sjrwmd_wells:3"] == ["approx_location"]  # STR centroid
+    assert flags["sjrwmd_wells:4"] == []

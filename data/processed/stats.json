@@ -35,11 +35,11 @@
   "1000": 29.712
  },
  "pct_covered_all_sources": {
-  "50": 2.076,
-  "100": 6.33,
-  "250": 23.273,
-  "500": 49.221,
-  "1000": 83.174
+  "50": 4.874,
+  "100": 14.125,
+  "250": 45.436,
+  "500": 77.841,
+  "1000": 96.574
  },
  "pct_covered_with_environmental_sites": {
   "50": 1.716,
@@ -215,11 +215,12 @@
    }
   ]
  },
- "generated": "2026-11-16T02:10:12+00:00",
+ "generated": "2026-11-16T02:14:12+00:00",
  "sources_status": {
   "fdot_d2": "ok",
   "fgs_wells": "ok",
   "usgs_nwis_gw": "ok",
+  "sjrwmd_wells": "ok",
   "geosetta_diggs": "ok",
   "fdep_cleanup": "ok",
   "fdep_petroleum": "ok",
