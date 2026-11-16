@@ -8,6 +8,9 @@
   url: https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soil_Boring_viewer/MapServer/0
   homepage: https://www.fdot.gov/geotechnical
   where: "1=1"
+  # gis.fdot.gov blocks scripted clients (Azure WAF). Save query pages from a browser into this
+  # folder and the adapter uses them instead of the network. See README "FDOT access".
+  import_dir: data/manual/fdot_d2
   tier: 2
   kind: geotechnical
   license: >-

@@ -52,14 +52,12 @@ cd web && npm test   # NN correctness + performance, and web-vs-Python stats con
 
 ### FDOT access workaround
 
-`gis.fdot.gov` appears to reject requests from cloud/datacenter IPs. Run the fetch from a
-normal network (your own machine); everything else works offline from the cache:
-
-```bash
-python -m pipeline fetch     # on a machine that can reach gis.fdot.gov
-# then copy data/raw/ to the build environment and run:
-python -m pipeline build && python -m pipeline stats --web
-```
+`gis.fdot.gov` rejects scripted clients (curl/requests get an Azure WAF 403 even from a home
+connection) but works in a web browser. Open the query URLs in
+[`data/manual/fdot_d2/README.md`](data/manual/fdot_d2/README.md) in a browser, save each response
+as `page0.json`, `page1.json`, ... in that folder, then run `python -m pipeline all`. When that
+folder has saved pages, the FDOT adapter reads them instead of calling the network, and
+`manifest.json` records that the data was imported.
 
 ## Licensing
 

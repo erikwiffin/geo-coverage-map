@@ -175,10 +175,18 @@
    {
     "area_km2": 0.002,
     "n_cells": 1,
-    "centroid_lon": -82.322366,
-    "centroid_lat": 29.62315,
+    "centroid_lon": -82.322946,
+    "centroid_lat": 29.622606,
     "max_distance_m": null,
     "rank": 7
+   },
+   {
+    "area_km2": 0.002,
+    "n_cells": 1,
+    "centroid_lon": -82.320287,
+    "centroid_lat": 29.62446,
+    "max_distance_m": null,
+    "rank": 8
    },
    {
     "area_km2": 0.002,
@@ -186,27 +194,19 @@
     "centroid_lon": -82.422078,
     "centroid_lat": 29.656188,
     "max_distance_m": null,
-    "rank": 8
-   },
-   {
-    "area_km2": 0.002,
-    "n_cells": 1,
-    "centroid_lon": -82.322946,
-    "centroid_lat": 29.622606,
-    "max_distance_m": null,
     "rank": 9
    },
    {
     "area_km2": 0.002,
     "n_cells": 1,
-    "centroid_lon": -82.416302,
-    "centroid_lat": 29.643006,
+    "centroid_lon": -82.322366,
+    "centroid_lat": 29.62315,
     "max_distance_m": null,
     "rank": 10
    }
   ]
  },
- "generated": "2026-11-15T00:43:35+00:00",
+ "generated": "2026-11-16T00:51:28+00:00",
  "sources_status": {
   "fdot_d2": "failed",
   "fgs_wells": "ok"

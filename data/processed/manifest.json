@@ -1,6 +1,6 @@
 {
  "area": "gainesville",
- "generated": "2026-11-15T00:35:55+00:00",
+ "generated": "2026-11-16T00:51:25+00:00",
  "bbox_fetch": [
   -82.4411445007918,
   29.5777197965482,
@@ -11,7 +11,7 @@
   "url": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer/4",
   "where": "GEOID='1225175'",
   "license": "US Census Bureau TIGER data, public domain.",
-  "fetched": "2026-11-15T00:35:55+00:00",
+  "fetched": "2026-11-16T00:51:25+00:00",
   "attributes": {
    "AREALAND": 165788850,
    "AREAWATER": 3045506,
@@ -59,12 +59,12 @@
    "disclaimer": null,
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-15T00:35:56+00:00",
+   "fetched": "2026-11-16T00:51:26+00:00",
    "n_raw": 157,
    "n_in_area": 157,
    "n_after_dedupe": 157
   }
  },
- "built": "2026-11-15T00:35:56+00:00",
+ "built": "2026-11-16T00:51:27+00:00",
  "basemap_style": "https://tiles.openfreemap.org/styles/positron"
 }

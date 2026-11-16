@@ -21,7 +21,7 @@ from .geo import expand_bbox
 from .normalize import dedupe_across_sources, normalize_source
 from .profile import profile_source
 from .reports import build_reports
-from .sources import ADAPTERS
+from .sources import ADAPTERS, arcgis_points
 from .sources.geosetta import SourceSkipped
 
 log = logging.getLogger("pipeline")
@@ -87,7 +87,15 @@ def fetch(ctx) -> None:
             (ctx.raw_dir / f"{src['id']}.records.json").write_text(json.dumps(recs, default=str))
             entry.update(status="ok", fetched=_now(), n_raw=len(recs))
             extra = {}
-            if src["adapter"] == "arcgis" and recs:
+            files = arcgis_points.imported_files(src) if src["adapter"] == "arcgis" else []
+            if files:
+                entry["method"] = (f"imported {len(files)} browser-saved file(s) "
+                                   f"from {src['import_dir']}")
+                entry["fetched"] = max(_mtime(f) for f in files)
+                meta = arcgis_points.layer_metadata(src) or {}
+                extra["attachments"] = {"hasAttachments": meta.get("hasAttachments"),
+                                        "sample": "not probed (host blocks scripted clients)"}
+            elif src["adapter"] == "arcgis" and recs:
                 extra["attachments"] = _attachment_probe(client, src, recs)
             (ctx.raw_dir / f"{src['id']}.extra.json").write_text(json.dumps(extra))
         except (SourceSkipped, FileNotFoundError) as e:
@@ -97,6 +105,10 @@ def fetch(ctx) -> None:
             log.error("source %s failed: %s", src["id"], e)
         manifest["sources"][src["id"]] = entry
     (ctx.raw_dir / "fetch_manifest.json").write_text(json.dumps(manifest, indent=1))
+
+
+def _mtime(p) -> str:
+    return datetime.fromtimestamp(p.stat().st_mtime, UTC).isoformat(timespec="seconds")
 
 
 def _attachment_probe(client, src, recs, n=5) -> dict:
