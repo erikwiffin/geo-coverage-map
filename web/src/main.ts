@@ -298,7 +298,9 @@ async function main() {
     new maplibregl.Popup({ maxWidth: "320px" }).setLngLat(e.lngLat).setHTML(html).addTo(map);
   }
   const docLine = (url: string | null, internal: unknown) => url
-    ? `<p><a href="${esc(url)}" target="_blank" rel="noopener">Open document ↗</a></p>`
+    ? `<p><a href="${esc(url)}" target="_blank" rel="noopener">${
+        /\/attachments\/\d+$/.test(url) ? "Open boring log (PDF) ↗"
+        : /\/attachments$/.test(url) ? "View attached documents ↗" : "Open document ↗"}</a></p>`
     : internal ? `<p class="muted">Document exists only on an internal agency network (not public). File: <code>${esc(String(internal).split(/[\\/]/).pop())}</code>. Request it as a public record.</p>` : "";
   const table = (rows: [string, unknown][]) =>
     `<table>${rows.filter(([, v]) => v != null && v !== "").map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</table>`;

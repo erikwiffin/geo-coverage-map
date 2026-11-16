@@ -38,6 +38,10 @@
   normalize_fields: {FIN: digits}
   # DOC_LINK targets FDOT's intranet and internal file shares, which are not reachable publicly.
   internal_doc_patterns: ['^https?://dotsd2ww01\.dot\.state\.fl\.us/', '^\\\\']
+  # The same PDFs are public as layer attachments (checked 2026-11-16: OBJECTID 117 ->
+  # B-12.pdf). With data/manual/fdot_d2/attachments.json saved, borings link straight to the
+  # PDF; without it, they link to the feature's attachment listing page.
+  attachments_page: true
 
 - id: fgs_wells
   name: Florida Geological Survey Wells

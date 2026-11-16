@@ -13,8 +13,8 @@ from .geo import SphereIndex
 SCHEMA = [
     "boring_uid", "source_id", "tier", "kind", "boring_type", "boring_name",
     "date_raw", "date", "year", "date_format", "depth_ft", "elev", "gw", "report_key",
-    "doc_url", "doc_internal", "doc_name", "project", "fin", "consultant", "lon", "lat",
-    "flags", "also_in", "attrs",
+    "doc_url", "doc_internal", "doc_name", "n_attachments", "project", "fin", "consultant",
+    "lon", "lat", "flags", "also_in", "attrs",
 ]
 
 DATE_FORMATS = [
@@ -152,6 +152,13 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
         doc_internal = None
         if doc is not None and any(rx.search(str(doc)) for rx in internal):
             doc, doc_internal = None, str(doc)
+        atts = r.get("attachments")
+        if atts:  # public copies served by the layer itself (e.g. FDOT's MapServer attachments)
+            pdfs = [a for a in atts if (a.get("contentType") or "").endswith("pdf")] or atts
+            doc = pdfs[0]["url"]
+        elif src.get("attachments_page") and doc is None and native_id is not None:
+            # no saved attachment index: link the layer's attachment listing page for the feature
+            doc = f"{src['url']}/{_fmt(native_id)}/attachments"
         if src.get("adapter") == "csv" and get(a, "report_key") is not None:
             rk = f"report_key={get(a, 'report_key')}"
         rows.append({
@@ -173,6 +180,7 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
             "doc_url": doc,
             "doc_internal": doc_internal,
             "doc_name": None if get(a, "doc_name") is None else str(get(a, "doc_name")),
+            "n_attachments": len(atts) if atts is not None else None,
             "project": None if get(a, "project") is None else str(get(a, "project")),
             "fin": None if get(a, "fin") is None else str(get(a, "fin")),
             "consultant": get(a, "consultant"),

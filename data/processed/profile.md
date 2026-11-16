@@ -1,6 +1,6 @@
 # Data profile: Gainesville, FL
 
-Generated 2026-11-16T01:00:26+00:00.
+Generated 2026-11-16T01:06:19+00:00.
 
 ## FDOT District 2 Soil Borings (`fdot_d2`)
 
@@ -91,7 +91,7 @@ Examples: <http://dotsd2ww01.dot.state.fl.us/intranet/highway-operations/materia
 ```
 {
  "hasAttachments": true,
- "sample": "not probed (host blocks scripted clients)"
+ "features_with_attachments": "unknown (no attachments.json saved)"
 }
 ```
 
@@ -99,16 +99,16 @@ Examples: <http://dotsd2ww01.dot.state.fl.us/intranet/highway-operations/materia
 
 | boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
 |---|---|---|---|---|---|---|---|---|---|
-| fdot_d2:117 | SPT | B-2 |  |  |  | fdot_d2:FIN=20778515201 |  | -82.325314 | 29.644461 |
-| fdot_d2:118 | SPT | B-4 |  |  |  | fdot_d2:FIN=20778515201 |  | -82.323934 | 29.644836 |
-| fdot_d2:119 | SPT | B-5 |  |  |  | fdot_d2:FIN=20778515201 |  | -82.32382 | 29.644874 |
-| fdot_d2:120 | SPT | B-8 |  |  |  | fdot_d2:FIN=20778515201 |  | -82.324612 | 29.644624 |
-| fdot_d2:148 | SPT | B-1 |  |  |  | fdot_d2:FIN=20754525201 |  | -82.422604 | 29.688867 |
-| fdot_d2:149 | SPT | B-2 |  |  |  | fdot_d2:FIN=20754525201 |  | -82.422919 | 29.688868 |
-| fdot_d2:150 | SPT | B-3 |  |  |  | fdot_d2:FIN=20754525201 |  | -82.423187 | 29.688868 |
-| fdot_d2:151 | SPT | B-4 |  |  |  | fdot_d2:FIN=20754525201 |  | -82.423455 | 29.68887 |
-| fdot_d2:152 | SPT | B-5 |  |  |  | fdot_d2:FIN=20754525201 |  | -82.423678 | 29.688873 |
-| fdot_d2:153 | SPT | B-6 |  |  |  | fdot_d2:FIN=20754525201 |  | -82.42399 | 29.688874 |
+| fdot_d2:117 | SPT | B-2 |  |  |  | fdot_d2:FIN=20778515201 | https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soi | -82.325314 | 29.644461 |
+| fdot_d2:118 | SPT | B-4 |  |  |  | fdot_d2:FIN=20778515201 | https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soi | -82.323934 | 29.644836 |
+| fdot_d2:119 | SPT | B-5 |  |  |  | fdot_d2:FIN=20778515201 | https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soi | -82.32382 | 29.644874 |
+| fdot_d2:120 | SPT | B-8 |  |  |  | fdot_d2:FIN=20778515201 | https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soi | -82.324612 | 29.644624 |
+| fdot_d2:148 | SPT | B-1 |  |  |  | fdot_d2:FIN=20754525201 | https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soi | -82.422604 | 29.688867 |
+| fdot_d2:149 | SPT | B-2 |  |  |  | fdot_d2:FIN=20754525201 | https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soi | -82.422919 | 29.688868 |
+| fdot_d2:150 | SPT | B-3 |  |  |  | fdot_d2:FIN=20754525201 | https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soi | -82.423187 | 29.688868 |
+| fdot_d2:151 | SPT | B-4 |  |  |  | fdot_d2:FIN=20754525201 | https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soi | -82.423455 | 29.68887 |
+| fdot_d2:152 | SPT | B-5 |  |  |  | fdot_d2:FIN=20754525201 | https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soi | -82.423678 | 29.688873 |
+| fdot_d2:153 | SPT | B-6 |  |  |  | fdot_d2:FIN=20754525201 | https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soi | -82.42399 | 29.688874 |
 
 
 ## Florida Geological Survey Wells (`fgs_wells`)

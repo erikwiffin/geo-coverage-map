@@ -53,11 +53,11 @@ cd web && npm test   # NN correctness + performance, and web-vs-Python stats con
 ### FDOT access workaround
 
 `gis.fdot.gov` rejects scripted clients (curl/requests get an Azure WAF 403 even from a home
-connection) but works in a web browser. Open the query URLs in
-[`data/manual/fdot_d2/README.md`](data/manual/fdot_d2/README.md) in a browser, save each response
-as `page0.json`, `page1.json`, ... in that folder, then run `python -m pipeline all`. When that
-folder has saved pages, the FDOT adapter reads them instead of calling the network, and
-`manifest.json` records that the data was imported.
+connection) but works in a web browser. Run `python -m pipeline manual-urls`, open the printed
+URLs in a browser, and save the responses into `data/manual/fdot_d2/` (details in
+[that folder's README](data/manual/fdot_d2/README.md)). `build` re-reads the folder every time
+and records the import in `manifest.json`. Saved `.json` feature pages there are used instead of
+the network, and `attachments.json` gives every boring a direct link to its public log PDF.
 
 ## Licensing
 

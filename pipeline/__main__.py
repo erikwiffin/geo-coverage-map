@@ -89,12 +89,7 @@ def fetch(ctx) -> None:
             extra = {}
             files = arcgis_points.imported_files(src) if src["adapter"] == "arcgis" else []
             if files:
-                entry["method"] = (f"imported {len(files)} browser-saved file(s) "
-                                   f"from {src['import_dir']}")
-                entry["fetched"] = max(_mtime(f) for f in files)
-                meta = arcgis_points.layer_metadata(src) or {}
-                extra["attachments"] = {"hasAttachments": meta.get("hasAttachments"),
-                                        "sample": "not probed (host blocks scripted clients)"}
+                extra = _mark_imported(src, files, recs, entry)
             elif src["adapter"] == "arcgis" and recs:
                 extra["attachments"] = _attachment_probe(client, src, recs)
             (ctx.raw_dir / f"{src['id']}.extra.json").write_text(json.dumps(extra))
@@ -105,6 +100,19 @@ def fetch(ctx) -> None:
             log.error("source %s failed: %s", src["id"], e)
         manifest["sources"][src["id"]] = entry
     (ctx.raw_dir / "fetch_manifest.json").write_text(json.dumps(manifest, indent=1))
+
+
+def _mark_imported(src, files, recs, entry) -> dict:
+    """Record in the manifest that a source came from browser-saved files; return profile extras."""
+    entry.update(status="ok", n_raw=len(recs), reason=None,
+                 method=f"imported {len(files)} browser-saved file(s) from {src['import_dir']}",
+                 fetched=max(_mtime(f) for f in files))
+    meta = arcgis_points.layer_metadata(src) or {}
+    n_att = sum(1 for r in recs if r.get("attachments"))
+    return {"attachments": {
+        "hasAttachments": meta.get("hasAttachments"),
+        "features_with_attachments": n_att if arcgis_points.attachments_file(src) else
+        "unknown (no attachments.json saved)"}}
 
 
 def _mtime(p) -> str:
@@ -135,8 +143,17 @@ def build(ctx) -> None:
     man = json.loads((ctx.raw_dir / "fetch_manifest.json").read_text())
     frames, profiles = [], []
     for src in ctx.sources:
-        entry = man["sources"].get(src["id"], {})
+        entry = man["sources"].setdefault(src["id"], {
+            k: src.get(k) for k in ("name", "url", "homepage", "tier", "kind", "license",
+                                    "disclaimer")} | {"default_on": src.get("default_on", True)})
         path = ctx.raw_dir / f"{src['id']}.records.json"
+        files = arcgis_points.imported_files(src) if src["adapter"] == "arcgis" else []
+        if files:  # browser-saved files always win, so `build` alone picks up new downloads
+            recs = arcgis_points.from_files(src, files, man.get("bbox_fetch"))
+            path.write_text(json.dumps(recs, default=str))
+            (ctx.raw_dir / f"{src['id']}.extra.json").write_text(
+                json.dumps(_mark_imported(src, files, recs, entry)))
+            log.info("%s: %d records from %s", src["id"], len(recs), src["import_dir"])
         if entry.get("status") != "ok" or not path.exists():
             profiles.append(f"## {src.get('name', src['id'])} (`{src['id']}`)\n\n"
                             f"**Not available:** {entry.get('status')} — {entry.get('reason')}\n")
@@ -238,10 +255,48 @@ def _cells_to_geojson(cells):
     return h3.cells_to_geo(cells)
 
 
+# --------------------------------------------------------------------- manual-urls
+def manual_urls(ctx) -> None:
+    """Print browser-download URLs for sources with an import_dir (hosts that block scripts)."""
+    from urllib.parse import urlencode
+    mp = ctx.raw_dir / "fetch_manifest.json"
+    if not mp.exists():
+        raise SystemExit("run `python -m pipeline fetch` first (it needs the boundary envelope)")
+    bbox = json.loads(mp.read_text())["bbox_fetch"]
+    geo = {"geometry": ",".join(f"{v:.5f}" for v in bbox), "geometryType": "esriGeometryEnvelope",
+           "inSR": "4326", "spatialRel": "esriSpatialRelIntersects"}
+    for src in ctx.sources:
+        if not src.get("import_dir"):
+            continue
+        q = src["url"] + "/query?"
+        where = src.get("where", "1=1")
+        print(f"# {src['id']}: save responses into {src['import_dir']}/\n")
+        print("1. Count (tells you how many pages of 1000 you need):")
+        print(q + urlencode({**geo, "where": where, "returnCountOnly": "true", "f": "json"}))
+        print("\n2. Features, save as page0.json, page1.json, ... (bump resultOffset by 1000):")
+        print(q + urlencode({**geo, "where": where, "outFields": "*", "outSR": "4326",
+                             "orderByFields": "OBJECTID", "resultOffset": 0,
+                             "resultRecordCount": 1000, "f": "json"}))
+        files = arcgis_points.imported_files(src)
+        oid = src.get("field_map", {}).get("native_id", "OBJECTID")
+        ids = sorted({r["attrs"][oid] for r in arcgis_points.from_files(src, files, None)}) \
+            if files else []
+        if ids:
+            print("\n3. Attachment index, save as attachments.json:")
+            for i in range(0, len(ids), 500):
+                chunk = ",".join(map(str, ids[i:i + 500]))
+                suffix = "" if len(ids) <= 500 else \
+                    f"   (part {i // 500 + 1}: save as attachments{i // 500 + 1}.json)"
+                print(src["url"] + "/queryAttachments?" + urlencode(
+                    {"objectIds": chunk, "f": "json"}) + suffix)
+        print()
+
+
 # --------------------------------------------------------------------- main
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="pipeline")
-    p.add_argument("command", choices=["check-network", "fetch", "build", "stats", "all"])
+    p.add_argument("command", choices=["check-network", "fetch", "build", "stats", "all",
+                                        "manual-urls"])
     p.add_argument("--area", default=str(cfgmod.ROOT / "config" / "area.gainesville.yaml"))
     p.add_argument("--sources", default=None)
     p.add_argument("--refresh", action="store_true", help="ignore the raw cache and refetch")
@@ -255,6 +310,9 @@ def main(argv=None) -> int:
     ctx.raw_dir.mkdir(parents=True, exist_ok=True)
     if a.command == "check-network":
         return check_network(ctx)
+    if a.command == "manual-urls":
+        manual_urls(ctx)
+        return 0
     if a.command in ("fetch", "all"):
         fetch(ctx)
     if a.command in ("build", "all"):

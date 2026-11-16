@@ -1,15 +1,23 @@
 # FDOT D2 soil borings: browser-saved query pages
 
-`gis.fdot.gov` returns 403 to scripts (Azure WAF) but works in a browser. Open each URL below,
-save the response as `page0.json`, `page1.json`, ... in this folder, and run
-`python -m pipeline all`. Keep opening pages until one has fewer than 1000 features. The first
-URL returns the total count.
+`gis.fdot.gov` returns 403 to scripts (Azure WAF), even from a home connection, but works in a
+browser. To refresh the data:
 
-Envelope = Gainesville boundary bbox + 1 km (from `data/raw/fetch_manifest.json`).
+1. Print the URLs (they're built from the boundary envelope and the pages already saved here):
 
-- Count: https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soil_Boring_viewer/MapServer/0/query?geometry=-82.44114%2C29.57772%2C-82.21204%2C29.78734&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&where=1%3D1&returnCountOnly=true&f=json
-- page0: https://gis.fdot.gov/arcgis/rest/services/Soil_Boring/D2_Soil_Boring_viewer/MapServer/0/query?geometry=-82.44114%2C29.57772%2C-82.21204%2C29.78734&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&where=1%3D1&outFields=%2A&outSR=4326&orderByFields=OBJECTID&resultOffset=0&resultRecordCount=1000&f=json
-- page1: same URL with `resultOffset=1000`
-- page2: same URL with `resultOffset=2000`, and so on
+   ```bash
+   python -m pipeline manual-urls
+   ```
+
+2. Open each URL in a browser and save the response into this folder:
+   - feature pages: any name, e.g. `page0.json`, `page1.json` (1000 records per page)
+   - the attachment index: `attachments.json` (or `attachments1.json`, `attachments2.json`, ...)
+3. Run `python -m pipeline build && python -m pipeline stats --web`, or `python -m pipeline all`.
+
+`build` always re-reads this folder, so you don't need to re-run `fetch` after adding files. Files
+are de-duplicated by OBJECTID, so overlapping pages are harmless.
+
+Without `attachments.json`, each boring links to its attachment listing page
+(`.../MapServer/0/<OBJECTID>/attachments`). With it, each boring links straight to its PDF.
 
 `layer.json` is the layer metadata (`?f=pjson`, saved 2026-11-15; renderer images stripped).

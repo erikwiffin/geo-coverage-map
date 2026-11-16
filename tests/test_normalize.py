@@ -63,7 +63,15 @@ def test_fin_normalized_and_internal_links(sources):
     ]
     df = normalize_source(recs, sources["fdot_d2"])
     assert df.report_key.nunique() == 1 and df.report_key.iloc[0] == "fdot_d2:FIN=44796215201"
-    assert df.doc_url.isna().all() and df.doc_internal.notna().all()
+    assert df.doc_internal.notna().all()
+    # internal links are replaced by the layer's public attachment listing page
+    assert df.doc_url.iloc[0] == sources["fdot_d2"]["url"] + "/1/attachments"
+    # a saved attachment index gives a direct PDF link
+    recs[0]["attachments"] = [{"id": 19584, "name": "B-12.pdf", "contentType": "application/pdf",
+                               "url": "https://h/MapServer/0/1/attachments/19584"}]
+    df = normalize_source(recs, sources["fdot_d2"])
+    assert df.doc_url.iloc[0] == "https://h/MapServer/0/1/attachments/19584"
+    assert df.n_attachments.iloc[0] == 1
 
 
 def test_normalize_fgs_recorded(sources, area):

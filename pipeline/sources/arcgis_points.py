@@ -4,6 +4,8 @@ If the source config has `import_dir` and that folder holds saved query response
 (`*.json` files from `<layer>/query?...&outSR=4326&f=json` or `f=geojson`), those are used instead
 of the network. This is for hosts that block scripted clients but work in a browser
 (gis.fdot.gov). `layer.json` in the same folder, if present, is the saved `?f=pjson` metadata.
+`attachments.json`, if present, is a saved `<layer>/queryAttachments?...&f=json` response; each
+record then gets direct links to its attachment files.
 """
 from __future__ import annotations
 
@@ -17,20 +19,52 @@ from ..config import ROOT
 log = logging.getLogger(__name__)
 
 
-def imported_files(src: dict) -> list[Path]:
-    d = src.get("import_dir")
-    if not d:
-        return []
-    d = Path(d) if Path(d).is_absolute() else ROOT / d
-    return sorted(p for p in d.glob("*.json") if p.name != "layer.json") if d.exists() else []
+SPECIAL = {"layer.json", "attachments.json"}
 
 
-def layer_metadata(src: dict) -> dict | None:
+def _dir(src: dict) -> Path | None:
     d = src.get("import_dir")
     if not d:
         return None
-    p = (Path(d) if Path(d).is_absolute() else ROOT / d) / "layer.json"
-    return json.loads(p.read_text()) if p.exists() else None
+    return Path(d) if Path(d).is_absolute() else ROOT / d
+
+
+def imported_files(src: dict) -> list[Path]:
+    d = _dir(src)
+    if not d or not d.exists():
+        return []
+    return sorted(p for p in d.glob("*.json")
+                  if p.name not in SPECIAL and not p.name.startswith("attachments"))
+
+
+def attachments_files(src: dict) -> list[Path]:
+    d = _dir(src)
+    return sorted(d.glob("attachments*.json")) if d and d.exists() else []
+
+
+def attachments_file(src: dict) -> Path | None:  # kept for callers that only need a yes/no
+    files = attachments_files(src)
+    return files[0] if files else None
+
+
+def load_attachments(src: dict) -> dict[int, list[dict]]:
+    """parentObjectId -> [{id, name, contentType, size, url}] from a saved queryAttachments page."""
+    out: dict[int, list[dict]] = {}
+    groups = [g for p in attachments_files(src)
+              for g in json.loads(p.read_text()).get("attachmentGroups", [])]
+    for g in groups:
+        oid = g.get("parentObjectId")
+        out[oid] = [{"id": a["id"], "name": a.get("name"), "contentType": a.get("contentType"),
+                     "size": a.get("size"),
+                     "url": f"{src['url']}/{oid}/attachments/{a['id']}"}
+                    for a in g.get("attachmentInfos", [])]
+    return out
+
+
+def layer_metadata(src: dict) -> dict | None:
+    d = _dir(src)
+    p = d / "layer.json" if d else None
+    return json.loads(p.read_text()) if p and p.exists() else None
 
 
 def _records_from_response(data: dict) -> list[dict]:
@@ -52,6 +86,7 @@ def _records_from_response(data: dict) -> list[dict]:
 
 def from_files(src: dict, files: list[Path], bbox) -> list[dict]:
     oid = src.get("field_map", {}).get("native_id", "OBJECTID")
+    atts = load_attachments(src)
     seen, out = set(), []
     for p in files:
         data = json.loads(p.read_text())
@@ -63,6 +98,8 @@ def from_files(src: dict, files: list[Path], bbox) -> list[dict]:
             if k in seen:
                 continue
             seen.add(k)
+            if atts:
+                r["attachments"] = atts.get(k, [])
             if bbox and r["lon"] is not None and r["lat"] is not None and not (
                     bbox[0] <= r["lon"] <= bbox[2] and bbox[1] <= r["lat"] <= bbox[3]):
                 continue
