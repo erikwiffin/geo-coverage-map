@@ -191,7 +191,7 @@
   name: SJRWMD Well Records
   adapter: arcgis
   url: https://permitting.sjrwmd.com/arcgis02/rest/services/sjrRegMapICR/MapServer/13
-  homepage: https://www.sjrwmd.com/permitting/water-well-construction/
+  homepage: https://www.sjrwmd.com/data/groundwater/
   where: "1=1"
   tier: 2
   kind: geologic_well        # water/monitoring wells: hidden by default like FGS and USGS
