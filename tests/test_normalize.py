@@ -15,6 +15,8 @@ def test_parse_date_formats():
     assert parse_date("2016-07-01T00:00:00") == ("2016-07-01", 2016, "%Y-%m-%d")
     assert parse_date("1998") == (None, 1998, "%Y")
     assert parse_date(1094601600000)[1] == 2004  # ArcGIS epoch ms
+    import numpy as np
+    assert parse_date(np.int64(1094601600000))[1] == 2004  # pandas hands numpy ints
     assert parse_date("")[2] == "null"
     assert parse_date(None)[2] == "null"
     assert parse_date("unknown") == (None, None, "unparsed")

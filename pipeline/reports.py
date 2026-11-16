@@ -4,8 +4,8 @@ from __future__ import annotations
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+import shapely
 from shapely.geometry import MultiPoint, mapping
-from shapely.ops import unary_union
 
 from .geo import haversine_m
 
@@ -44,7 +44,11 @@ def build_reports(borings: pd.DataFrame, buffer_m: float = 30,
     pts_m = pts.to_crs(utm)
     rows = []
     for key, g in pts_m.groupby("report_key", sort=True):
-        foot = unary_union(g.geometry.buffer(buffer_m, quad_segs=8))
+        # Outline: a concave hull of the borings padded by buffer_m. It follows corridors
+        # (an L-shaped road project doesn't fill its corner) and reads as an area rather than
+        # a chain of circles.
+        mp = MultiPoint(list(g.geometry))
+        foot = shapely.concave_hull(mp, ratio=0.3).buffer(buffer_m, quad_segs=8)
         hull = MultiPoint(list(g.geometry)).convex_hull if len(g) >= 3 else None
         if hull is not None and hull.geom_type != "Polygon":
             hull = None

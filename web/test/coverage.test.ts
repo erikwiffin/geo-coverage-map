@@ -37,3 +37,16 @@ describe("BucketNN", () => {
     expect(ms).toBeLessThan(200);
   });
 });
+
+describe("reportCounts", () => {
+  it("counts distinct reports within the radius (exact haversine edge)", async () => {
+    const { reportCounts, makeGrid } = await import("../src/coverage");
+    const disc: GeoJSON.Polygon = { type: "Polygon", coordinates: [[[-82.34, 29.64], [-82.32, 29.64], [-82.32, 29.66], [-82.34, 29.66], [-82.34, 29.64]]] };
+    const g = makeGrid(disc, 9);
+    const i = 0, lon = g.lon[i], lat = g.lat[i];
+    const dLat = (m: number) => m / 111194.93;
+    const b = (k: string, m: number) => ({ boring_uid: k + m, lon, lat: lat + dLat(m), report_key: k }) as Boring;
+    const rc = reportCounts(g, [b("A", 0), b("A", 10), b("B", 240), b("C", 260), b("D", 100)], 250, [i]);
+    expect(rc[i]).toBe(3); // A (twice, counted once), B, D; C is outside 250 m
+  });
+});

@@ -220,6 +220,41 @@
     Location method: MTHD_DTRMN_DSC
   report_key: [FULL_APP_NO]
 
+# SJRWMD Environmental Resource Permits: project-site polygons (stormwater/wetland permits).
+# Applications for stormwater systems commonly include soil borings / seasonal high water
+# table estimates, so a permit site marks where subsurface data likely exists. Area source:
+# counts through the H3 cells it overlaps (see pipeline/areas.py).
+- id: sjrwmd_erp
+  name: SJRWMD Environmental Resource Permits
+  adapter: arcgis
+  area: true
+  url: https://permitting.sjrwmd.com/arcgis02/rest/services/sjrRegMapICR/MapServer/4
+  homepage: https://www.sjrwmd.com/permitting/
+  where: "1=1"
+  max_offset: 0.00002         # ~2 m geometry generalization on the server
+  tier: 2
+  kind: permit_site
+  default_on: false
+  license: Florida agency public record (St. Johns River Water Management District).
+  fixed_type: Permit
+  doc_label: SJRWMD e-Permitting record
+  area_group_by: OFFCL_PRMT_ID          # one area per permit; sequences dissolved
+  area_exclude: {PRMT_STTS: [Never Issued]}
+  area_date: PRMT_DECISION_DT
+  max_coverage_acres: 100     # bigger (master/campus permits) are drawn but don't count
+  field_map:
+    native_id: OFFCL_PRMT_ID
+    boring_name: PRMT_PROJ_NM
+    doc_url: LINK
+  details:
+    Permit: OFFCL_PRMT_ID
+    Permit type: RULE_TYPE_DESC
+    Status: PRMT_STTS
+    Applicant: APPLICANT
+    Project acres (reported): PROJ_ACRES
+    Received: RECV_DT
+    Expires: PRMT_EXPIR_DT
+
 # Geosetta area exports (draw an area on geosetta.org's map, export the DIGGS viewer HTML) or
 # raw DIGGS XML, saved into import_dir. Parsed logs: depth, SPT N-values, lab tests, lithology.
 # Boreholes that match a lower-tier boring (e.g. FDOT) within dedupe_m enrich it instead of

@@ -20,7 +20,8 @@
   ],
   "exclude_kinds": [
    "geologic_well",
-   "environmental_site"
+   "environmental_site",
+   "permit_site"
   ],
   "years": "all, incl. undated"
  },
@@ -35,11 +36,11 @@
   "1000": 29.712
  },
  "pct_covered_all_sources": {
-  "50": 4.874,
-  "100": 14.125,
-  "250": 45.436,
-  "500": 77.841,
-  "1000": 96.574
+  "50": 30.75,
+  "100": 42.974,
+  "250": 69.144,
+  "500": 86.361,
+  "1000": 96.575
  },
  "pct_covered_with_environmental_sites": {
   "50": 1.716,
@@ -47,6 +48,13 @@
   "250": 18.115,
   "500": 39.793,
   "1000": 73.057
+ },
+ "pct_covered_with_permit_sites": {
+  "50": 28.638,
+  "100": 37.695,
+  "250": 58.373,
+  "500": 74.47,
+  "1000": 82.672
  },
  "pct_covered_by_tier": {
   "<=1": {
@@ -215,12 +223,13 @@
    }
   ]
  },
- "generated": "2026-11-16T02:29:16+00:00",
+ "generated": "2026-11-16T02:50:34+00:00",
  "sources_status": {
   "fdot_d2": "ok",
   "fgs_wells": "ok",
   "usgs_nwis_gw": "ok",
   "sjrwmd_wells": "ok",
+  "sjrwmd_erp": "ok",
   "geosetta_diggs": "ok",
   "fdep_cleanup": "ok",
   "fdep_petroleum": "ok",

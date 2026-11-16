@@ -62,6 +62,8 @@ cd web && npm test   # NN correctness + performance, and web-vs-Python stats con
 | `tigerweb.geo.census.gov` | city boundary | reachable |
 | `gis.fdot.gov` | FDOT soil borings (**primary source**) | **blocked by FDOT's Azure WAF** (HTTP 403 block page; not the sandbox allowlist) |
 | `ca.dep.state.fl.us` | FGS wells, FDEP cleanup sites | reachable |
+| `permitting.sjrwmd.com` | SJRWMD well records, ERP permit areas | reachable |
+| `waterservices.usgs.gov` | USGS NWIS groundwater sites | reachable |
 | `tiles.openfreemap.org` | basemap | reachable |
 | `doi.org`, `www.sciencebase.gov` | USGS CPT release (open question 6) | reachable; release has no Florida points |
 | `services1.arcgis.com` | FDOT's ArcGIS Online org (`O1JpcwDW8sjYuddV`) | reachable; its 1,605 hosted services include **no soil-boring layer**, so it's not an FDOT mirror |

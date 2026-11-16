@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import numbers
 import re
 from datetime import UTC, date, datetime
 
@@ -39,7 +40,7 @@ def parse_date(raw) -> tuple[str | None, int | None, str | None]:
     """Return (iso_date_or_None, year_or_None, format_label). Never invents a value."""
     if raw is None or (isinstance(raw, float) and np.isnan(raw)):
         return None, None, "null"
-    if isinstance(raw, (int, float)) and not isinstance(raw, bool):
+    if isinstance(raw, numbers.Number) and not isinstance(raw, bool):  # incl. numpy ints
         v = float(raw)
         if abs(v) > 1e10:  # ArcGIS esriFieldTypeDate: epoch milliseconds
             d = datetime.fromtimestamp(v / 1000, tz=UTC).date()

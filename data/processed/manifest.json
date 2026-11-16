@@ -1,6 +1,6 @@
 {
  "area": "gainesville",
- "generated": "2026-11-16T02:13:27+00:00",
+ "generated": "2026-11-16T02:43:48+00:00",
  "bbox_fetch": [
   -82.4411445007918,
   29.5777197965482,
@@ -11,7 +11,7 @@
   "url": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer/4",
   "where": "GEOID='1225175'",
   "license": "US Census Bureau TIGER data, public domain.",
-  "fetched": "2026-11-16T02:13:27+00:00",
+  "fetched": "2026-11-16T02:43:48+00:00",
   "attributes": {
    "AREALAND": 165788850,
    "AREAWATER": 3045506,
@@ -66,7 +66,7 @@
    "doc_label": null,
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-16T02:13:27+00:00",
+   "fetched": "2026-11-16T02:43:48+00:00",
    "n_raw": 157,
    "n_in_area": 157,
    "n_after_dedupe": 157
@@ -82,7 +82,7 @@
    "doc_label": "USGS monitoring-location page",
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-16T02:13:27+00:00",
+   "fetched": "2026-11-16T02:43:48+00:00",
    "n_raw": 28,
    "n_in_area": 28,
    "n_after_dedupe": 28
@@ -98,10 +98,27 @@
    "doc_label": null,
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-16T02:13:32+00:00",
+   "fetched": "2026-11-16T02:43:48+00:00",
    "n_raw": 4054,
    "n_in_area": 4054,
    "n_after_dedupe": 4037
+  },
+  "sjrwmd_erp": {
+   "name": "SJRWMD Environmental Resource Permits",
+   "url": "https://permitting.sjrwmd.com/arcgis02/rest/services/sjrRegMapICR/MapServer/4",
+   "homepage": "https://www.sjrwmd.com/permitting/",
+   "tier": 2,
+   "kind": "permit_site",
+   "license": "Florida agency public record (St. Johns River Water Management District).",
+   "disclaimer": null,
+   "doc_label": "SJRWMD e-Permitting record",
+   "default_on": false,
+   "status": "ok",
+   "fetched": "2026-11-16T02:43:49+00:00",
+   "n_raw": 2680,
+   "n_in_area": 1129,
+   "n_after_dedupe": 1129,
+   "n_counting": 1090
   },
   "geosetta_diggs": {
    "name": "Geosetta (DIGGS area exports)",
@@ -114,7 +131,7 @@
    "doc_label": null,
    "default_on": true,
    "status": "ok",
-   "fetched": "2026-11-16T02:29:08+00:00",
+   "fetched": "2026-11-16T02:50:25+00:00",
    "n_raw": 57,
    "reason": null,
    "method": "imported DIGGS files from data/manual/geosetta",
@@ -132,7 +149,7 @@
    "doc_label": "FDEP cleanup documents (site assessment reports)",
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-16T02:13:33+00:00",
+   "fetched": "2026-11-16T02:43:49+00:00",
    "n_raw": 131,
    "n_in_area": 126,
    "n_after_dedupe": 126
@@ -148,7 +165,7 @@
    "doc_label": "FDEP cleanup documents (site assessment reports)",
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-16T02:13:33+00:00",
+   "fetched": "2026-11-16T02:43:49+00:00",
    "n_raw": 362,
    "n_in_area": 309,
    "n_after_dedupe": 236
@@ -164,12 +181,12 @@
    "doc_label": "FDEP cleanup documents (site assessment reports)",
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-16T02:13:33+00:00",
+   "fetched": "2026-11-16T02:43:49+00:00",
    "n_raw": 18,
    "n_in_area": 18,
    "n_after_dedupe": 2
   }
  },
- "built": "2026-11-16T02:29:13+00:00",
+ "built": "2026-11-16T02:50:31+00:00",
  "basemap_style": "https://tiles.openfreemap.org/styles/positron"
 }

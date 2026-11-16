@@ -1,6 +1,6 @@
 # Data profile: Gainesville, FL
 
-Generated 2026-11-16T02:29:13+00:00.
+Generated 2026-11-16T02:50:31+00:00.
 
 ## FDOT District 2 Soil Borings (`fdot_d2`)
 
@@ -431,6 +431,11 @@ Normalized before keying: nothing.
 | sjrwmd_wells:45289 | Well | PCS20 |  |  |  |  |  | -82.248056 | 29.610833 |
 
 
+## SJRWMD Environmental Resource Permits (`sjrwmd_erp`)
+
+- Polygon records in envelope: **2680**; areas after grouping by `OFFCL_PRMT_ID` and excluding {'PRMT_STTS': ['Never Issued']}: **1129**
+- Counting toward coverage (≤ 100 acres): **1090**; median 0.5 acres
+
 ## Geosetta (DIGGS area exports) (`geosetta_diggs`)
 
 - URL: None
@@ -804,7 +809,7 @@ Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/
 
 ## Reports (M2)
 
-- Reports built: **831**; borings in reports: **1432** (= sum of n_borings: 1432); borings without a key: **3596**.
+- Reports built: **831**; borings in reports: **1432** (= sum of n_borings: 1432); borings without a key: **3596**; reports with 2+ borings (drawn as outlines): **62**.
 - Reports spanning > 5 km (corridor project or bad key): **1**
 
   - `fdot_d2:FIN=44703215201` — 26 borings, 5042 m

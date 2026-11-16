@@ -13,6 +13,8 @@ import json
 import logging
 from pathlib import Path
 
+from shapely.geometry import MultiPolygon, mapping, shape
+
 from ..arcgis import make_client
 from ..config import ROOT
 
@@ -113,9 +115,37 @@ def fetch(src: dict, ctx, bbox) -> list[dict]:
     if files:
         return from_files(src, files, bbox)
     client = make_client(ctx)
-    feats = client.query_features(src["url"], src.get("where", "1=1"), bbox)
+    feats = client.query_features(src["url"], src.get("where", "1=1"), bbox,
+                                  extra={"maxAllowableOffset": src["max_offset"]}
+                                  if src.get("max_offset") else None)
     out = []
     for f in feats:
         g = f.get("geometry") or {}
-        out.append({"attrs": f.get("attributes", {}), "lon": g.get("x"), "lat": g.get("y")})
+        rec = {"attrs": f.get("attributes", {}), "lon": g.get("x"), "lat": g.get("y")}
+        if "rings" in g:  # polygon (area sources): keep GeoJSON geometry + a label point
+            geom = _rings_to_geojson(g["rings"])
+            if geom and not shape(geom).is_empty:
+                rec["geometry"] = geom
+                pt = shape(geom).representative_point()
+                rec["lon"], rec["lat"] = pt.x, pt.y
+        out.append(rec)
     return out
+
+
+def _rings_to_geojson(rings: list) -> dict | None:
+    """Esri rings (outer rings clockwise, holes counter-clockwise) -> GeoJSON (Multi)Polygon."""
+    from shapely.geometry import LinearRing, Polygon
+    outers, holes = [], []
+    for r in rings:
+        if len(r) < 4:
+            continue
+        (outers if not LinearRing(r).is_ccw else holes).append(r)
+    polys = []
+    for o in outers:
+        po = Polygon(o)
+        inner = [h for h in holes if po.contains(Polygon(h).representative_point())]
+        polys.append(Polygon(o, inner))
+    if not polys:
+        return None
+    geom = polys[0] if len(polys) == 1 else MultiPolygon(polys)
+    return mapping(geom.buffer(0))

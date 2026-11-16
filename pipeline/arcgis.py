@@ -128,7 +128,7 @@ class Client:
     def query_features(self, layer_url: str, where: str = "1=1",
                        bbox: tuple[float, float, float, float] | None = None,
                        batch: int = 500, out_fields: str = "*",
-                       return_geometry: bool = True) -> list[dict]:
+                       return_geometry: bool = True, extra: dict | None = None) -> list[dict]:
         """Fetch features via returnIdsOnly + POST batches of <= `batch` object IDs."""
         ids = self.query_ids(layer_url, where, bbox)
         feats: list[dict] = []
@@ -140,6 +140,7 @@ class Client:
                 "outFields": out_fields,
                 "returnGeometry": str(return_geometry).lower(),
                 "outSR": "4326",
+                **(extra or {}),
             }
             data = self.request(layer_url + "/query", params, method="POST")
             feats.extend(data.get("features", []))

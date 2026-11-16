@@ -2,6 +2,7 @@ import maplibregl, { GeoJSONSource, MapMouseEvent } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./style.css";
 import { cellToBoundary } from "h3-js";
+import { areaPseudoPoints } from "./areas";
 import {
   applyFilters, Boring, coverageCurve, Filters, findGaps, Grid, makeGrid, median,
   nearestDistances, reportCounts,
@@ -25,22 +26,22 @@ interface Stats {
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const DATA = "./data/";
-const TYPES = ["SPT", "CPT", "Auger", "Well", "Other", "Site"];
-const TYPE_LABEL: Record<string, string> = { Site: "Cleanup site (FDEP)" };
+const TYPES = ["SPT", "CPT", "Auger", "Well", "Other", "Site", "Permit"];
+const TYPE_LABEL: Record<string, string> = { Site: "Cleanup site (FDEP)", Permit: "Permit area (ERP)" };
 const TYPE_COLOR: Record<string, string> = {
-  SPT: "#2a78d6", CPT: "#eb6834", Auger: "#1baf7a", Well: "#52514e", Other: "#a3a29c", Site: "#c98500",
+  SPT: "#2a78d6", CPT: "#eb6834", Auger: "#1baf7a", Well: "#52514e", Other: "#a3a29c", Site: "#c98500", Permit: "#008300",
 };
 const DIST_BINS = [50, 100, 250, 500, 1000];
 const DIST_COLORS = ["#104281", "#1c5cab", "#2a78d6", "#5598e7", "#86b6ef", "#cde2fb"]; // near = dark
 const DIST_LABELS = ["0–50 m", "50–100 m", "100–250 m", "250–500 m", "500–1000 m", "> 1000 m"];
-const RC_BINS = [1, 2, 4, 8, 16];
-const RC_COLORS = ["#cde2fb", "#86b6ef", "#5598e7", "#2a78d6", "#1c5cab", "#104281"]; // more = dark
-const RC_LABELS = ["0", "1", "2–3", "4–7", "8–15", "16+"];
 const PRESETS = [50, 100, 250, 500, 1000];
 const TIER_LABELS: Record<number, string> = {
   1: "Tier 1: US federal (public domain)", 2: "Tier 2: + Florida agency public record",
   3: "Tier 3: + open licence (attribution)", 4: "Tier 4: + terms of use / disclaimer",
 };
+// feature-state "c": distance bin 0-5
+const HEX_COLOR = ["match", ["coalesce", ["feature-state", "c"], -1],
+  ...DIST_COLORS.flatMap((col, i) => [i, col]), "#00000000"] as unknown as maplibregl.ExpressionSpecification;
 const SPARK_R = Array.from({ length: 61 }, (_, i) => i * 25); // 0..1500 m
 
 const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -55,11 +56,17 @@ async function getJSON<T>(name: string): Promise<T> {
 }
 
 async function main() {
-  const [boundary, boringsFC, reportsFC, manifest, stats] = await Promise.all([
+  const [boundary, boringsFC, reportsFC, manifest, stats, areasFC] = await Promise.all([
     getJSON<FC>("boundary.geojson"), getJSON<FC>("borings.geojson"), getJSON<FC>("reports.geojson"),
     getJSON<Manifest>("manifest.json"), getJSON<Stats>("stats.json"),
+    getJSON<FC>("areas.geojson").catch(() => ({ type: "FeatureCollection", features: [] }) as FC),
   ]);
-  const borings: Boring[] = boringsFC.features.map((f) => f.properties as Boring);
+  // Real borings are drawn and counted. Area sources (permit polygons) add pseudo-points at the
+  // H3 cells they overlap; those feed the coverage maths only (same model as pipeline/areas.py).
+  const realBorings: Boring[] = boringsFC.features.map((f) => f.properties as Boring);
+  const pseudo = areaPseudoPoints(areasFC, stats.h3_resolution);
+  const borings: Boring[] = realBorings.concat(pseudo);
+  const isReal = (b: Boring) => !b.pseudo;
   const bgeom = boundary.features[0].geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon;
   const bprops = (boundary.features[0].properties ?? {}) as Record<string, string>;
   $("title").textContent = `Geotechnical coverage: ${bprops.BASENAME ?? stats.area_id}`;
@@ -70,19 +77,19 @@ async function main() {
   const hexGeoms = dgrid.cells.map((c) => ({ type: "Polygon", coordinates: [cellToBoundary(c, true)] }) as GeoJSON.Polygon);
 
   // ---------------------------------------------------------------- state
-  const years = borings.map((b) => b.year).filter((y): y is number => y != null);
+  const years = realBorings.map((b) => b.year).concat(areasFC.features.map((f) => f.properties?.year))
+    .filter((y): y is number => y != null);
   const y0 = years.length ? Math.min(...years) : 1900, y1 = years.length ? Math.max(...years) : new Date().getFullYear();
   const sources = Object.entries(manifest.sources);
   const state = {
     radius: stats.default_radius_m ?? 250,
-    colorBy: "distance" as "distance" | "reports",
     filters: {
       maxTier: 4,
       types: new Set(TYPES),
       sources: new Set(sources.filter(([, s]) => s.status === "ok" && s.default_on !== false).map(([id]) => id)),
       yearMin: y0, yearMax: y1, includeUndated: true,
     } as Filters,
-    layers: { boundary: true, hexes: true, borings: true, reports: true, gaps: true } as Record<string, boolean>,
+    layers: { boundary: true, hexes: true, borings: true, reports: true, areas: true, gaps: true } as Record<string, boolean>,
   };
 
   // ---------------------------------------------------------------- map
@@ -98,17 +105,27 @@ async function main() {
   map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 30, duration: 0 });
 
   let mapReady = false;
+  const hexColor = new Int8Array(dgrid.cells.length).fill(-1);
   map.on("load", () => {
     mapReady = true;
     map.addSource("boundary", { type: "geojson", data: boundary });
-    map.addSource("hexes", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+    // hex geometry is static: sent to MapLibre once; colours change through feature-state
+    map.addSource("hexes", { type: "geojson", data: { type: "FeatureCollection",
+      features: hexGeoms.map((g, i) => ({ type: "Feature", id: i, geometry: g, properties: { i } })) } });
     map.addSource("reports", { type: "geojson", data: reportsFC });
     map.addSource("gaps", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
     map.addSource("borings", { type: "geojson", data: { type: "FeatureCollection", features: [] },
       cluster: true, clusterMaxZoom: 12, clusterRadius: 40 });
 
     map.addLayer({ id: "hexes", type: "fill", source: "hexes",
-      paint: { "fill-color": ["get", "color"], "fill-outline-color": ["get", "color"], "fill-opacity": 0.55 } });
+      paint: { "fill-color": HEX_COLOR, "fill-outline-color": HEX_COLOR,
+        "fill-opacity": ["case", ["<", ["coalesce", ["feature-state", "c"], -1], 0], 0, 0.55] } });
+    map.addSource("areas", { type: "geojson", data: areasFC });
+    map.addLayer({ id: "areas-fill", type: "fill", source: "areas", filter: ["in", ["get", "area_uid"], ["literal", []]],
+      paint: { "fill-color": "#008300", "fill-opacity": ["case", ["get", "counts_toward_coverage"], 0.14, 0.05] } });
+    map.addLayer({ id: "areas-line", type: "line", source: "areas", filter: ["in", ["get", "area_uid"], ["literal", []]],
+      paint: { "line-color": "#008300", "line-width": 1, "line-opacity": 0.8,
+        "line-dasharray": ["case", ["get", "counts_toward_coverage"], ["literal", [1, 0]], ["literal", [3, 2]]] } });
     map.addLayer({ id: "reports-fill", type: "fill", source: "reports",
       paint: { "fill-color": "#6250d6", "fill-opacity": 0.12 } });
     map.addLayer({ id: "reports-line", type: "line", source: "reports",
@@ -137,7 +154,7 @@ async function main() {
         "circle-stroke-width": 2,
       } });
 
-    for (const id of ["borings", "clusters", "reports-fill", "hexes"]) {
+    for (const id of ["borings", "clusters", "reports-fill", "areas-fill", "hexes"]) {
       map.on("mouseenter", id, () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", id, () => (map.getCanvas().style.cursor = ""));
     }
@@ -147,7 +164,7 @@ async function main() {
   });
 
   // ---------------------------------------------------------------- compute
-  let last: { dist: Float64Array; ddist: Float64Array; drc: Uint16Array; filtered: Boring[]; pct: number; curve: number[] } | null = null;
+  let last: { dist: Float64Array; ddist: Float64Array; filtered: Boring[]; pct: number; curve: number[] } | null = null;
   let pending = 0;
   buildControls();
 
@@ -158,32 +175,40 @@ async function main() {
       const filtered = applyFilters(borings, state.filters);
       const dist = nearestDistances(grid, filtered);
       const ddist = dgrid === grid ? dist : nearestDistances(dgrid, filtered);
-      const drc = state.colorBy === "reports" || state.layers.hexes ? reportCounts(dgrid, filtered, state.radius) : new Uint16Array(dgrid.cells.length);
-      const curve = coverageCurve(dist, grid.area, SPARK_R);
-      const pct = coverageCurve(dist, grid.area, [state.radius])[0];
-      last = { dist, ddist, drc, filtered, pct, curve };
+      const both = coverageCurve(dist, grid.area, [...SPARK_R, state.radius]);
+      const curve = both.slice(0, SPARK_R.length), pct = both[SPARK_R.length];
+      last = { dist, ddist, filtered, pct, curve };
+      const t1 = performance.now();
       updateMap();
+      const t2 = performance.now();
       updateStats();
-      console.debug(`recompute ${(performance.now() - t0).toFixed(0)} ms`);
+      console.debug(`recompute ${(performance.now() - t0).toFixed(0)} ms (compute ${(t1 - t0).toFixed(0)}, map ${(t2 - t1).toFixed(0)})`);
     });
   }
 
   function updateMap() {
     if (!last || !mapReady) return;
-    const { ddist, drc, filtered } = last;
-    const feats: GeoJSON.Feature[] = new Array(dgrid.cells.length);
+    const { ddist, filtered } = last;
+    // colour index per hex = distance bin; only hexes whose bin changed are updated
     for (let i = 0; i < dgrid.cells.length; i++) {
-      const d = ddist[i];
-      const color = state.colorBy === "distance" ? DIST_COLORS[binOf(d, DIST_BINS)] : RC_COLORS[binOf(drc[i], RC_BINS)];
-      feats[i] = { type: "Feature", id: i, geometry: hexGeoms[i], properties: { i, color } };
+      const c = binOf(ddist[i], DIST_BINS);
+      if (hexColor[i] !== c) { hexColor[i] = c; map.setFeatureState({ source: "hexes", id: i }, { c }); }
     }
-    (map.getSource("hexes") as GeoJSONSource).setData({ type: "FeatureCollection", features: feats });
     (map.getSource("borings") as GeoJSONSource).setData({ type: "FeatureCollection",
-      features: filtered.map((b) => ({ type: "Feature", geometry: { type: "Point", coordinates: [b.lon, b.lat] }, properties: b })) });
+      features: filtered.filter(isReal).map((b) => ({ type: "Feature", geometry: { type: "Point", coordinates: [b.lon, b.lat] }, properties: b })) });
     const visibleReports = new Set(filtered.map((b) => b.report_key).filter(Boolean));
     map.setFilter("reports-fill", ["in", ["get", "report_key"], ["literal", [...visibleReports]]]);
     map.setFilter("reports-line", ["in", ["get", "report_key"], ["literal", [...visibleReports]]]);
-    const gaps = findGaps(dgrid, ddist, state.radius, 10);
+    // areas: visible when their source/tier/type/year pass the filters (big areas have no
+    // pseudo-points, so test the area's own properties)
+    const f = state.filters;
+    const visibleAreas = areasFC.features.map((a) => a.properties as Record<string, unknown>).filter((a) =>
+      f.sources.has(a.source_id as string) && (a.tier as number) <= f.maxTier && f.types.has(a.boring_type as string) &&
+      (a.year == null ? f.includeUndated : (a.year as number) >= f.yearMin && (a.year as number) <= f.yearMax))
+      .map((a) => a.area_uid as string);
+    map.setFilter("areas-fill", ["in", ["get", "area_uid"], ["literal", visibleAreas]]);
+    map.setFilter("areas-line", ["in", ["get", "area_uid"], ["literal", visibleAreas]]);
+    const gaps = state.layers.gaps ? findGaps(dgrid, ddist, state.radius, 10) : [];
     (map.getSource("gaps") as GeoJSONSource).setData({ type: "FeatureCollection",
       features: gaps.map((g) => ({ type: "Feature",
         geometry: { type: "MultiPolygon", coordinates: g.geometry.coordinates.map((poly) => [poly[0]]) } as GeoJSON.MultiPolygon, properties: { rank: g.rank, area_km2: g.areaKm2 } })) });
@@ -195,7 +220,7 @@ async function main() {
     const { filtered, pct, dist, curve } = last;
     $("hero-pct").textContent = fmtPct(pct);
     $("hero-r").textContent = String(state.radius);
-    $("st-borings").textContent = filtered.length.toLocaleString();
+    $("st-borings").textContent = filtered.filter(isReal).length.toLocaleString();
     $("st-reports").textContent = new Set(filtered.map((b) => b.report_key).filter(Boolean)).size.toLocaleString();
     $("st-median").textContent = fmtM(median(dist));
     drawSpark(curve);
@@ -204,6 +229,8 @@ async function main() {
     const msgs: string[] = [];
     if (failed.length) msgs.push(`Unavailable: ${failed.map(([id, s]) => `${s.name ?? id} (${s.status})`).join(", ")}.`);
     if (!filtered.length) msgs.push("No borings match the current filters.");
+    if (filtered.some((b) => b.kind === "permit_site"))
+      msgs.push("Permit areas count toward coverage through the area they cover, not as borings; permits over 100 acres are drawn but not counted.");
     if (filtered.some((b) => b.kind === "environmental_site"))
       msgs.push("Cleanup sites are facilities, not borings: coverage with them on counts sites whose public files usually contain shallow boring logs.");
     // Disclaimers travel with the data: a source is "in use" when it is switched on or when its
@@ -253,23 +280,23 @@ async function main() {
 
   // ---------------------------------------------------------------- legend
   function renderLegend() {
-    const bins = state.colorBy === "distance"
-      ? DIST_LABELS.map((l, i) => [DIST_COLORS[i], l]) : RC_LABELS.map((l, i) => [RC_COLORS[i], l]);
+    const bins = DIST_LABELS.map((l, i) => [DIST_COLORS[i], l]);
     const typesShown = TYPES.filter((t) => state.filters.types.has(t));
     const open = (document.querySelector("#legend details") as HTMLDetailsElement | null)?.open ?? !matchMedia("(max-width: 760px)").matches;
     $("legend").innerHTML = `<details ${open ? "open" : ""}><summary>Legend</summary>
-      <h3>${state.colorBy === "distance" ? "Distance to nearest boring" : `Reports within ${state.radius} m`}</h3>
+      <h3>Distance to nearest boring</h3>
       <div class="bins">${bins.map(([c, l]) => `<span class="bin" style="background:${c}"></span><span>${l}</span>`).join("")}</div>
       <h3>Borings</h3>
       <div class="bins">${typesShown.map((t) => `<span class="swatch" style="background:${TYPE_COLOR[t]}"></span><span>${TYPE_LABEL[t] ?? t}</span>`).join("")}
         <span class="swatch" style="border:2px solid #52514e"></span><span>Hollow: tier 3–4</span></div>
       <div class="bins"><span class="bin" style="background:#6250d633;border-color:#6250d6"></span><span>Report footprint</span>
-        <span class="bin" style="border:2px dashed #d03b3b"></span><span>Largest gaps at R</span></div></details>`;
+        <span class="bin" style="border:2px dashed #d03b3b"></span><span>Largest gaps at R</span>
+        ${state.filters.sources.has("sjrwmd_erp") ? `<span class="bin" style="background:#00830024;border-color:#008300"></span><span>Permit area (dashed: drawn only)</span>` : ""}</div></details>`;
   }
 
   // ---------------------------------------------------------------- popups
   function onClick(e: MapMouseEvent) {
-    const order = ["clusters", "borings", "reports-fill", "hexes"].filter((l) => state.layers[layerKey(l)]);
+    const order = ["clusters", "borings", "reports-fill", "areas-fill", "hexes"].filter((l) => state.layers[layerKey(l)]);
     const hits = map.queryRenderedFeatures(e.point, { layers: order });
     if (!hits.length) return;
     const f = hits.sort((a, b) => order.indexOf(a.layer.id) - order.indexOf(b.layer.id))[0];
@@ -290,6 +317,15 @@ async function main() {
         ["Location", String(p.flags ?? "").includes("approx_location") ? "approximate: placed at a geocoded report site, may be far off" : null],
       ]).concat(detailRows(p.details))) + logHtml(p.log, p.log_from) + docLine(url, p.doc_internal, src?.doc_label)
         + (p.boring_type === "Site" ? `<p class="muted">A cleanup site, not a boring: its public file usually holds site assessment reports with shallow soil-boring and monitoring-well logs. Point = facility location.</p>` : "");
+    } else if (f.layer.id === "areas-fill") {
+      const src = manifest.sources[p.source_id as string];
+      const url = safeUrl(p.doc_url);
+      html = table((<[string, unknown][]>[
+        ["Permit area", p.name], ["Source", src?.name ?? p.source_id], ["Tier", p.tier],
+        ["Decision date", p.date ?? p.year ?? "undated"], ["Mapped area", `${p.acres} acres`],
+        ["Coverage", p.counts_toward_coverage ? "counts (cells it overlaps)" : `drawn only: larger than the ${100}-acre limit`],
+      ]).concat(detailRows(p.details))) + docLine(url, null, src?.doc_label)
+        + `<p class="muted">A permit site, not a boring: stormwater permit applications commonly include soil borings and seasonal high water table estimates.</p>`;
     } else if (f.layer.id === "reports-fill") {
       const src = manifest.sources[p.source_id as string];
       const url = safeUrl(p.doc_url);
@@ -302,7 +338,8 @@ async function main() {
       ]) + docLine(url, p.doc_internal, src?.doc_label);
     } else if (f.layer.id === "hexes" && last) {
       const i = p.i as number;
-      html = table([["Distance to nearest boring", fmtM(last.ddist[i])], [`Reports within ${state.radius} m`, last.drc[i]]]);
+      const rc = reportCounts(dgrid, last.filtered, state.radius, [i])[i];
+      html = table([["Distance to nearest boring", fmtM(last.ddist[i])], [`Reports within ${state.radius} m`, rc]]);
     }
     new maplibregl.Popup({ maxWidth: "320px" }).setLngLat(e.lngLat).setHTML(html).addTo(map);
   }
@@ -331,10 +368,10 @@ async function main() {
   }
   const table = (rows: [string, unknown][]) =>
     `<table>${rows.filter(([, v]) => v != null && v !== "").map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</table>`;
-  const layerKey = (id: string) => (id.startsWith("report") ? "reports" : id === "clusters" || id === "cluster-count" ? "borings" : id.startsWith("gaps") ? "gaps" : id);
+  const layerKey = (id: string) => (id.startsWith("areas") ? "areas" : id.startsWith("report") ? "reports" : id === "clusters" || id === "cluster-count" ? "borings" : id.startsWith("gaps") ? "gaps" : id);
 
   function applyLayerVisibility() {
-    for (const id of ["boundary", "hexes", "reports-fill", "reports-line", "gaps", "gaps-label", "borings", "clusters", "cluster-count"]) {
+    for (const id of ["boundary", "hexes", "areas-fill", "areas-line", "reports-fill", "reports-line", "gaps", "gaps-label", "borings", "clusters", "cluster-count"]) {
       if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", state.layers[layerKey(id)] ? "visible" : "none");
     }
   }
@@ -355,7 +392,7 @@ async function main() {
     $("tiers").innerHTML = [1, 2, 3, 4].map((t) => `<label class="check"><input type="radio" name="tier" value="${t}" ${t === 4 ? "checked" : ""}/> ${TIER_LABELS[t]}</label>`).join("");
     $("tiers").addEventListener("change", (e) => { state.filters.maxTier = Number((e.target as HTMLInputElement).value); recompute(); });
 
-    const tcount = (t: string) => borings.filter((b) => b.boring_type === t).length;
+    const tcount = (t: string) => t === "Permit" ? areasFC.features.length : realBorings.filter((b) => b.boring_type === t).length;
     $("types").innerHTML = TYPES.map((t) => `<label class="check"><input type="checkbox" value="${t}" checked/> <span class="swatch" style="background:${TYPE_COLOR[t]}"></span>${TYPE_LABEL[t] ?? t} <span class="hint">${tcount(t)}</span></label>`).join("");
     $("types").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; i.checked ? state.filters.types.add(i.value) : state.filters.types.delete(i.value); recompute(); });
 
@@ -380,18 +417,16 @@ async function main() {
     $("year-min-val").textContent = String(y0); $("year-max-val").textContent = String(y1);
     $<HTMLInputElement>("undated").addEventListener("change", (e) => { state.filters.includeUndated = (e.target as HTMLInputElement).checked; recompute(); });
 
-    document.querySelectorAll<HTMLInputElement>("input[name=colorby]").forEach((el) =>
-      el.addEventListener("change", () => { state.colorBy = el.value as "distance" | "reports"; if (last) updateMap(); }));
 
-    const L: [string, string][] = [["hexes", "Coverage hexes"], ["borings", "Borings"], ["reports", "Report footprints"], ["gaps", "Gaps"], ["boundary", "City boundary"]];
+    const L: [string, string][] = [["hexes", "Coverage hexes"], ["borings", "Borings"], ["reports", "Report footprints"], ["areas", "Permit areas"], ["gaps", "Gaps"], ["boundary", "City boundary"]];
     $("layers").innerHTML = L.map(([k, l]) => `<label class="check"><input type="checkbox" value="${k}" checked/> ${l}</label>`).join("");
-    $("layers").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; state.layers[i.value] = i.checked; applyLayerVisibility(); });
+    $("layers").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; state.layers[i.value] = i.checked; applyLayerVisibility(); if (i.value === "gaps" && i.checked) recompute(); });
 
     $("export-csv").addEventListener("click", exportCSV);
     $("export-geojson").addEventListener("click", () => {
       if (!last) return;
       download("borings_filtered.geojson", "application/geo+json", JSON.stringify({ type: "FeatureCollection",
-        features: last.filtered.map((b) => ({ type: "Feature", geometry: { type: "Point", coordinates: [b.lon, b.lat] }, properties: b })) }));
+        features: last.filtered.filter(isReal).map((b) => ({ type: "Feature", geometry: { type: "Point", coordinates: [b.lon, b.lat] }, properties: b })) }));
     });
     $("about-btn").addEventListener("click", () => { renderAbout(); $<HTMLDialogElement>("about").showModal(); });
     setRadius(state.radius);
@@ -405,7 +440,7 @@ async function main() {
       ["area_id", stats.area_id], ["h3_resolution", grid.resolution], ["n_cells", grid.cells.length],
       ["max_tier", f.maxTier], ["types", [...f.types].join(";")], ["sources", [...f.sources].join(";")],
       ["year_min", f.yearMin], ["year_max", f.yearMax], ["include_undated", f.includeUndated],
-      ["n_borings", last.filtered.length], ["n_reports", new Set(last.filtered.map((b) => b.report_key).filter(Boolean)).size],
+      ["n_borings", last.filtered.filter(isReal).length], ["n_reports", new Set(last.filtered.map((b) => b.report_key).filter(Boolean)).size],
       ["median_nearest_m", median(last.dist)?.toFixed(1) ?? ""],
       ...[...new Set([...stats.radii_m, state.radius])].sort((a, b) => a - b).map((r) =>
         [`pct_covered_${r}m`, coverageCurve(last!.dist, grid.area, [r])[0].toFixed(3)])];

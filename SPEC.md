@@ -451,3 +451,26 @@ When a request is blocked, the error names the host; add it to the allowlist and
   open-data hub's "Well completion report sites" copy (20,438 features district-wide) is on
   `services.arcgis.com/s8wtJX9suxFen6TA`, which is still blocked. Not needed: layer 13 is the
   live source. No SRWMD well layer was found.
+- **Report footprints (2026-11-16):** now a concave hull (ratio 0.3) of a report's borings, padded
+  30 m, drawn only for reports with 2 or more borings (62). Single-boring "reports" (wells, sites,
+  most Geosetta) were 30 m circles that duplicated their markers. `reports.geojson` went from
+  1.8 MB to 0.13 MB.
+- **Area sources, SJRWMD ERP permits (2026-11-16):** `sjrRegMapICR/MapServer/4` (ERP application
+  polygons) is a new *area* source (`area: true`, `pipeline/areas.py`). 2,680 polygon records
+  were dissolved by permit (`OFFCL_PRMT_ID`, sequences merged, latest attributes kept); `Never
+  Issued` was excluded, leaving 1,129 permit areas. Each links to its public e-Permitting record.
+  **Coverage model:** an area contributes *pseudo-points* at the centres of the H3 cells it
+  overlaps (coverage resolution), so cells inside a permit are at distance 0, and the existing
+  NN and report-count code works unchanged in Python and the browser (the web expands the same
+  compacted cell lists, and the consistency test covers it). Permits over 100 acres (39, e.g.
+  the UF master drainage permit, 2,170 ac) are drawn dashed but don't count. Kind
+  `permit_site`: off by default, excluded from headline stats. `stats.json` gains
+  `pct_covered_with_permit_sites`: 4.7% → 58.4% at 250 m. Whether ERP files contain soil borings
+  hasn't been checked document by document.
+- **Web performance (2026-11-16):** with ~28k area pseudo-points, the recompute was 400–600 ms.
+  Fixes: hex geometry sent once with colours via feature-state (only changed hexes update),
+  planar-KDBush report counts computed only for a clicked hex, one sort for the coverage curve,
+  cached gap neighbour lists. In headless Chromium on a 4-core sandbox the compute step is
+  110–200 ms. The map update adds up to about 250 ms when almost every hex changes colour (e.g.
+  toggling permits). The "colour hexes by report count" option was removed at the owner's
+  request; hexes are always coloured by distance.

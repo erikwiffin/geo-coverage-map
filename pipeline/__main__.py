@@ -16,6 +16,7 @@ from shapely.geometry import shape
 
 from . import config as cfgmod
 from .arcgis import FetchError, RemoteBlocked, SandboxBlocked, classify_response, make_client
+from .areas import build_areas, pseudo_points
 from .coverage import compute_stats, make_grid, plot_curve
 from .geo import expand_bbox
 from .normalize import dedupe_across_sources, normalize_source
@@ -151,7 +152,7 @@ def _attachment_probe(client, src, recs, n=5) -> dict:
 # --------------------------------------------------------------------- build
 def build(ctx) -> None:
     man = json.loads((ctx.raw_dir / "fetch_manifest.json").read_text())
-    frames, profiles = [], []
+    frames, profiles, area_frames = [], [], []
     for src in ctx.sources:
         entry = man["sources"].setdefault(src["id"], {})
         # config-derived fields (homepage, licence, disclaimer, ...) always come from the current
@@ -179,6 +180,20 @@ def build(ctx) -> None:
                             f"**Not available:** {entry.get('status')} — {entry.get('reason')}\n")
             continue
         recs = json.loads(path.read_text())
+        if src.get("area"):  # polygon source: areas.geojson, not borings
+            a = build_areas(recs, src, ctx.h3_resolution)
+            area_frames.append(a)
+            entry["n_in_area"] = len(a)
+            entry["n_after_dedupe"] = len(a)
+            entry["n_counting"] = int(a["counts_toward_coverage"].sum()) if len(a) else 0
+            profiles.append(
+                f"## {src.get('name', src['id'])} (`{src['id']}`)\n\n"
+                f"- Polygon records in envelope: **{len(recs)}**; areas after grouping by "
+                f"`{src.get('area_group_by')}` and excluding {src.get('area_exclude')}: "
+                f"**{len(a)}**\n- Counting toward coverage (≤ {src.get('max_coverage_acres')} "
+                f"acres): **{entry['n_counting']}**; median "
+                f"{a['acres'].median() if len(a) else 0:.1f} acres\n")
+            continue
         df = normalize_source(recs, src, ctx.area.get("county_bbox"))
         entry["n_in_area"] = len(df)
         extra_p = ctx.raw_dir / f"{src['id']}.extra.json"
@@ -189,12 +204,24 @@ def build(ctx) -> None:
     if not borings.empty:
         borings = dedupe_across_sources(borings, ctx.area.get("dedupe_m", 5),
                                         [s["id"] for s in ctx.sources])
+    area_ids = {s["id"] for s in ctx.sources if s.get("area")}
     for sid, entry in man["sources"].items():
-        if entry.get("status") == "ok":
+        if entry.get("status") == "ok" and sid not in area_ids:
             entry["n_after_dedupe"] = int((borings["source_id"] == sid).sum()) \
                 if not borings.empty else 0
     out = ctx.out_dir
     out.mkdir(parents=True, exist_ok=True)
+    areas = pd.concat(area_frames, ignore_index=True) if area_frames else None
+    if areas is not None and len(areas):
+        areas = gpd.GeoDataFrame(areas, geometry="geometry", crs=4326)
+        areas.to_parquet(out / "areas.parquet")
+        web_areas = areas.copy()
+        web_areas.geometry = web_areas.geometry.simplify(0.00001)
+        (out / "areas.geojson").write_text(web_areas.to_json(drop_id=True, na="drop"))
+    else:
+        for f in ("areas.parquet",):
+            (out / f).unlink(missing_ok=True)
+        (out / "areas.geojson").write_text('{"type":"FeatureCollection","features":[]}')
     gdf = gpd.GeoDataFrame(borings, geometry=gpd.points_from_xy(borings.lon, borings.lat),
                            crs=4326) if not borings.empty else gpd.GeoDataFrame(
         columns=["geometry"], geometry="geometry", crs=4326)
@@ -207,7 +234,9 @@ def build(ctx) -> None:
         (out / "borings.geojson").write_text(web.to_json(drop_id=True, na="drop"))
         reports = build_reports(borings, ctx.area.get("report_buffer_m", 30),
                                 ctx.area.get("report_span_flag_km", 5))
-        rep = reports.copy()
+        # single-boring "reports" (one well, one site) have no meaningful extent: the boring's
+        # own marker shows it, so only multi-boring outlines are written for the map
+        rep = reports[reports["n_borings"] >= 2].copy()
         rep["hull"] = rep["hull"].map(lambda h: json.dumps(h) if h else None)
         rep["types"] = rep["types"].map(",".join)
         rep.geometry = rep.geometry.simplify(0.000005)
@@ -219,7 +248,9 @@ def build(ctx) -> None:
             "## Reports (M2)\n\n"
             f"- Reports built: **{len(reports)}**; borings in reports: **{n_keyed}** "
             f"(= sum of n_borings: {int(reports['n_borings'].sum())}); "
-            f"borings without a key: **{int(borings['report_key'].isna().sum())}**.\n"
+            f"borings without a key: **{int(borings['report_key'].isna().sum())}**; "
+            f"reports with 2+ borings (drawn as outlines): "
+            f"**{int((reports['n_borings'] >= 2).sum())}**.\n"
             f"- Reports spanning > {ctx.area.get('report_span_flag_km', 5)} km "
             f"(corridor project or bad key): **{len(flagged)}**\n\n"
             + (pd.DataFrame(flagged[["report_key", "n_borings", "span_m"]]).to_markdown(
@@ -255,6 +286,11 @@ def stats(ctx) -> None:
     borings = pd.read_parquet(pq) if pq.exists() else pd.DataFrame(
         columns=["tier", "boring_type", "source_id", "kind", "year", "report_key", "lon", "lat"])
     default_sources = [s["id"] for s in ctx.sources if s.get("default_on", True)]
+    apq = out / "areas.parquet"
+    if apq.exists():  # areas count through pseudo-points at their overlapped cell centres
+        pts = pseudo_points(pd.read_parquet(apq), ctx.h3_resolution)
+        pts["pseudo"] = True
+        borings = pd.concat([borings.assign(pseudo=False), pts], ignore_index=True)
     grid = make_grid(boundary, ctx.h3_resolution)
     st, extras = compute_stats(grid, borings, ctx.area, default_sources)
     st["generated"] = _now()
@@ -343,6 +379,7 @@ def main(argv=None) -> int:
         dest = cfgmod.ROOT / "web" / "public" / "data"
         dest.mkdir(parents=True, exist_ok=True)
         for f in ("boundary.geojson", "borings.geojson", "reports.geojson", "gaps.geojson",
+                  "areas.geojson",
                   "stats.json", "manifest.json"):
             if (ctx.out_dir / f).exists():
                 shutil.copy(ctx.out_dir / f, dest / f)
