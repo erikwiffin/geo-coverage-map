@@ -65,6 +65,8 @@
     consultant: DRILL_COMPANY
     county: COUNTY
   report_key: [REPORT_LINK]
+  # FGS USGS_ID holds old USGS local well numbers (e.g. 936-220-1), not NWIS 15-digit site
+  # numbers, so it can't be used to match NWIS records; only the 5 m spatial dedupe applies.
 
 # FDEP contamination cleanup sites. Not borings: each point is a facility whose public cleanup
 # file (site assessment reports, usually with soil-boring and monitoring-well logs) is in DEP
@@ -153,6 +155,34 @@
 #   tier: 1
 #   kind: geotechnical
 #   license: US federal work, public domain.
+
+# USGS NWIS groundwater sites (water/monitoring wells with depth). Federal: public domain.
+- id: usgs_nwis_gw
+  name: USGS NWIS Groundwater Sites
+  adapter: usgs_nwis
+  url: https://waterservices.usgs.gov/nwis/site/
+  homepage: https://waterdata.usgs.gov/
+  tier: 1
+  kind: geologic_well        # water wells, hidden by default like FGS wells
+  default_on: false
+  license: US federal work (USGS), public domain.
+  fixed_type: Well
+  doc_label: USGS monitoring-location page
+  site_id_prefix: "usgs:"
+  field_map:
+    native_id: site_no
+    site_id: site_no
+    boring_name: station_nm
+    date: construction_dt
+    depth_ft: depth_ft
+    elev: alt_va
+    doc_url: page_url
+  details:
+    USGS site: site_no
+    Aquifer: nat_aqfr_cd
+    Well depth (ft): well_depth_va
+    Hole depth (ft): hole_depth_va
+  report_key: [site_no]
 
 # Geosetta area exports (draw an area on geosetta.org's map, export the DIGGS viewer HTML) or
 # raw DIGGS XML, saved into import_dir. Parsed logs: depth, SPT N-values, lab tests, lithology.

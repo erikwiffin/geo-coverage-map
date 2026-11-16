@@ -67,10 +67,13 @@ class Client:
             time.sleep(wait)
         self._last[host] = time.monotonic()
 
-    def request(self, url: str, params: dict, method: str = "GET") -> dict:
+    def request(self, url: str, params: dict, method: str = "GET", text: bool = False):
+        """JSON (default) or raw text (`text=True`, e.g. USGS RDB), cached on disk."""
         path = self._cache_path(url, params)
+        if text:
+            path = path.with_suffix(".txt")
         if path.exists() and not self.refresh:
-            return json.loads(path.read_text())
+            return path.read_text() if text else json.loads(path.read_text())
         delay = 1.0
         for attempt in range(self.max_retries + 1):
             self._throttle(url)
@@ -101,6 +104,9 @@ class Client:
                     "looks like the host's own firewall/WAF, not the sandbox)")
             if kind == "error":
                 raise FetchError(f"HTTP {resp.status_code} from {url}: {resp.text[:300]}")
+            if text:
+                path.write_text(resp.text)
+                return resp.text
             data = resp.json()
             if isinstance(data, dict) and "error" in data:
                 raise FetchError(f"ArcGIS error from {url}: {data['error']}")

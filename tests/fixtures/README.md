@@ -9,3 +9,5 @@
 - `diggs_synthetic.html` — **SYNTHETIC**, a minimal DIGGS 3 document wrapped like Geosetta's
   viewer export (disclaimer comment + embedded XML): two co-located boreholes, SPT N-values,
   lithology.
+- `usgs_nwis_sample.rdb`: real USGS NWIS site-service response (RDB), recorded 2026-11-16:
+  comment lines, header, field-width row, and 3 Gainesville groundwater sites.

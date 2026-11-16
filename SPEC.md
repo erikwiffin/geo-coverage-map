@@ -426,3 +426,16 @@ When a request is blocked, the error names the host; add it to the allowlist and
   logs live. Facilities aren't borings, so the kind is off by default and excluded from the
   headline stats. `stats.json` gains `pct_covered_with_environmental_sites`: 4.7% → 18.1% at
   250 m, and 29.7% → 73.1% at 1 km.
+- **USGS NWIS groundwater sites (2026-11-16):** new `usgs_nwis` adapter for the
+  `waterservices.usgs.gov/nwis/site/` RDB service (bounding box, `siteType=GW`,
+  `siteOutput=expanded`). 28 sites, 23 with well depth (80 to 3,167 ft), built 1968–2004. Tier 1,
+  kind `geologic_well` (hidden by default like the FGS wells). Each links to its
+  waterdata.usgs.gov monitoring-location page. The FGS `USGS_ID` field holds old local well numbers
+  (e.g. `936-220-1`), not NWIS site numbers, so the two can't be matched by id. Five USGS sites
+  sit 11–35 m from an FGS well (possibly the same wells at different coordinate precision) and are
+  not merged at `dedupe_m = 5`.
+- **Water management district well permits: blocked.** Alachua County is split between the St.
+  Johns River WMD (SJRWMD) and the Suwannee River WMD (SRWMD). SJRWMD well data appears to be on
+  `permitting.sjrwmd.com` (ArcGIS `sjrRegMapICR` MapServer, which includes well depth, casing and
+  use) and in a "Well completion report sites" dataset on `data-floridaswater.opendata.arcgis.com`.
+  Both hosts are blocked by the sandbox. No public SRWMD well-permit layer was found.

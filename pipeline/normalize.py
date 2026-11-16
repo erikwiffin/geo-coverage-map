@@ -194,7 +194,8 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
             "also_in": [],
             "log": json.dumps(get(a, "log"), default=str) if get(a, "log") else None,
             "log_from": src["id"] if get(a, "log") else None,
-            "site_id": None if get(a, "site_id") is None else _fmt(get(a, "site_id")),
+            "site_id": None if get(a, "site_id") is None
+            else f"{src.get('site_id_prefix', '')}{_fmt(get(a, 'site_id'))}",
             "details": json.dumps({k: _fmt(a[f]) for k, f in (src.get("details") or {}).items()
                                    if _clean(a.get(f)) is not None}) if src.get("details")
             else None,

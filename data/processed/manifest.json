@@ -1,6 +1,6 @@
 {
  "area": "gainesville",
- "generated": "2026-11-16T01:52:25+00:00",
+ "generated": "2026-11-16T02:09:48+00:00",
  "bbox_fetch": [
   -82.4411445007918,
   29.5777197965482,
@@ -11,7 +11,7 @@
   "url": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer/4",
   "where": "GEOID='1225175'",
   "license": "US Census Bureau TIGER data, public domain.",
-  "fetched": "2026-11-16T01:52:25+00:00",
+  "fetched": "2026-11-16T02:09:48+00:00",
   "attributes": {
    "AREALAND": 165788850,
    "AREAWATER": 3045506,
@@ -66,10 +66,26 @@
    "doc_label": null,
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-16T01:52:25+00:00",
+   "fetched": "2026-11-16T02:09:48+00:00",
    "n_raw": 157,
    "n_in_area": 157,
    "n_after_dedupe": 157
+  },
+  "usgs_nwis_gw": {
+   "name": "USGS NWIS Groundwater Sites",
+   "url": "https://waterservices.usgs.gov/nwis/site/",
+   "homepage": "https://waterdata.usgs.gov/",
+   "tier": 1,
+   "kind": "geologic_well",
+   "license": "US federal work (USGS), public domain.",
+   "disclaimer": null,
+   "doc_label": "USGS monitoring-location page",
+   "default_on": false,
+   "status": "ok",
+   "fetched": "2026-11-16T02:09:49+00:00",
+   "n_raw": 28,
+   "n_in_area": 28,
+   "n_after_dedupe": 28
   },
   "geosetta_diggs": {
    "name": "Geosetta (DIGGS area exports)",
@@ -82,7 +98,7 @@
    "doc_label": null,
    "default_on": true,
    "status": "ok",
-   "fetched": "2026-11-16T01:52:30+00:00",
+   "fetched": "2026-11-16T02:10:07+00:00",
    "n_raw": 57,
    "reason": null,
    "method": "imported DIGGS files from data/manual/geosetta",
@@ -100,7 +116,7 @@
    "doc_label": "FDEP cleanup documents (site assessment reports)",
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-16T01:52:27+00:00",
+   "fetched": "2026-11-16T02:09:49+00:00",
    "n_raw": 131,
    "n_in_area": 126,
    "n_after_dedupe": 126
@@ -116,7 +132,7 @@
    "doc_label": "FDEP cleanup documents (site assessment reports)",
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-16T01:52:29+00:00",
+   "fetched": "2026-11-16T02:09:49+00:00",
    "n_raw": 362,
    "n_in_area": 309,
    "n_after_dedupe": 236
@@ -132,12 +148,12 @@
    "doc_label": "FDEP cleanup documents (site assessment reports)",
    "default_on": false,
    "status": "ok",
-   "fetched": "2026-11-16T01:52:30+00:00",
+   "fetched": "2026-11-16T02:09:49+00:00",
    "n_raw": 18,
    "n_in_area": 18,
    "n_after_dedupe": 2
   }
  },
- "built": "2026-11-16T01:52:32+00:00",
+ "built": "2026-11-16T02:10:09+00:00",
  "basemap_style": "https://tiles.openfreemap.org/styles/positron"
 }

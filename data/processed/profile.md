@@ -1,6 +1,6 @@
 # Data profile: Gainesville, FL
 
-Generated 2026-11-16T01:52:32+00:00.
+Generated 2026-11-16T02:10:09+00:00.
 
 ## FDOT District 2 Soil Borings (`fdot_d2`)
 
@@ -237,6 +237,115 @@ Examples: <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18576>
 | fgs_wells:1103 | Well | Gainesville- Lake Kanapaha WWTP | 203817600000 | 1976.0 | 1050.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.412264 | 29.63195 |
 | fgs_wells:1721 | Well | Koppers XB-1 |  | 2002.0 | 155.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.3281 | 29.680914 |
 | fgs_wells:1986 | Well | City of Gainesville 1954 (Airport) |  | 1954.0 | 350.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.274163 | 29.695836 |
+
+
+## USGS NWIS Groundwater Sites (`usgs_nwis_gw`)
+
+- URL: https://waterservices.usgs.gov/nwis/site/
+- Tier 1, kind `geologic_well`
+- Raw records in envelope: **28**; after cleaning: **28**
+- Flags: none
+
+### Null rate per field
+
+| field | null_% |
+|---|---|
+| agency_cd | 0.0 |
+| site_no | 0.0 |
+| station_nm | 0.0 |
+| site_tp_cd | 0.0 |
+| lat_va | 0.0 |
+| long_va | 0.0 |
+| dec_lat_va | 0.0 |
+| dec_long_va | 0.0 |
+| coord_meth_cd | 0.0 |
+| coord_acy_cd | 0.0 |
+| coord_datum_cd | 0.0 |
+| dec_coord_datum_cd | 0.0 |
+| district_cd | 0.0 |
+| state_cd | 0.0 |
+| county_cd | 0.0 |
+| country_cd | 0.0 |
+| land_net_ds | 82.1 |
+| map_nm | 25.0 |
+| map_scale_fc | 28.6 |
+| alt_va | 10.7 |
+| alt_meth_cd | 10.7 |
+| alt_acy_va | 10.7 |
+| alt_datum_cd | 10.7 |
+| huc_cd | 0.0 |
+| basin_cd | 100.0 |
+| topo_cd | 82.1 |
+| instruments_cd | 0.0 |
+| construction_dt | 46.4 |
+| inventory_dt | 100.0 |
+| drain_area_va | 100.0 |
+| contrib_drain_area_va | 100.0 |
+| tz_cd | 0.0 |
+| local_time_fg | 0.0 |
+| reliability_cd | 0.0 |
+| gw_file_cd | 10.7 |
+| nat_aqfr_cd | 39.3 |
+| aqfr_cd | 39.3 |
+| aqfr_type_cd | 96.4 |
+| well_depth_va | 17.9 |
+| hole_depth_va | 85.7 |
+| depth_src_cd | 85.7 |
+| project_no | 92.9 |
+| page_url | 0.0 |
+| depth_ft | 17.9 |
+
+### Normalized boring_type
+
+| type | n |
+|---|---|
+| Well | 28 |
+
+### Date formats (field `construction_dt`)
+
+Share with a parsed year: **42.9%**; undated: **16**.
+
+| format | n |
+|---|---|
+| null | 13 |
+| %Y | 7 |
+| %Y%m%d | 5 |
+| unparsed | 3 |
+
+Unparsed examples: `['198911', '199210', '199210']`
+
+Year range: 1968–2004, median 1992.
+
+### Report-key candidates
+
+Normalized before keying: nothing.
+
+| key | non_null_pct | distinct |
+|---|---|---|
+| site_no | 100.0 | 28 |
+
+### Hostnames in `page_url`
+
+| host | n |
+|---|---|
+| waterdata.usgs.gov | 28 |
+
+Examples: <https://waterdata.usgs.gov/monitoring-location/293634082144901/>, <https://waterdata.usgs.gov/monitoring-location/293644082244201/>, <https://waterdata.usgs.gov/monitoring-location/293751082173501/>, <https://waterdata.usgs.gov/monitoring-location/293857082203985/>, <https://waterdata.usgs.gov/monitoring-location/294005082184901/>
+
+### Sample rows (10)
+
+| boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
+|---|---|---|---|---|---|---|---|---|---|
+| usgs_nwis_gw:293634082144901 | Well | HOLBACK WELL NR G.VILLE | 19680101 | 1968.0 | 80.0 | usgs_nwis_gw:site_no=293634082144901 | https://waterdata.usgs.gov/monitoring-location/2936340821449 | -82.246768 | 29.609691 |
+| usgs_nwis_gw:293644082244201 | Well | A-0016 RUN MONITOR WELL NO1 AT KANAPAHA |  |  | 250.0 | usgs_nwis_gw:site_no=293644082244201 | https://waterdata.usgs.gov/monitoring-location/2936440822442 | -82.411495 | 29.612468 |
+| usgs_nwis_gw:293751082173501 | Well | FLA-BRA-1 |  |  | 3167.0 | usgs_nwis_gw:site_no=293751082173501 | https://waterdata.usgs.gov/monitoring-location/2937510821735 | -82.292925 | 29.630844 |
+| usgs_nwis_gw:293857082203985 | Well | University of Florida |  |  | 406.0 | usgs_nwis_gw:site_no=293857082203985 | https://waterdata.usgs.gov/monitoring-location/2938570822039 | -82.343994 | 29.649412 |
+| usgs_nwis_gw:294005082184901 | Well | McGurn Investments (HRS,G-06) UFA Well |  |  |  | usgs_nwis_gw:site_no=294005082184901 | https://waterdata.usgs.gov/monitoring-location/2940050821849 | -82.313556 | 29.668139 |
+| usgs_nwis_gw:294011082260401 | Well | A-0713 ALACHUA CO VISA 3 AT GAINESVILLE,FL |  |  | 80.0 | usgs_nwis_gw:site_no=294011082260401 | https://waterdata.usgs.gov/monitoring-location/2940110822604 | -82.434275 | 29.669967 |
+| usgs_nwis_gw:294028082245301 | Well | A-0712 VISA 2 NR GAINESVILLE,FL | 198911 |  | 80.0 | usgs_nwis_gw:site_no=294028082245301 | https://waterdata.usgs.gov/monitoring-location/2940280822453 | -82.414552 | 29.674689 |
+| usgs_nwis_gw:294104082171202 | Well | A-0702 SURF WELL ALACHUA CO FAIR NR GAINESVILLE,FL | 19950831 | 1995.0 | 22.0 | usgs_nwis_gw:site_no=294104082171202 | https://waterdata.usgs.gov/monitoring-location/2941040821712 | -82.286492 | 29.68469 |
+| usgs_nwis_gw:294105082171501 | Well | A-063 ALACHUA FAIRGROUNDS CF IN GAINESVILLE,FL | 19950301 | 1995.0 | 440.0 | usgs_nwis_gw:site_no=294105082171501 | https://waterdata.usgs.gov/monitoring-location/2941050821715 | -82.287326 | 29.684968 |
+| usgs_nwis_gw:294106082171501 | Well | A-0366 L FLORIDAN ALACHUA CO FAIR NR GAINSVILLE,FL | 20040812 | 2004.0 | 1810.0 | usgs_nwis_gw:site_no=294106082171501 | https://waterdata.usgs.gov/monitoring-location/2941060821715 | -82.287326 | 29.685245 |
 
 
 ## Geosetta (DIGGS area exports) (`geosetta_diggs`)
@@ -612,7 +721,7 @@ Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/
 
 ## Reports (M2)
 
-- Reports built: **549**; borings in reports: **963** (= sum of n_borings: 963); borings without a key: **0**.
+- Reports built: **577**; borings in reports: **991** (= sum of n_borings: 991); borings without a key: **0**.
 - Reports spanning > 5 km (corridor project or bad key): **1**
 
   - `fdot_d2:FIN=44703215201` — 26 borings, 5042 m

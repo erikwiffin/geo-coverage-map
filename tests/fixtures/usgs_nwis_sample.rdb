@@ -1,0 +1,10 @@
+#
+#
+# US Geological Survey
+# retrieved: 2026-11-15 21:09:49 -05:00	(sdas01)
+#
+agency_cd	site_no	station_nm	site_tp_cd	lat_va	long_va	dec_lat_va	dec_long_va	coord_meth_cd	coord_acy_cd	coord_datum_cd	dec_coord_datum_cd	district_cd	state_cd	county_cd	country_cd	land_net_ds	map_nm	map_scale_fc	alt_va	alt_meth_cd	alt_acy_va	alt_datum_cd	huc_cd	basin_cd	topo_cd	instruments_cd	construction_dt	inventory_dt	drain_area_va	contrib_drain_area_va	tz_cd	local_time_fg	reliability_cd	gw_file_cd	nat_aqfr_cd	aqfr_cd	aqfr_type_cd	well_depth_va	hole_depth_va	depth_src_cd	project_no
+5s	15s	50s	7s	16s	16s	16s	16s	1s	1s	10s	10s	3s	2s	3s	2s	23s	20s	7s	8s	1s	3s	10s	16s	2s	1s	30s	8s	8s	8s	8s	6s	1s	1s	30s	10s	8s	1s	8s	8s	1s	12s
+USGS	293634082144901	HOLBACK WELL NR G.VILLE	GW	293634	0821449	29.60969095	-82.2467676	M	S	NAD27	NAD83	125	12	001	US	NWSWNES9T10SR21E	ROCHELLE	  24000	 68.00	M	2.5	NGVD29	03080102		F	NNNNNNNNNNNNNNNNNNNNNNNNNNNNNN	19680101				EST	N	C	YNNNNYNN				80.0	80.0		
+USGS	293644082244201	A-0016 RUN MONITOR WELL NO1 AT KANAPAHA	GW	293644	0822442	29.61246759	-82.411495	M	S	NAD27	NAD83	125	12	001	US	NES21T10SR19E	ARREDONDO	  24000	 89.34	A	1.0	NGVD29	03080102		F	NNNNNNNNNNNNNNNNNNNNNNNNNNNNNN					EST	N	C	YNNNNYNN	S400FLORDN	120FLRD		250			
+USGS	293751082173501	FLA-BRA-1	GW	293751.04	0821734.53	29.63084444	-82.292925	U	5	NAD83	NAD83	13	12	001	US				 132	U	 10	NGVD29	03080102			NNNNNNNNNNNNNNNNNNNNNNNNNNNNNN					EST	Y	C					3167		A	
