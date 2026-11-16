@@ -16,24 +16,26 @@
   "types": "all",
   "sources": [
    "fdot_d2",
-   "geosetta_diggs"
-  ],
-  "exclude_kinds": [
-   "geologic_well",
-   "environmental_site",
-   "permit_site"
+   "fgs_wells",
+   "usgs_nwis_gw",
+   "sjrwmd_wells",
+   "sjrwmd_erp",
+   "geosetta_diggs",
+   "fdep_cleanup",
+   "fdep_petroleum",
+   "fdep_drycleaning"
   ],
   "years": "all, incl. undated"
  },
- "n_borings_default": 442,
- "n_reports_default": 28,
- "median_nearest_m": 1571.5,
+ "n_borings_default": 5028,
+ "n_reports_default": 1921,
+ "median_nearest_m": 132.6,
  "pct_covered": {
-  "50": 0.533,
-  "100": 1.3,
-  "250": 4.716,
-  "500": 12.617,
-  "1000": 29.712
+  "50": 30.75,
+  "100": 42.974,
+  "250": 69.144,
+  "500": 86.361,
+  "1000": 96.575
  },
  "pct_covered_all_sources": {
   "50": 30.75,
@@ -41,6 +43,13 @@
   "250": 69.144,
   "500": 86.361,
   "1000": 96.575
+ },
+ "pct_covered_geotechnical_only": {
+  "50": 0.533,
+  "100": 1.3,
+  "250": 4.716,
+  "500": 12.617,
+  "1000": 29.712
  },
  "pct_covered_with_environmental_sites": {
   "50": 1.716,
@@ -58,41 +67,41 @@
  },
  "pct_covered_by_tier": {
   "<=1": {
-   "50": 0.0,
-   "100": 0.0,
-   "250": 0.0,
-   "500": 0.0,
-   "1000": 0.0
+   "50": 0.041,
+   "100": 0.16,
+   "250": 0.903,
+   "500": 3.461,
+   "1000": 13.687
   },
   "<=2": {
-   "50": 0.521,
-   "100": 1.249,
-   "250": 4.421,
-   "500": 11.79,
-   "1000": 27.154
+   "50": 30.744,
+   "100": 42.965,
+   "250": 69.138,
+   "500": 86.334,
+   "1000": 96.544
   },
   "<=3": {
-   "50": 0.521,
-   "100": 1.249,
-   "250": 4.421,
-   "500": 11.79,
-   "1000": 27.154
+   "50": 30.744,
+   "100": 42.965,
+   "250": 69.138,
+   "500": 86.334,
+   "1000": 96.544
   },
   "<=4": {
-   "50": 0.533,
-   "100": 1.3,
-   "250": 4.716,
-   "500": 12.617,
-   "1000": 29.712
+   "50": 30.75,
+   "100": 42.974,
+   "250": 69.144,
+   "500": 86.361,
+   "1000": 96.575
   }
  },
  "pct_covered_by_type": {
   "all": {
-   "50": 0.533,
-   "100": 1.3,
-   "250": 4.716,
-   "500": 12.617,
-   "1000": 29.712
+   "50": 30.75,
+   "100": 42.974,
+   "250": 69.144,
+   "500": 86.361,
+   "1000": 96.575
   },
   "spt_cpt": {
    "50": 0.416,
@@ -111,119 +120,119 @@
  },
  "pct_covered_by_recency": {
   "all_years": {
-   "50": 0.533,
-   "100": 1.3,
-   "250": 4.716,
-   "500": 12.617,
-   "1000": 29.712
+   "50": 30.75,
+   "100": 42.974,
+   "250": 69.144,
+   "500": 86.361,
+   "1000": 96.575
   },
   "2000_and_later": {
-   "50": 0.128,
-   "100": 0.347,
-   "250": 1.375,
-   "500": 4.293,
-   "1000": 12.783
+   "50": 24.161,
+   "100": 32.311,
+   "250": 52.367,
+   "500": 70.739,
+   "1000": 81.857
   },
   "2015_and_later": {
-   "50": 0.128,
-   "100": 0.347,
-   "250": 1.375,
-   "500": 4.293,
-   "1000": 12.783
+   "50": 16.01,
+   "100": 21.899,
+   "250": 39.219,
+   "500": 60.235,
+   "1000": 76.522
   }
  },
  "reports_within_radius": {
   "radius_m": 250,
-  "median": 0.0,
-  "p90": 0.0,
-  "pct_cells_zero": 95.28
+  "median": 1.0,
+  "p90": 7.0,
+  "pct_cells_zero": 37.93
  },
  "gaps": {
   "radius_m": 500,
   "top": [
    {
-    "area_km2": 145.9942,
-    "n_cells": 73089,
-    "centroid_lon": -82.348361,
-    "centroid_lat": 29.683529,
-    "max_distance_m": 6442.9,
+    "area_km2": 20.9001,
+    "n_cells": 10459,
+    "centroid_lon": -82.377042,
+    "centroid_lat": 29.745872,
+    "max_distance_m": 1863.3,
     "rank": 1
    },
    {
-    "area_km2": 0.6509,
-    "n_cells": 326,
-    "centroid_lon": -82.319971,
-    "centroid_lat": 29.616143,
-    "max_distance_m": 1626.7,
+    "area_km2": 0.6069,
+    "n_cells": 304,
+    "centroid_lon": -82.324595,
+    "centroid_lat": 29.711348,
+    "max_distance_m": 1017.9,
     "rank": 2
    },
    {
-    "area_km2": 0.5941,
-    "n_cells": 297,
-    "centroid_lon": -82.414629,
-    "centroid_lat": 29.618891,
-    "max_distance_m": 4275.1,
+    "area_km2": 0.337,
+    "n_cells": 169,
+    "centroid_lon": -82.26912,
+    "centroid_lat": 29.687007,
+    "max_distance_m": 726.2,
     "rank": 3
    },
    {
-    "area_km2": 0.242,
-    "n_cells": 121,
-    "centroid_lon": -82.412496,
-    "centroid_lat": 29.663744,
-    "max_distance_m": 848.1,
+    "area_km2": 0.264,
+    "n_cells": 132,
+    "centroid_lon": -82.40103,
+    "centroid_lat": 29.588571,
+    "max_distance_m": 729.3,
     "rank": 4
    },
    {
-    "area_km2": 0.152,
-    "n_cells": 76,
-    "centroid_lon": -82.396645,
-    "centroid_lat": 29.614851,
-    "max_distance_m": 2813.9,
+    "area_km2": 0.1794,
+    "n_cells": 90,
+    "centroid_lon": -82.23001,
+    "centroid_lat": 29.674908,
+    "max_distance_m": 761.3,
     "rank": 5
    },
    {
-    "area_km2": 0.042,
-    "n_cells": 21,
-    "centroid_lon": -82.404828,
-    "centroid_lat": 29.612713,
-    "max_distance_m": 3016.5,
+    "area_km2": 0.1516,
+    "n_cells": 76,
+    "centroid_lon": -82.286593,
+    "centroid_lat": 29.69285,
+    "max_distance_m": 612.1,
     "rank": 6
    },
    {
-    "area_km2": 0.008,
-    "n_cells": 4,
-    "centroid_lon": -82.421701,
-    "centroid_lat": 29.654458,
-    "max_distance_m": 578.4,
+    "area_km2": 0.1499,
+    "n_cells": 75,
+    "centroid_lon": -82.37528,
+    "centroid_lat": 29.67582,
+    "max_distance_m": 629.2,
     "rank": 7
    },
    {
-    "area_km2": 0.006,
-    "n_cells": 3,
-    "centroid_lon": -82.422059,
-    "centroid_lat": 29.616111,
-    "max_distance_m": 4305.2,
+    "area_km2": 0.118,
+    "n_cells": 59,
+    "centroid_lon": -82.40561,
+    "centroid_lat": 29.63366,
+    "max_distance_m": 675.7,
     "rank": 8
    },
    {
-    "area_km2": 0.002,
-    "n_cells": 1,
-    "centroid_lon": -82.337448,
-    "centroid_lat": 29.616686,
-    "max_distance_m": 502.8,
+    "area_km2": 0.0679,
+    "n_cells": 34,
+    "centroid_lon": -82.315656,
+    "centroid_lat": 29.616794,
+    "max_distance_m": 645.0,
     "rank": 9
    },
    {
-    "area_km2": 0.002,
-    "n_cells": 1,
-    "centroid_lon": -82.416302,
-    "centroid_lat": 29.643006,
-    "max_distance_m": 1242.7,
+    "area_km2": 0.0638,
+    "n_cells": 32,
+    "centroid_lon": -82.239304,
+    "centroid_lat": 29.682061,
+    "max_distance_m": 556.1,
     "rank": 10
    }
   ]
  },
- "generated": "2026-11-16T03:06:15+00:00",
+ "generated": "2026-11-16T03:32:17+00:00",
  "sources_status": {
   "fdot_d2": "ok",
   "fgs_wells": "ok",

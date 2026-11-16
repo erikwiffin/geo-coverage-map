@@ -32,7 +32,7 @@ class Filters:
     max_tier: int = 4
     types: tuple[str, ...] | None = None          # None = all
     sources: tuple[str, ...] | None = None        # None = all default-on sources
-    exclude_kinds: tuple[str, ...] = ("geologic_well", "environmental_site", "permit_site")
+    exclude_kinds: tuple[str, ...] = ()
     min_year: int | None = None
     include_undated: bool = True
 
@@ -150,7 +150,10 @@ def compute_stats(grid: Grid, borings: pd.DataFrame, area_cfg: dict,
 
     # every configured source, wells included: lets the web consistency test exercise real data
     # even when the default-on sources are empty.
-    all_src = Filters(sources=None, exclude_kinds=())
+    all_src = Filters(sources=None)
+    geo_only = Filters(sources=tuple(default_sources),
+                       exclude_kinds=("geologic_well", "environmental_site", "permit_site"))
+    dist_geo = nearest_distance(grid, borings[geo_only.mask(borings)])
     dist_all = nearest_distance(grid, borings[all_src.mask(borings)])
     # default sources plus environmental cleanup sites: how much do FDEP files add?
     env_ids = tuple(borings.loc[borings["kind"] == "environmental_site", "source_id"].unique())
@@ -171,8 +174,6 @@ def compute_stats(grid: Grid, borings: pd.DataFrame, area_cfg: dict,
         "radii_m": radii,
         "default_radius_m": area_cfg.get("default_radius_m", 250),
         "default_filters": {"max_tier": 4, "types": "all", "sources": default_sources,
-                            "exclude_kinds": ["geologic_well", "environmental_site",
-                                              "permit_site"],
                             "years": "all, incl. undated"},
         "n_borings_default": int(len(default_df) - int(default_df.get("pseudo", pd.Series(
             dtype=bool)).fillna(False).astype(bool).sum())),
@@ -180,6 +181,7 @@ def compute_stats(grid: Grid, borings: pd.DataFrame, area_cfg: dict,
         "median_nearest_m": round(float(np.median(finite)), 1) if len(finite) else None,
         "pct_covered": curve(dist, grid.area_m2, radii),
         "pct_covered_all_sources": curve(dist_all, grid.area_m2, radii),
+        "pct_covered_geotechnical_only": curve(dist_geo, grid.area_m2, radii),
         "pct_covered_with_environmental_sites": curve(dist_env, grid.area_m2, radii),
         "pct_covered_with_permit_sites": curve(dist_permits, grid.area_m2, radii),
         "pct_covered_by_tier": by_tier,

@@ -23,9 +23,17 @@ describe.skipIf(!have)("web vs pipeline consistency", () => {
 
   it("default filters match stats.json pct_covered", () => {
     const sources = new Set(ok.filter(([, s]) => s.default_on !== false).map(([id]) => id));
-    const d = nearestDistances(grid, applyFilters(borings, { ...base, sources }).filter((b) => !["geologic_well", "environmental_site", "permit_site"].includes(b.kind)));
+    const d = nearestDistances(grid, applyFilters(borings, { ...base, sources }));
     const web = coverageCurve(d, grid.area, stats.radii_m);
     stats.radii_m.forEach((r: number, i: number) => expect(Math.abs(web[i] - stats.pct_covered[String(r)])).toBeLessThan(0.5));
+  });
+
+  it("geotechnical-only view matches stats.json pct_covered_geotechnical_only", () => {
+    const sources = new Set(ok.map(([id]) => id));
+    const d = nearestDistances(grid, applyFilters(borings, { ...base, sources })
+      .filter((b) => !["geologic_well", "environmental_site", "permit_site"].includes(b.kind)));
+    const web = coverageCurve(d, grid.area, stats.radii_m);
+    stats.radii_m.forEach((r: number, i: number) => expect(Math.abs(web[i] - stats.pct_covered_geotechnical_only[String(r)])).toBeLessThan(0.5));
   });
 
   it("all sources (incl. wells) match stats.json pct_covered_all_sources", () => {

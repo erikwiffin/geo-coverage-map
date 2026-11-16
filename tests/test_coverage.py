@@ -59,8 +59,10 @@ def test_filters_cumulative_tier_and_recency():
                  boring_type=["SPT", "CPT", "Auger", "Well"],
                  kind=["geotechnical"] * 3 + ["geologic_well"])
     assert Filters(max_tier=2).mask(df).tolist() == [True, True, False, False]
+    assert Filters(max_tier=4).mask(df).tolist() == [True, True, True, True]
     assert Filters(min_year=2000, include_undated=False).mask(df).tolist() == \
-        [False, True, False, False]
-    assert Filters(min_year=2000).mask(df).tolist() == [False, True, True, False]
+        [False, True, False, True]
+    assert Filters(min_year=2000).mask(df).tolist() == [False, True, True, True]
     assert Filters(types=("SPT", "CPT")).mask(df).sum() == 2
-    assert Filters(exclude_kinds=()).mask(df).sum() == 4
+    assert Filters().mask(df).sum() == 4
+    assert Filters(exclude_kinds=("geologic_well",)).mask(df).sum() == 3

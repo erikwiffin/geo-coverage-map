@@ -85,6 +85,12 @@ DIGGS `.xml`) into `data/manual/geosetta/`. `build` re-reads that folder. Boreho
 FDOT boring within 5 m add their depth, SPT N-values and soil layers to it; the rest become
 tier-4 borings flagged `approx_location` when Geosetta placed them at a report site.
 
+### Linking to a view
+
+The map keeps its state in the URL, e.g.
+`?r=500&src=fdot_d2,geosetta_diggs&tier=2&hide=gaps&map=14.00/29.65/-82.33&about=fdot_d2`.
+Defaults are omitted, so the plain URL shows every source at 250 m.
+
 ## Licensing
 
 Each source has a license tier (SPEC §8), recorded in `manifest.json` and shown in the map's About

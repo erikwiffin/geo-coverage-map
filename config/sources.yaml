@@ -51,7 +51,6 @@
   where: "1=1"
   tier: 2
   kind: geologic_well        # hidden by default in UI and headline stats
-  default_on: false
   license: Florida agency public record (FDEP / Florida Geological Survey).
   fixed_type: Well
   field_map:
@@ -80,7 +79,6 @@
   where: "1=1"
   tier: 2
   kind: environmental_site
-  default_on: false
   license: Florida agency public record (FDEP).
   fixed_type: Site
   doc_label: FDEP cleanup documents (site assessment reports)
@@ -104,7 +102,6 @@
   where: "1=1"
   tier: 2
   kind: environmental_site
-  default_on: false
   license: Florida agency public record (FDEP).
   fixed_type: Site
   doc_label: FDEP cleanup documents (site assessment reports)
@@ -131,7 +128,6 @@
   where: "1=1"
   tier: 2
   kind: environmental_site
-  default_on: false
   license: Florida agency public record (FDEP).
   fixed_type: Site
   doc_label: FDEP cleanup documents (site assessment reports)
@@ -164,7 +160,6 @@
   homepage: https://waterdata.usgs.gov/
   tier: 1
   kind: geologic_well        # water wells, hidden by default like FGS wells
-  default_on: false
   license: US federal work (USGS), public domain.
   fixed_type: Well
   doc_label: USGS monitoring-location page
@@ -195,7 +190,6 @@
   where: "1=1"
   tier: 2
   kind: geologic_well        # water/monitoring wells: hidden by default like FGS and USGS
-  default_on: false
   license: Florida agency public record (St. Johns River Water Management District).
   fixed_type: Well
   approx_when:               # position from a section-township-range centroid: ~1 km off
@@ -234,7 +228,6 @@
   max_offset: 0.00002         # ~2 m geometry generalization on the server
   tier: 2
   kind: permit_site
-  default_on: false
   license: Florida agency public record (St. Johns River Water Management District).
   fixed_type: Permit
   doc_label: SJRWMD e-Permitting record

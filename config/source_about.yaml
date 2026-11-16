@@ -80,7 +80,7 @@ fgs_wells:
     enters foundation choice.
   limits: >-
     No blow counts or strength data, and log descriptions are geological, not engineering
-    classifications. Hidden by default and not counted in the headline coverage.
+    classifications.
 
 usgs_nwis_gw:
   origin: >-
@@ -97,7 +97,7 @@ usgs_nwis_gw:
     table; these deep wells only bound it.
   limits: >-
     Deep wells, few sites. No lithology or engineering properties in the data we import.
-    Hidden by default.
+   
 
 sjrwmd_wells:
   origin: >-
@@ -120,7 +120,7 @@ sjrwmd_wells:
     foundations and karst screening.
   limits: >-
     No soil descriptions or strength data. Water levels are single readings at completion, not
-    seasonal highs. Hidden by default.
+    seasonal highs.
 
 fdep_cleanup:
   origin: >-
@@ -138,8 +138,7 @@ fdep_cleanup:
     contaminated soil or groundwater may need special handling and disposal.
   limits: >-
     One point per facility, not per boring. Borings are environmental, so no blow counts or
-    bearing data. Contents vary by site and haven't been checked one by one. Hidden by default
-    and not counted in the headline coverage.
+    bearing data. Contents vary by site and haven't been checked one by one.
 
 fdep_petroleum:
   origin: >-
@@ -157,7 +156,7 @@ fdep_petroleum:
     between road projects.
   limits: >-
     Environmental, not geotechnical, borings. "No cleanup required" sites may hold little
-    subsurface data. Hidden by default.
+    subsurface data.
 
 fdep_drycleaning:
   origin: >-
@@ -171,7 +170,7 @@ fdep_drycleaning:
     monitoring wells. That's useful for shallow soil type and groundwater, and a flag for
     contaminated-soil handling in any excavation.
   limits: >-
-    Environmental, not geotechnical, borings. Hidden by default.
+    Environmental, not geotechnical, borings.
 
 sjrwmd_erp:
   origin: >-
@@ -198,4 +197,4 @@ sjrwmd_erp:
     Most permits from before about 2010 have only correspondence and the permit online, not
     the application package. Whether a given permit contains borings has to be checked in its
     documents. Permits over 100 acres (campus or master permits) are drawn dashed and don't
-    count toward coverage. Hidden by default.
+    count toward coverage.

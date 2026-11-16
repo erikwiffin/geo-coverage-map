@@ -480,3 +480,12 @@ When a request is blocked, the error names the host; add it to the allowlist and
   `build` copies each write-up into `manifest.json`. The About panel opens with a "what to look
   for, and where" table and shows each write-up as a card; the "i" button next to each source
   opens its card.
+- **All sources on by default; shareable URLs (2026-11-16):** every source has
+  `default_on: true`. The pipeline's default filters no longer exclude any kind, so
+  `stats.json` `pct_covered` is what the map shows on load (69% at 250 m), and
+  `pct_covered_geotechnical_only` keeps the borings-only figure (4.7% at 250 m). The web app
+  stores its view in the query string (`web/src/urlstate.ts`), writing only values that differ
+  from the defaults: `r` radius, `tier`, `types`, `src` (enabled sources; empty = none), `y`
+  year range, `undated`, `hide` (hidden layers), `map` (zoom/lat/lng, once the user moves the
+  map) and `about` (open source card, or `guide`). It updates on every change with
+  `history.replaceState`; a "Copy link to this view" button copies it.

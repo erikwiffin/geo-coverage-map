@@ -70,7 +70,7 @@
    "license": "Florida agency public record (FDEP / Florida Geological Survey).",
    "disclaimer": null,
    "doc_label": null,
-   "default_on": false,
+   "default_on": true,
    "status": "ok",
    "fetched": "2026-11-16T02:43:48+00:00",
    "n_raw": 157,
@@ -78,7 +78,7 @@
     "origin": "Florida Geological Survey wells layer on FDEP's open-data map server (OpenData/FGS_WELLS), queried directly. Each well links to its borehole summary in FGS's Geologic Data Explorer.",
     "contents": "157 wells and boreholes: water-supply wells, stratigraphic test holes, monitoring wells. They are deep (median 250 ft, up to 3,400 ft) and drilled 1930\u20132016. The record holds total depth, elevation, drilling date and company. 134 have an FGS lithologic log (cuttings or core described by a geologist) and 72 a driller's log, both through the linked summary.",
     "design_use": "Geology, not soil mechanics. The lithologic logs show the regional layering under Gainesville: surficial sands, the clayey Hawthorn Group, and the depth to the Ocala Limestone. That indicates where shallow clays will matter (over-excavation) and roughly how deep a pile would meet limestone, and it flags karst-prone settings where sinkhole risk enters foundation choice.",
-    "limits": "No blow counts or strength data, and log descriptions are geological, not engineering classifications. Hidden by default and not counted in the headline coverage."
+    "limits": "No blow counts or strength data, and log descriptions are geological, not engineering classifications."
    },
    "n_in_area": 157,
    "n_after_dedupe": 157
@@ -92,7 +92,7 @@
    "license": "US federal work (USGS), public domain.",
    "disclaimer": null,
    "doc_label": "USGS monitoring-location page",
-   "default_on": false,
+   "default_on": true,
    "status": "ok",
    "fetched": "2026-11-16T02:43:48+00:00",
    "n_raw": 28,
@@ -100,7 +100,7 @@
     "origin": "USGS National Water Information System site service (waterservices.usgs.gov), queried for groundwater sites in the city's bounding box. US federal data: public domain (tier 1).",
     "contents": "28 groundwater sites, all completed in the Floridan aquifer, with well and hole depth (23 sites; median about 190 ft, up to 3,167 ft) and construction dates 1968\u20132004. Each links to its USGS monitoring-location page, which for many sites has a water-level history.",
     "design_use": "Groundwater, not soil. Where a site has a water-level record, it shows the seasonal range of the Floridan aquifer's potentiometric surface, background for dewatering a deep excavation. For a pool, the design water level depends on the shallow (surficial) water table; these deep wells only bound it.",
-    "limits": "Deep wells, few sites. No lithology or engineering properties in the data we import. Hidden by default."
+    "limits": "Deep wells, few sites. No lithology or engineering properties in the data we import."
    },
    "n_in_area": 28,
    "n_after_dedupe": 28
@@ -114,7 +114,7 @@
    "license": "Florida agency public record (St. Johns River Water Management District).",
    "disclaimer": null,
    "doc_label": null,
-   "default_on": false,
+   "default_on": true,
    "status": "ok",
    "fetched": "2026-11-16T02:43:48+00:00",
    "n_raw": 4054,
@@ -122,7 +122,7 @@
     "origin": "St. Johns River Water Management District's permitting map service (layer \"All Wells\" on permitting.sjrwmd.com), queried directly. These are the district's well-construction and well-permit records. Although it's SJRWMD's layer, Gainesville records cover the whole city, including the part in the Suwannee River district.",
     "contents": "4,037 wells: 1,478 monitoring wells (median depth 18 ft), domestic, irrigation, remediation and public-supply wells. The record holds total depth (3,357 wells), casing depth, diameter, use, drilling contractor, permit number, Florida unique well ID and, for 2,209 wells, the initial static water level. Many wells at one site share one coordinate, and those are flagged as approximate.",
     "design_use": "Two useful indicators, both rough. The initial static water level, especially from the many shallow monitoring wells, gives a sense of how deep groundwater sits nearby, an input to excavation dewatering and the design water level for a pool (uplift and hydrostatic-relief design). For wells drilled into the Floridan aquifer, casing depth often reflects where the driller reached limestone, a crude depth-to-rock indicator for deep foundations and karst screening.",
-    "limits": "No soil descriptions or strength data. Water levels are single readings at completion, not seasonal highs. Hidden by default."
+    "limits": "No soil descriptions or strength data. Water levels are single readings at completion, not seasonal highs."
    },
    "n_in_area": 4054,
    "n_after_dedupe": 4037
@@ -136,7 +136,7 @@
    "license": "Florida agency public record (St. Johns River Water Management District).",
    "disclaimer": null,
    "doc_label": "SJRWMD e-Permitting record",
-   "default_on": false,
+   "default_on": true,
    "status": "ok",
    "fetched": "2026-11-16T02:43:49+00:00",
    "n_raw": 2680,
@@ -144,7 +144,7 @@
     "origin": "St. Johns River Water Management District Environmental Resource Permit (ERP) application boundaries (layer 4 of the permitting map service on permitting.sjrwmd.com). Each permit links to its public e-Permitting record, whose documents (application, stormwater report, plans, responses to staff questions) can be downloaded without a login.",
     "contents": "1,129 permits (2,680 permit sequences merged by permit number; never-issued applications dropped), mostly stormwater permits for development: shopping centres, apartments, offices, subdivisions, public projects. Each area has permit type, status, applicant, decision and expiry dates, and its mapped boundary (median 0.5 acres). 495 permits date from 2010 or later.",
     "design_use": "Potentially the richest source for private sites. Stormwater ponds and exfiltration systems must be designed to the seasonal high water table, so recent applications usually include a geotechnical report. In a sample of Gainesville permits, the 2021\u20132022 applications (Oaks Mall Master Basin; Sunshine State RV) contained full geotechnical reports by local consultants: SPT boring logs with N-values, auger borings, soil classifications and seasonal high groundwater estimates. That's the same content, and often the same firms, as the site-specific report a pool or building project would get, including recommendations on over-excavation and compaction.",
-    "limits": "Most permits from before about 2010 have only correspondence and the permit online, not the application package. Whether a given permit contains borings has to be checked in its documents. Permits over 100 acres (campus or master permits) are drawn dashed and don't count toward coverage. Hidden by default."
+    "limits": "Most permits from before about 2010 have only correspondence and the permit online, not the application package. Whether a given permit contains borings has to be checked in its documents. Permits over 100 acres (campus or master permits) are drawn dashed and don't count toward coverage."
    },
    "n_in_area": 1129,
    "n_after_dedupe": 1129,
@@ -161,7 +161,7 @@
    "doc_label": null,
    "default_on": true,
    "status": "ok",
-   "fetched": "2026-11-16T03:06:05+00:00",
+   "fetched": "2026-11-16T03:32:08+00:00",
    "n_raw": 57,
    "about": {
     "origin": "Geosetta (geosetta.org), a non-profit that compiles public boring logs and extracts their data. With no API key, areas were drawn on Geosetta's map and exported as its DIGGS viewer pages (three exports covering Gainesville). The pipeline reads the DIGGS XML embedded in each page. Geosetta's terms require its disclaimer to accompany the data, so this is tier 4.",
@@ -183,7 +183,7 @@
    "license": "Florida agency public record (FDEP).",
    "disclaimer": null,
    "doc_label": "FDEP cleanup documents (site assessment reports)",
-   "default_on": false,
+   "default_on": true,
    "status": "ok",
    "fetched": "2026-11-16T02:43:49+00:00",
    "n_raw": 131,
@@ -191,7 +191,7 @@
     "origin": "FDEP open data: DEP Cleanup Sites (OpenData/CLEANUP_SP), active sites in all cleanup programs. Each site links to its public file search in DEP Nexus.",
     "contents": "126 facilities (after merging the same facility across FDEP layers): petroleum tank sites, other contamination cleanups, brownfields, PFAS and Superfund sites, with address, program and remediation status.",
     "design_use": "A cleanup site's file usually includes site assessment reports with soil borings (typically direct-push or hand-auger lithologic descriptions, not SPT), monitoring-well logs and measured groundwater levels. That gives the shallow soil types and water table near the site. For an excavation (a pool, an over-excavation), it also warns that contaminated soil or groundwater may need special handling and disposal.",
-    "limits": "One point per facility, not per boring. Borings are environmental, so no blow counts or bearing data. Contents vary by site and haven't been checked one by one. Hidden by default and not counted in the headline coverage."
+    "limits": "One point per facility, not per boring. Borings are environmental, so no blow counts or bearing data. Contents vary by site and haven't been checked one by one."
    },
    "n_in_area": 126,
    "n_after_dedupe": 126
@@ -205,7 +205,7 @@
    "license": "Florida agency public record (FDEP).",
    "disclaimer": null,
    "doc_label": "FDEP cleanup documents (site assessment reports)",
-   "default_on": false,
+   "default_on": true,
    "status": "ok",
    "fetched": "2026-11-16T02:43:49+00:00",
    "n_raw": 362,
@@ -213,7 +213,7 @@
     "origin": "FDEP open data: Petroleum Contamination Monitoring discharges from the Storage Tank Contamination Monitoring database (OpenData/DWM_STCM, layer 2), including closed cleanups. Each facility links to its DEP Nexus documents.",
     "contents": "236 facilities not already in the Cleanup Sites layer (309 facilities and 362 discharges in all), mostly retail fuel stations, with cleanup status (183 closed, 53 \"no cleanup required\") and the date of the earliest discharge (1982\u20132014).",
     "design_use": "Same as the other cleanup sites. Closed petroleum sites went through site assessment, so their files typically hold shallow soil-boring descriptions, monitoring-well construction and groundwater measurements. Gas stations sit on busy corridors, so these fill in areas between road projects.",
-    "limits": "Environmental, not geotechnical, borings. \"No cleanup required\" sites may hold little subsurface data. Hidden by default."
+    "limits": "Environmental, not geotechnical, borings. \"No cleanup required\" sites may hold little subsurface data."
    },
    "n_in_area": 309,
    "n_after_dedupe": 236
@@ -227,7 +227,7 @@
    "license": "Florida agency public record (FDEP).",
    "disclaimer": null,
    "doc_label": "FDEP cleanup documents (site assessment reports)",
-   "default_on": false,
+   "default_on": true,
    "status": "ok",
    "fetched": "2026-11-16T02:43:49+00:00",
    "n_raw": 18,
@@ -235,12 +235,12 @@
     "origin": "FDEP open data: Drycleaning Solvent Cleanup Program sites (OpenData/DWM_STCM, layer 4). Each links to its DEP Nexus documents.",
     "contents": "2 facilities not already in the Cleanup Sites layer (18 dry cleaners in all), with program, status and site ID.",
     "design_use": "Solvent investigations often go deeper than petroleum ones and include soil borings and monitoring wells. That's useful for shallow soil type and groundwater, and a flag for contaminated-soil handling in any excavation.",
-    "limits": "Environmental, not geotechnical, borings. Hidden by default."
+    "limits": "Environmental, not geotechnical, borings."
    },
    "n_in_area": 18,
    "n_after_dedupe": 2
   }
  },
- "built": "2026-11-16T03:06:11+00:00",
+ "built": "2026-11-16T03:32:14+00:00",
  "basemap_style": "https://tiles.openfreemap.org/styles/positron"
 }

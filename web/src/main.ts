@@ -3,6 +3,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import "./style.css";
 import { cellToBoundary } from "h3-js";
 import { areaPseudoPoints } from "./areas";
+import { decodeState, encodeState, ViewState } from "./urlstate";
 import {
   applyFilters, Boring, coverageCurve, Filters, findGaps, Grid, makeGrid, median,
   nearestDistances, reportCounts,
@@ -93,6 +94,28 @@ async function main() {
     layers: { boundary: true, hexes: true, borings: true, reports: true, areas: true, gaps: true } as Record<string, boolean>,
   };
 
+  // ---------------------------------------------------------------- shareable URL state
+  const LAYER_KEYS = Object.keys(state.layers);
+  const sourceIds = sources.map(([id]) => id);
+  const defaults: ViewState = { radius: state.radius, maxTier: 4, types: new Set(TYPES), sources: new Set(state.filters.sources),
+    yearMin: y0, yearMax: y1, includeUndated: true, hiddenLayers: new Set() };
+  const initial = decodeState(location.search, defaults, TYPES, sourceIds.filter((id) => manifest.sources[id].status === "ok"), LAYER_KEYS);
+  state.radius = initial.radius;
+  Object.assign(state.filters, { maxTier: initial.maxTier, types: initial.types, sources: initial.sources,
+    yearMin: Math.max(y0, initial.yearMin), yearMax: Math.min(y1, initial.yearMax), includeUndated: initial.includeUndated });
+  for (const k of initial.hiddenLayers) state.layers[k] = false;
+  let mapView = initial.map;   // only written once the view differs from the default fit
+  let aboutOpen: string | undefined;
+  function writeUrl() {
+    const f = state.filters;
+    const v: ViewState = { radius: state.radius, maxTier: f.maxTier, types: f.types, sources: f.sources, yearMin: f.yearMin,
+      yearMax: f.yearMax, includeUndated: f.includeUndated, hiddenLayers: new Set(LAYER_KEYS.filter((k) => !state.layers[k])),
+      map: mapView, about: aboutOpen };
+    const q = encodeState(v, defaults, TYPES, sourceIds);
+    const url = location.pathname + (q ? "?" + q : "") + location.hash;
+    if (url !== location.pathname + location.search + location.hash) history.replaceState(null, "", url);
+  }
+
   // ---------------------------------------------------------------- map
   const map = new maplibregl.Map({
     container: "map",
@@ -103,7 +126,14 @@ async function main() {
   map.addControl(new maplibregl.NavigationControl(), "top-left");
   map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
   const bb = bbox(bgeom);
-  map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 30, duration: 0 });
+  if (mapView) map.jumpTo({ center: [mapView.lng, mapView.lat], zoom: mapView.zoom });
+  else map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 30, duration: 0 });
+  map.on("moveend", (e) => {
+    if (!(e as { originalEvent?: unknown }).originalEvent && !mapView) return; // ignore the initial fit
+    const c = map.getCenter();
+    mapView = { zoom: map.getZoom(), lat: c.lat, lng: c.lng };
+    writeUrl();
+  });
 
   let mapReady = false;
   const hexColor = new Int8Array(dgrid.cells.length).fill(-1);
@@ -179,6 +209,7 @@ async function main() {
       const both = coverageCurve(dist, grid.area, [...SPARK_R, state.radius]);
       const curve = both.slice(0, SPARK_R.length), pct = both[SPARK_R.length];
       last = { dist, ddist, filtered, pct, curve };
+      writeUrl();
       const t1 = performance.now();
       updateMap();
       const t2 = performance.now();
@@ -390,11 +421,11 @@ async function main() {
     presets.addEventListener("click", (e) => { const r = (e.target as HTMLElement).dataset.r; if (r) setRadius(Number(r)); });
     radius.addEventListener("input", () => setRadius(Number(radius.value)));
 
-    $("tiers").innerHTML = [1, 2, 3, 4].map((t) => `<label class="check"><input type="radio" name="tier" value="${t}" ${t === 4 ? "checked" : ""}/> ${TIER_LABELS[t]}</label>`).join("");
+    $("tiers").innerHTML = [1, 2, 3, 4].map((t) => `<label class="check"><input type="radio" name="tier" value="${t}" ${t === state.filters.maxTier ? "checked" : ""}/> ${TIER_LABELS[t]}</label>`).join("");
     $("tiers").addEventListener("change", (e) => { state.filters.maxTier = Number((e.target as HTMLInputElement).value); recompute(); });
 
     const tcount = (t: string) => t === "Permit" ? areasFC.features.length : realBorings.filter((b) => b.boring_type === t).length;
-    $("types").innerHTML = TYPES.map((t) => `<label class="check"><input type="checkbox" value="${t}" checked/> <span class="swatch" style="background:${TYPE_COLOR[t]}"></span>${TYPE_LABEL[t] ?? t} <span class="hint">${tcount(t)}</span></label>`).join("");
+    $("types").innerHTML = TYPES.map((t) => `<label class="check"><input type="checkbox" value="${t}" ${state.filters.types.has(t) ? "checked" : ""}/> <span class="swatch" style="background:${TYPE_COLOR[t]}"></span>${TYPE_LABEL[t] ?? t} <span class="hint">${tcount(t)}</span></label>`).join("");
     $("types").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; i.checked ? state.filters.types.add(i.value) : state.filters.types.delete(i.value); recompute(); });
 
     $("sources").innerHTML = sources.map(([id, s]) => {
@@ -405,13 +436,13 @@ async function main() {
     }).join("");
     $("sources").addEventListener("click", (e) => {
       const id = (e.target as HTMLElement).dataset?.about;
-      if (id) { renderAbout(id); $<HTMLDialogElement>("about").showModal(); }
+      if (id) openAbout(id);
     });
     $("sources").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; i.checked ? state.filters.sources.add(i.value) : state.filters.sources.delete(i.value); recompute(); });
 
     const ymin = $<HTMLInputElement>("year-min"), ymax = $<HTMLInputElement>("year-max");
     for (const el of [ymin, ymax]) { el.min = String(y0); el.max = String(y1); el.step = "1"; }
-    ymin.value = String(y0); ymax.value = String(y1);
+    ymin.value = String(state.filters.yearMin); ymax.value = String(state.filters.yearMax);
     const syncYears = () => {
       let a = Number(ymin.value), b = Number(ymax.value);
       if (a > b) [a, b] = [b, a];
@@ -420,13 +451,14 @@ async function main() {
       recompute();
     };
     ymin.addEventListener("input", syncYears); ymax.addEventListener("input", syncYears);
-    $("year-min-val").textContent = String(y0); $("year-max-val").textContent = String(y1);
+    $("year-min-val").textContent = String(state.filters.yearMin); $("year-max-val").textContent = String(state.filters.yearMax);
+    $<HTMLInputElement>("undated").checked = state.filters.includeUndated;
     $<HTMLInputElement>("undated").addEventListener("change", (e) => { state.filters.includeUndated = (e.target as HTMLInputElement).checked; recompute(); });
 
 
     const L: [string, string][] = [["hexes", "Coverage hexes"], ["borings", "Borings"], ["reports", "Report footprints"], ["areas", "Permit areas"], ["gaps", "Gaps"], ["boundary", "City boundary"]];
-    $("layers").innerHTML = L.map(([k, l]) => `<label class="check"><input type="checkbox" value="${k}" checked/> ${l}</label>`).join("");
-    $("layers").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; state.layers[i.value] = i.checked; applyLayerVisibility(); if (i.value === "gaps" && i.checked) recompute(); });
+    $("layers").innerHTML = L.map(([k, l]) => `<label class="check"><input type="checkbox" value="${k}" ${state.layers[k] ? "checked" : ""}/> ${l}</label>`).join("");
+    $("layers").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; state.layers[i.value] = i.checked; applyLayerVisibility(); writeUrl(); if (i.value === "gaps" && i.checked) recompute(); });
 
     $("export-csv").addEventListener("click", exportCSV);
     $("export-geojson").addEventListener("click", () => {
@@ -434,8 +466,17 @@ async function main() {
       download("borings_filtered.geojson", "application/geo+json", JSON.stringify({ type: "FeatureCollection",
         features: last.filtered.filter(isReal).map((b) => ({ type: "Feature", geometry: { type: "Point", coordinates: [b.lon, b.lat] }, properties: b })) }));
     });
-    $("about-btn").addEventListener("click", () => { renderAbout(); $<HTMLDialogElement>("about").showModal(); });
+    $("about-btn").addEventListener("click", () => openAbout());
+    $("copy-link").addEventListener("click", async () => {
+      writeUrl();
+      const b = $("copy-link");
+      try { await navigator.clipboard.writeText(location.href); b.textContent = "Link copied"; }
+      catch { prompt("Copy this link:", location.href); }
+      setTimeout(() => (b.textContent = "Copy link to this view"), 2000);
+    });
+    $<HTMLDialogElement>("about").addEventListener("close", () => { aboutOpen = undefined; writeUrl(); });
     setRadius(state.radius);
+    if (initial.about) setTimeout(() => openAbout(initial.about === "guide" ? undefined : initial.about), 0);
     $("foot-sources").innerHTML = `Data built ${esc((manifest.built ?? manifest.generated).slice(0, 10))}. Basemap © OpenFreeMap, © OpenStreetMap contributors.`;
   }
 
@@ -451,6 +492,14 @@ async function main() {
       ...[...new Set([...stats.radii_m, state.radius])].sort((a, b) => a - b).map((r) =>
         [`pct_covered_${r}m`, coverageCurve(last!.dist, grid.area, [r])[0].toFixed(3)])];
     download("coverage_stats.csv", "text/csv", rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n"));
+  }
+
+  function openAbout(focus?: string) {
+    renderAbout(focus);
+    const d = $<HTMLDialogElement>("about");
+    if (!d.open) d.showModal();
+    aboutOpen = focus ?? "guide";
+    writeUrl();
   }
 
   function renderAbout(focus?: string) {
@@ -490,9 +539,10 @@ async function main() {
         <tr><td>Piles or ground improvement</td><td>Low N-values to depth, depth to limestone, voids or weathered rock (karst)</td><td>Deep FDOT SPT borings, FGS lithologic logs, SJRWMD casing depths (rough depth to rock)</td></tr>
         <tr><td>Groundwater (pools, excavations)</td><td>Seasonal high water table; for a pool, uplift and the need for hydrostatic relief</td><td>ERP geotech reports (seasonal high water), FDOT logs, SJRWMD static water levels, FDEP monitoring wells; USGS for the deep aquifer</td></tr>
       </table>
-      <p class="muted">The headline coverage counts only geotechnical borings (FDOT and Geosetta). Wells, cleanup sites and permit areas are off by default;
-      turn them on under Sources to see where else information may exist. Coverage is area-based on an H3 grid
-      (resolution ${grid.resolution}, ${grid.cells.length.toLocaleString()} cells): the share of the city within R of qualifying data.</p>
+      <p class="muted">Coverage counts every source switched on under Sources: geotechnical borings, wells, cleanup sites and permit areas.
+      They carry very different information (see each card below), so turn sources off to see, for example, where only SPT borings exist.
+      Coverage is area-based on an H3 grid (resolution ${grid.resolution}, ${grid.cells.length.toLocaleString()} cells): the share of the city within R of the selected data.
+      The current view, filters included, is saved in the page address, so it can be shared as a link.</p>
 
       <h3>Sources</h3>
       ${cards}
