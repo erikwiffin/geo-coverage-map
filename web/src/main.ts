@@ -59,7 +59,7 @@ async function main() {
   const [boundary, boringsFC, reportsFC, manifest, stats, areasFC] = await Promise.all([
     getJSON<FC>("boundary.geojson"), getJSON<FC>("borings.geojson"), getJSON<FC>("reports.geojson"),
     getJSON<Manifest>("manifest.json"), getJSON<Stats>("stats.json"),
-    getJSON<FC>("areas.geojson").catch(() => ({ type: "FeatureCollection", features: [] }) as FC),
+    getJSON<FC>("areas.geojson"),
   ]);
   // Real borings are drawn and counted. Area sources (permit polygons) add pseudo-points at the
   // H3 cells they overlap; those feed the coverage maths only (same model as pipeline/areas.py).

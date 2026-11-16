@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const src = resolve(here, "../../data/processed");
 const dest = resolve(here, "../public/data");
-const files = ["boundary.geojson", "borings.geojson", "reports.geojson", "gaps.geojson",
+const files = ["boundary.geojson", "borings.geojson", "reports.geojson", "gaps.geojson", "areas.geojson",
   "stats.json", "manifest.json"];
 mkdirSync(dest, { recursive: true });
 const missing = files.filter((f) => !existsSync(resolve(src, f)));
