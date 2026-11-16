@@ -1,6 +1,6 @@
 # Data profile: Gainesville, FL
 
-Generated 2026-11-16T01:32:54+00:00.
+Generated 2026-11-16T01:38:18+00:00.
 
 ## FDOT District 2 Soil Borings (`fdot_d2`)
 
@@ -91,7 +91,7 @@ Examples: <http://dotsd2ww01.dot.state.fl.us/intranet/highway-operations/materia
 ```
 {
  "hasAttachments": true,
- "features_with_attachments": "unknown (no attachments.json saved)"
+ "features_with_attachments": 412
 }
 ```
 

@@ -82,11 +82,11 @@
    "n_raw": 47,
    "reason": null,
    "method": "imported DIGGS files from data/manual/geosetta",
-   "fetched": "2026-11-16T01:32:53+00:00",
+   "fetched": "2026-11-16T01:38:17+00:00",
    "n_in_area": 47,
    "n_after_dedupe": 20
   }
  },
- "built": "2026-11-16T01:32:54+00:00",
+ "built": "2026-11-16T01:38:18+00:00",
  "basemap_style": "https://tiles.openfreemap.org/styles/positron"
 }

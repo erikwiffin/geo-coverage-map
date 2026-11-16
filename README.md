@@ -30,6 +30,23 @@ web app). Raw API responses are cached in `data/raw/`; use `--refresh` to refetc
 Outputs go to `data/processed/`: `boundary.geojson`, `borings.geojson` / `.parquet`,
 `reports.geojson`, `gaps.geojson`, `stats.json`, `coverage_curve.png`, `manifest.json`, `profile.md`.
 
+## Publishing (GitHub Pages)
+
+`.github/workflows/pages.yml` builds `web/` and deploys it to GitHub Pages on every push to `main`
+that touches `web/` or `data/processed/` (or run it by hand from the Actions tab). CI doesn't run
+the Python pipeline, because FDOT and Geosetta inputs are browser-saved files. The site shows the
+outputs committed in `data/processed/`. To update the site:
+
+```bash
+python -m pipeline build && python -m pipeline stats --web
+git add data/processed && git commit -m "Update map data" && git push
+```
+
+One-time setup: in the repo, **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+The site is served at `https://<owner>.github.io/<repo>/` (Vite builds with relative paths, so
+any subpath works). `npm run dev`/`build` copy `data/processed/` into `web/public/data`
+automatically (`npm run sync-data`).
+
 ## Tests
 
 ```bash
