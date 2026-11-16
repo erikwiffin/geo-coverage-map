@@ -59,6 +59,13 @@ URLs in a browser, and save the responses into `data/manual/fdot_d2/` (details i
 and records the import in `manifest.json`. Saved `.json` feature pages there are used instead of
 the network, and `attachments.json` gives every boring a direct link to its public log PDF.
 
+### Geosetta (no API key needed for this route)
+
+Draw an area on geosetta.org's map, export the DIGGS viewer page, and save the `.html` (or raw
+DIGGS `.xml`) into `data/manual/geosetta/`. `build` re-reads that folder. Boreholes that match an
+FDOT boring within 5 m add their depth, SPT N-values and soil layers to it; the rest become
+tier-4 borings flagged `approx_location` when Geosetta placed them at a report site.
+
 ## Licensing
 
 Each source has a license tier (SPEC §8), recorded in `manifest.json` and shown in the map's About

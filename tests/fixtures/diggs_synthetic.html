@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!-- GEOSETTA DISCLAIMER: Synthetic test disclaimer text. Keep it attached. -->
+<html><body><script type="application/xml" id="d">
+<Diggs xmlns="http://diggsml.org/schemas/3" xmlns:diggs="http://diggsml.org/schemas/3" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <project><Project gml:id="Project0"><gml:name>SYNTHETIC SITE</gml:name>
+    <role><Role><businessAssociate><BusinessAssociate gml:id="BA0"><gml:name>FDOT</gml:name></BusinessAssociate></businessAssociate></Role></role></Project></project>
+  <samplingFeature><Borehole gml:id="Borehole_Num_1"><gml:name>B-1</gml:name><projectRef xlink:href="#Project0"/>
+    <referencePoint><PointLocation gml:id="P1"><gml:pos>29.65 -82.34 100.0</gml:pos></PointLocation></referencePoint>
+    <totalMeasuredDepth uom="ft">0.0</totalMeasuredDepth></Borehole></samplingFeature>
+  <samplingFeature><Borehole gml:id="Borehole_Num_2"><gml:name>B-2</gml:name><projectRef xlink:href="#Project0"/>
+    <referencePoint><PointLocation gml:id="P2"><gml:pos>29.65 -82.34 100.0</gml:pos></PointLocation></referencePoint>
+    <totalMeasuredDepth uom="ft">30.0</totalMeasuredDepth></Borehole></samplingFeature>
+  <measurement><Test gml:id="T1"><gml:name>SPT</gml:name><samplingFeatureRef xlink:href="#Borehole_Num_1"/>
+    <outcome><TestResult gml:id="R1"><location><LinearExtent gml:id="L1"><gml:posList>1.0 2.5</gml:posList></LinearExtent></location>
+    <results><ResultSet><parameters><PropertyParameters gml:id="PP1"><properties><Property index="1" gml:id="pr1"><propertyName>N-Value</propertyName><propertyClass>n_value</propertyClass></Property></properties></PropertyParameters></parameters>
+    <dataValues>12</dataValues></ResultSet></results></TestResult></outcome></Test></measurement>
+  <measurement><Test gml:id="T2"><gml:name>SPT</gml:name><samplingFeatureRef xlink:href="#Borehole_Num_1"/>
+    <outcome><TestResult gml:id="R2"><location><LinearExtent gml:id="L2"><gml:posList>18.5 20.0</gml:posList></LinearExtent></location>
+    <results><ResultSet><parameters><PropertyParameters gml:id="PP2"><properties><Property index="1" gml:id="pr2"><propertyName>N-Value</propertyName><propertyClass>n_value</propertyClass></Property></properties></PropertyParameters></parameters>
+    <dataValues>30</dataValues></ResultSet></results></TestResult></outcome></Test></measurement>
+  <observation><LithologySystem gml:id="LS1"><samplingFeatureRef xlink:href="#Borehole_Num_1"/><lithologyObservation><LithologyObservation gml:id="LO1">
+    <location><LinearExtent gml:id="LL1"><gml:posList>0.0 20.0</gml:posList></LinearExtent></location>
+    <primaryLithology><Lithology gml:id="Li1"><lithDescription>BROWN FINE SAND (SP)</lithDescription><classificationSymbol>SP</classificationSymbol></Lithology></primaryLithology></LithologyObservation></lithologyObservation></LithologySystem></observation>
+  <observation><LithologySystem gml:id="LS2"><samplingFeatureRef xlink:href="#Borehole_Num_1"/><lithologyObservation><LithologyObservation gml:id="LO2">
+    <location><LinearExtent gml:id="LL2"><gml:posList>20.0 20.0</gml:posList></LinearExtent></location>
+    <primaryLithology><Lithology gml:id="Li2"><lithDescription>Bottom of borehole</lithDescription></Lithology></primaryLithology></LithologyObservation></lithologyObservation></LithologySystem></observation>
+</Diggs>
+</script></body></html>

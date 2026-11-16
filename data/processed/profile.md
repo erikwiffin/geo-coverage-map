@@ -1,6 +1,6 @@
 # Data profile: Gainesville, FL
 
-Generated 2026-11-16T01:06:19+00:00.
+Generated 2026-11-16T01:32:54+00:00.
 
 ## FDOT District 2 Soil Borings (`fdot_d2`)
 
@@ -239,9 +239,86 @@ Examples: <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18576>
 | fgs_wells:1986 | Well | City of Gainesville 1954 (Airport) |  | 1954.0 | 350.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.274163 | 29.695836 |
 
 
+## Geosetta (DIGGS area exports) (`geosetta_diggs`)
+
+- URL: None
+- Tier 4, kind `geotechnical`
+- Raw records in envelope: **47**; after cleaning: **47**
+- Flags: {'approx_location': 20}
+
+### Null rate per field
+
+| field | null_% |
+|---|---|
+| fk | 0.0 |
+| name | 0.0 |
+| project | 0.0 |
+| provider | 0.0 |
+| lat | 0.0 |
+| lon | 0.0 |
+| elev_ft | 0.0 |
+| total_depth_ft | 0.0 |
+| n_values | 0.0 |
+| lithology | 0.0 |
+| lab | 0.0 |
+| groundwater_depth_ft | 76.6 |
+| test_types | 0.0 |
+| depth_ft | 0.0 |
+| test_type | 0.0 |
+| uid | 0.0 |
+| flags | 0.0 |
+| log | 0.0 |
+
+### `test_type` distribution
+
+| test_type | n |
+|---|---|
+| SPT | 45 |
+| Depth to groundwater table observation | 1 |
+| Depth to groundwater table observation,The percentage of par | 1 |
+
+### Normalized boring_type
+
+| type | n |
+|---|---|
+| SPT | 45 |
+| Other | 2 |
+
+### Date formats (field `None`)
+
+Share with a parsed year: **0.0%**; undated: **47**.
+
+| format | n |
+|---|---|
+| null | 47 |
+
+### Report-key candidates
+
+Normalized before keying: nothing.
+
+| key | non_null_pct | distinct |
+|---|---|---|
+| project | 100.0 | 10 |
+
+### Sample rows (10)
+
+| boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
+|---|---|---|---|---|---|---|---|---|---|
+| geosetta_diggs:29.65398732;-82.41391143#ff7ae3de | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.413911 | 29.653987 |
+| geosetta_diggs:29.65697928;-82.41652743#c618ebb3 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.416527 | 29.656979 |
+| geosetta_diggs:29.65525635;-82.4149488#20da4274 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.414949 | 29.655256 |
+| geosetta_diggs:29.6888682;-82.42318691#8e683156 | SPT | 129+19, 32.0' Lt. |  |  | 30.5 | geosetta_diggs:project=SPT BORINGS FOR ROADWAY STA. 129+19 - |  | -82.423187 | 29.688868 |
+| geosetta_diggs:29.65453707;-82.41435742#d1faa4f1 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.414357 | 29.654537 |
+| geosetta_diggs:29.65741689;-82.41690904#5282866a | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.416909 | 29.657417 |
+| geosetta_diggs:29.57818442;-82.33643683#b078caf6 | SPT | 514+53, 42' LT |  |  | 21.5 | geosetta_diggs:project=STATE ROAD 25 BOX CULVERT REPAIR |  | -82.336437 | 29.578184 |
+| geosetta_diggs:29.65541703;-82.41503896#970cec62 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.415039 | 29.655417 |
+| geosetta_diggs:29.65582667;-82.41537391#20f7e847 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.415374 | 29.655827 |
+| geosetta_diggs:29.65426943;-82.41413128#dfc05192 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.414131 | 29.654269 |
+
+
 ## Reports (M2)
 
-- Reports built: **179**; borings in reports: **569** (= sum of n_borings: 569); borings without a key: **0**.
+- Reports built: **184**; borings in reports: **589** (= sum of n_borings: 589); borings without a key: **0**.
 - Reports spanning > 5 km (corridor project or bad key): **1**
 
   - `fdot_d2:FIN=44703215201` — 26 borings, 5042 m

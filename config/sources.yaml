@@ -75,6 +75,34 @@
 #   kind: geotechnical
 #   license: US federal work, public domain.
 
+# Geosetta area exports (draw an area on geosetta.org's map, export the DIGGS viewer HTML) or
+# raw DIGGS XML, saved into import_dir. Parsed logs: depth, SPT N-values, lab tests, lithology.
+# Boreholes that match a lower-tier boring (e.g. FDOT) within dedupe_m enrich it instead of
+# duplicating it. Geosetta terms: the disclaimer must accompany redistributed outputs.
+- id: geosetta_diggs
+  name: Geosetta (DIGGS area exports)
+  adapter: diggs
+  import_dir: data/manual/geosetta
+  homepage: https://geosetta.org
+  tier: 4
+  kind: geotechnical
+  license: >-
+    Geosetta terms of use: compiled from DOTs, agencies and public sources; parsed values may
+    contain transcription errors. Disclaimer must accompany redistributed outputs.
+  disclaimer_file: data/manual/geosetta/DISCLAIMER.txt
+  keep_colocated: true        # site-level boreholes share a coordinate; don't collapse them
+  field_map:
+    native_id: uid
+    boring_name: name
+    type: test_type
+    depth_ft: depth_ft
+    elev: elev_ft
+    gw: groundwater_depth_ft
+    doc_name: project
+    consultant: provider
+    log: log
+  report_key: [project]
+
 # Optional, needs GEOSETTA_API_KEY. Read https://geosetta.org/api_docs/ before enabling.
 # - id: geosetta
 #   adapter: geosetta

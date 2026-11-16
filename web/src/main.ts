@@ -203,8 +203,11 @@ async function main() {
     const msgs: string[] = [];
     if (failed.length) msgs.push(`Unavailable: ${failed.map(([id, s]) => `${s.name ?? id} (${s.status})`).join(", ")}.`);
     if (!filtered.length) msgs.push("No borings match the current filters.");
-    const gs = sources.filter(([id, s]) => state.filters.sources.has(id) && s.disclaimer);
-    for (const [, s] of gs) msgs.push(s.disclaimer!);
+    // Disclaimers travel with the data: a source is "in use" when it is switched on or when its
+    // parsed logs enrich borings from another source (e.g. Geosetta logs on FDOT borings).
+    const inUse = new Set([...state.filters.sources, ...filtered.map((b) => b.log_from as string).filter(Boolean)]);
+    const gs = sources.filter(([id, s]) => inUse.has(id) && s.disclaimer);
+    for (const [, s] of gs) msgs.push(`${s.name ?? "Source"} data is shown with its disclaimer (see About): not for design; may contain transcription errors.`);
     notice.hidden = !msgs.length;
     notice.textContent = msgs.join(" ");
   }
@@ -278,9 +281,11 @@ async function main() {
       const url = safeUrl(p.doc_url);
       html = table([
         ["Boring", p.boring_name], ["Type", p.boring_type], ["Date", p.date ?? p.year ?? p.date_raw ?? "undated"],
-        ["Source", src?.name ?? p.source_id], ["Tier", p.tier], ["Depth", p.depth_ft != null ? `${p.depth_ft} ft` : null],
+        ["Source", src?.name ?? p.source_id], ["Tier", p.tier], ["Depth", p.depth_ft != null ? `${p.depth_ft} ft${p.log_from && p.log_from !== p.source_id ? " (from parsed log)" : ""}` : null],
         ["Elevation", p.elev], ["Water level", p.gw], ["FDOT project (FIN)", p.fin],
-      ]) + docLine(url, p.doc_internal);
+        ["Project", p.source_id !== "fdot_d2" ? p.doc_name : null],
+        ["Location", String(p.flags ?? "").includes("approx_location") ? "approximate: placed at a geocoded report site, may be far off" : null],
+      ]) + logHtml(p.log, p.log_from) + docLine(url, p.doc_internal);
     } else if (f.layer.id === "reports-fill") {
       const src = manifest.sources[p.source_id as string];
       const url = safeUrl(p.doc_url);
@@ -302,6 +307,20 @@ async function main() {
         /\/attachments\/\d+$/.test(url) ? "Open boring log (PDF) ↗"
         : /\/attachments$/.test(url) ? "View attached documents ↗" : "Open document ↗"}</a></p>`
     : internal ? `<p class="muted">Document exists only on an internal agency network (not public). File: <code>${esc(String(internal).split(/[\\/]/).pop())}</code>. Request it as a public record.</p>` : "";
+  function logHtml(raw: unknown, from: unknown): string {
+    if (typeof raw !== "string") return "";
+    let log: { n_values?: number[][]; lithology?: (number | string | null)[][]; provider?: string };
+    try { log = JSON.parse(raw); } catch { return ""; }
+    const src = manifest.sources[String(from)]?.name ?? String(from ?? "");
+    const ft = (a: unknown, b: unknown) => `${a}–${b} ft`;
+    const n = (log.n_values ?? []).map(([a, b, v]) => `<tr><td>${ft(a, b)}</td><td class="num">${esc(v)}</td></tr>`).join("");
+    const l = (log.lithology ?? []).map(([a, b, sym, d]) =>
+      `<tr><td>${ft(a, b)}</td><td>${sym ? `<strong>${esc(sym)}</strong> ` : ""}${esc(String(d ?? "").toLowerCase())}</td></tr>`).join("");
+    if (!n && !l) return "";
+    return `<details class="log" open><summary>Boring log <span class="muted">via ${esc(src)}${log.provider ? ` · ${esc(log.provider)}` : ""}</span></summary>
+      <div class="log-body">${n ? `<table><tr><th>Depth</th><th class="num">SPT N</th></tr>${n}</table>` : ""}
+      ${l ? `<table><tr><th>Depth</th><th>Soil</th></tr>${l}</table>` : ""}</div></details>`;
+  }
   const table = (rows: [string, unknown][]) =>
     `<table>${rows.filter(([, v]) => v != null && v !== "").map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</table>`;
   const layerKey = (id: string) => (id.startsWith("report") ? "reports" : id === "clusters" || id === "cluster-count" ? "borings" : id.startsWith("gaps") ? "gaps" : id);

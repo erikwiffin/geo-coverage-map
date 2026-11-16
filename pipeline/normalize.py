@@ -14,8 +14,11 @@ SCHEMA = [
     "boring_uid", "source_id", "tier", "kind", "boring_type", "boring_name",
     "date_raw", "date", "year", "date_format", "depth_ft", "elev", "gw", "report_key",
     "doc_url", "doc_internal", "doc_name", "n_attachments", "project", "fin", "consultant",
-    "lon", "lat", "flags", "also_in", "attrs",
+    "lon", "lat", "flags", "also_in", "log", "log_from", "attrs",
 ]
+# Filled from a merged duplicate when the kept record lacks them (e.g. Geosetta's parsed log
+# depth/N-values attached to the matching FDOT boring).
+ENRICH = ["depth_ft", "log"]
 
 DATE_FORMATS = [
     ("%m/%d/%Y", r"^\d{1,2}/\d{1,2}/\d{4}$"),
@@ -186,15 +189,17 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
             "consultant": get(a, "consultant"),
             "lon": _num(r.get("lon")),
             "lat": _num(r.get("lat")),
-            "flags": [],
+            "flags": list(a.get("flags") or []) if src.get("adapter") == "diggs" else [],
             "also_in": [],
+            "log": json.dumps(get(a, "log"), default=str) if get(a, "log") else None,
+            "log_from": src["id"] if get(a, "log") else None,
             "attrs": json.dumps(a, default=str),
         })
     df = pd.DataFrame(rows, columns=SCHEMA)
-    return clean(df, county_bbox)
+    return clean(df, county_bbox, collapse_colocated=not src.get("keep_colocated"))
 
 
-def clean(df: pd.DataFrame, county_bbox=None) -> pd.DataFrame:
+def clean(df: pd.DataFrame, county_bbox=None, collapse_colocated: bool = True) -> pd.DataFrame:
     if df.empty:
         return df
     bad = df["lon"].isna() | df["lat"].isna() | (df["lon"] == 0) | (df["lat"] == 0)
@@ -208,9 +213,10 @@ def clean(df: pd.DataFrame, county_bbox=None) -> pd.DataFrame:
             df.at[i, "flags"] = df.at[i, "flags"] + (
                 ["swapped_latlon"] if swapped[i] else ["out_of_county"])
     # within-source exact duplicates: same coordinates + boring name
-    key = df["lon"].round(7).astype(str) + "," + df["lat"].round(7).astype(str) + "," + \
-        df["boring_name"].fillna("")
-    df = df[~key.duplicated()].copy()
+    if collapse_colocated:
+        key = df["lon"].round(7).astype(str) + "," + df["lat"].round(7).astype(str) + "," + \
+            df["boring_name"].fillna("")
+        df = df[~key.duplicated()].copy()
     return df
 
 
@@ -243,5 +249,10 @@ def dedupe_across_sources(df: pd.DataFrame, radius_m: float,
             if _compatible(df.at[i, "boring_type"], df.at[j, "boring_type"]):
                 dropped.add(j)
                 also[i].append(df.at[j, "boring_uid"])
+                for col in ENRICH:
+                    if col in df and pd.isna(df.at[i, col]) and not pd.isna(df.at[j, col]):
+                        df.at[i, col] = df.at[j, col]
+                        if col == "log":
+                            df.at[i, "log_from"] = df.at[j, "log_from"]
     df["also_in"] = [also[i] for i in df.index]
     return df.drop(index=sorted(dropped)).reset_index(drop=True)

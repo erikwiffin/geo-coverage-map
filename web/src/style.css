@@ -116,3 +116,10 @@ dialog td, dialog th { border-bottom: 1px solid var(--border); padding: 4px 6px;
   .legend { bottom: auto; top: 8px; right: 8px; max-width: 200px; max-height: calc(55vh - 60px); overflow-y: auto; }
 }
 .maplibregl-popup-content .muted { color: var(--text-secondary); font-size: 12px; margin: 6px 0 0; }
+.maplibregl-popup-content details.log { margin-top: 6px; }
+.maplibregl-popup-content details.log summary { cursor: pointer; font-weight: 600; }
+.maplibregl-popup-content .log-body { max-height: 220px; overflow-y: auto; font-size: 12px; margin-top: 4px; }
+.maplibregl-popup-content .log-body table { width: 100%; margin-bottom: 6px; }
+.maplibregl-popup-content .log-body td, .maplibregl-popup-content .log-body th { padding: 1px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.maplibregl-popup-content .num { text-align: right; font-variant-numeric: tabular-nums; }
+.maplibregl-popup-content .log-body td:first-child { white-space: nowrap; color: var(--text-secondary); }

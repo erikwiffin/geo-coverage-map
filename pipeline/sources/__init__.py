@@ -4,10 +4,11 @@ A raw record is {"attrs": {...native attributes...}, "lon": float|None, "lat": f
 """
 from collections.abc import Callable
 
-from . import arcgis_points, csv_source, geosetta
+from . import arcgis_points, csv_source, diggs, geosetta
 
 ADAPTERS: dict[str, Callable] = {
     "arcgis": arcgis_points.fetch,
     "csv": csv_source.fetch,
+    "diggs": diggs.fetch,
     "geosetta": geosetta.fetch,
 }

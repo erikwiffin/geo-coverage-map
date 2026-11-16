@@ -391,3 +391,22 @@ When a request is blocked, the error names the host; add it to the allowlist and
 - **Coverage, default filters (FDOT only), 2026-11-16:** 0.5% / 1.2% / 4.4% / 11.8% / 27.2% of
   city area within 50 / 100 / 250 / 500 / 1000 m. With borings from 2000 onward only: 12.8% at 1 km.
   The median distance from a city cell to the nearest boring is 1.77 km.
+- **Geosetta via DIGGS area exports (2026-11-16, M5 partly done):** with no API key, the user drew
+  an area on geosetta.org and exported the DIGGS viewer HTML (Geosetta's disclaimer comment plus an
+  embedded DIGGS 3 document). The new `diggs` adapter reads `*.html` and `*.xml` from
+  `data/manual/geosetta/`: boreholes, SPT N-values, lab tests (water content, fines, LL) and
+  USCS lithology, depths in feet. The disclaimer is saved to `DISCLAIMER.txt`, carried in the
+  manifest, and shown in the map's About panel and as a notice whenever Geosetta data is visible.
+  Source `geosetta_diggs`, tier 4.
+  - First export: 47 boreholes. **27 matched FDOT D2 borings within 5 m.** Their parsed log
+    (`depth_ft`, `log`) now *enriches* the FDOT boring (cross-source dedupe fills `ENRICH`
+    columns from the dropped duplicate; `log_from` records where it came from), so 26 FDOT
+    borings now have depth and N-values (one received two co-located Geosetta boreholes).
+  - **20 new boreholes in 5 non-FDOT reports**, all from Geosetta's "Automated Web Crawl": GRU
+    Deerhaven pond embankment (6), Plum Creek Property (6), Boulware Springs Improvements (5),
+    Malcom Randall VA Medical Center boiler building (3). All are placed at a geocoded report
+    site, and several are visibly misplaced (Deerhaven and Boulware Springs by kilometres, the VA
+    by about 1 km). They're flagged `approx_location` (several boreholes on one exact coordinate,
+    or no more than 4 decimal places) and the popup says so. They still count toward coverage.
+  - Co-located boreholes are kept apart (`keep_colocated`); identity = Geosetta functional key
+    `lat;lon` + content hash, so overlapping exports don't double count.

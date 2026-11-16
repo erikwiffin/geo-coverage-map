@@ -57,7 +57,7 @@ def profile_source(src: dict, records: list[dict], norm: pd.DataFrame, extra: di
          f"- Raw records in envelope: **{len(records)}**; after cleaning: **{len(norm)}**"]
     if norm is not None and len(norm):
         flags = pd.Series([f for fl in norm["flags"] for f in fl]).value_counts()
-        s.append(f"- Flags: {dict(flags) if len(flags) else 'none'}")
+        s.append(f"- Flags: {({k: int(v) for k, v in flags.items()}) if len(flags) else 'none'}")
     if attrs.empty:
         return "\n".join(s) + "\n"
 

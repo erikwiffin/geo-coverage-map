@@ -60,6 +60,18 @@ def check_network(ctx) -> int:
     return worst
 
 
+def _source_entry(src: dict) -> dict:
+    entry = {k: src.get(k) for k in ("name", "url", "homepage", "tier", "kind", "license",
+                                     "disclaimer")}
+    entry["default_on"] = src.get("default_on", True)
+    df = src.get("disclaimer_file")
+    if df:
+        p = cfgmod.ROOT / df
+        if p.exists():
+            entry["disclaimer"] = p.read_text().strip()
+    return entry
+
+
 # --------------------------------------------------------------------- fetch
 def fetch(ctx) -> None:
     client = make_client(ctx)
@@ -78,9 +90,7 @@ def fetch(ctx) -> None:
                              "attributes": data["features"][0].get("properties")},
                 "sources": {}}
     for src in ctx.sources:
-        entry = {k: src.get(k) for k in ("name", "url", "homepage", "tier", "kind", "license",
-                                          "disclaimer")}
-        entry["default_on"] = src.get("default_on", True)
+        entry = _source_entry(src)
         try:
             log.info("fetching %s", src["id"])
             recs = ADAPTERS[src["adapter"]](src, ctx, bbox)
@@ -143,10 +153,18 @@ def build(ctx) -> None:
     man = json.loads((ctx.raw_dir / "fetch_manifest.json").read_text())
     frames, profiles = [], []
     for src in ctx.sources:
-        entry = man["sources"].setdefault(src["id"], {
-            k: src.get(k) for k in ("name", "url", "homepage", "tier", "kind", "license",
-                                    "disclaimer")} | {"default_on": src.get("default_on", True)})
+        entry = man["sources"].setdefault(src["id"], _source_entry(src))
+        entry["disclaimer"] = _source_entry(src)["disclaimer"]  # file may appear after fetch
         path = ctx.raw_dir / f"{src['id']}.records.json"
+        if src["adapter"] == "diggs":  # folder-only source: always re-read on build
+            try:
+                recs = ADAPTERS["diggs"](src, ctx, man.get("bbox_fetch"))
+                path.write_text(json.dumps(recs, default=str))
+                entry.update(_source_entry(src), status="ok", n_raw=len(recs), reason=None,
+                             method=f"imported DIGGS files from {src['import_dir']}",
+                             fetched=_now())
+            except FileNotFoundError as e:
+                entry.update(status="skipped", reason=str(e))
         files = arcgis_points.imported_files(src) if src["adapter"] == "arcgis" else []
         if files:  # browser-saved files always win, so `build` alone picks up new downloads
             recs = arcgis_points.from_files(src, files, man.get("bbox_fetch"))
