@@ -1,6 +1,6 @@
 {
  "area": "gainesville",
- "generated": "2026-11-16T02:43:48+00:00",
+ "generated": "2026-11-24T14:29:20+00:00",
  "bbox_fetch": [
   -82.4411445007918,
   29.5777197965482,
@@ -11,7 +11,7 @@
   "url": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer/4",
   "where": "GEOID='1225175'",
   "license": "US Census Bureau TIGER data, public domain.",
-  "fetched": "2026-11-16T02:43:48+00:00",
+  "fetched": "2026-11-24T14:29:20+00:00",
   "attributes": {
    "AREALAND": 165788850,
    "AREAWATER": 3045506,
@@ -46,18 +46,18 @@
    "license": "Florida agency public record (FDOT). See Microdecisions v. Skinner (Fla. 2d DCA 2004). Consultant-authored reports may still carry the consultant's copyright.",
    "disclaimer": null,
    "doc_label": null,
-   "default_on": true,
-   "status": "ok",
-   "fetched": "2026-11-16T00:58:55+00:00",
-   "n_raw": 412,
-   "reason": null,
-   "method": "imported 1 browser-saved file(s) from data/manual/fdot_d2",
    "about": {
     "origin": "FDOT District 2's public Soil Boring viewer (ArcGIS layer \"District 2 Soil Boring Locations\" on gis.fdot.gov). FDOT's firewall blocks scripted downloads, so the boring records and the attachment index were saved from a web browser and imported from files. Each boring links to its log PDF, served by the same FDOT layer as an attachment.",
     "contents": "412 borings in about 20 FDOT projects along state roads (SR 26 / Newberry Rd, SR 24 / Archer Rd, US 441, SR 20, the I-75 interchanges): 271 SPT borings and 141 auger borings. The map record holds location, boring number, type, FDOT project number (FIN), station/offset and, for 19%, a date (2018\u20132025). There's no depth in the record. The linked PDF is the boring log: soil descriptions with AASHTO/USCS classes, SPT blow counts (N-values) by depth for SPT borings, and the groundwater level measured in the hole. 26 of these borings also show a parsed log (depth, N-values, soil layers) from Geosetta.",
     "design_use": "This is the most directly useful source for structural parameters. An SPT log nearby gives the soil profile and N-values, from which a geotechnical engineer estimates relative density and consistency, allowable bearing and settlement. Clayey layers (Hawthorn Group clays are common in Gainesville) or organic soils in the upper 5\u201310 ft are the usual reason a report recommends over-excavating and replacing with clean compacted sand. Very loose sands or weathered limestone with voids at shallow depth point toward ground improvement or deep foundations. The water level in the log feeds the design groundwater level for a pool.\nAuger borings are shallow (typically 5\u201310 ft, for pavement and drainage design) and give soil type and water level, not strength.",
     "limits": "Borings follow the road right-of-way, not private lots, so they describe nearby roadway soils, not your site. Karst conditions in Alachua County can change over short distances. Use them to anticipate what a site-specific report may find, never in place of one."
    },
+   "default_on": true,
+   "status": "ok",
+   "fetched": "2026-11-24T13:45:36+00:00",
+   "n_raw": 412,
+   "reason": null,
+   "method": "imported 1 browser-saved file(s) from data/manual/fdot_d2",
    "n_in_area": 412,
    "n_after_dedupe": 412
   },
@@ -70,16 +70,16 @@
    "license": "Florida agency public record (FDEP / Florida Geological Survey).",
    "disclaimer": null,
    "doc_label": null,
-   "default_on": true,
-   "status": "ok",
-   "fetched": "2026-11-16T02:43:48+00:00",
-   "n_raw": 157,
    "about": {
     "origin": "Florida Geological Survey wells layer on FDEP's open-data map server (OpenData/FGS_WELLS), queried directly. Each well links to its borehole summary in FGS's Geologic Data Explorer.",
     "contents": "157 wells and boreholes: water-supply wells, stratigraphic test holes, monitoring wells. They are deep (median 250 ft, up to 3,400 ft) and drilled 1930\u20132016. The record holds total depth, elevation, drilling date and company. 134 have an FGS lithologic log (cuttings or core described by a geologist) and 72 a driller's log, both through the linked summary.",
     "design_use": "Geology, not soil mechanics. The lithologic logs show the regional layering under Gainesville: surficial sands, the clayey Hawthorn Group, and the depth to the Ocala Limestone. That indicates where shallow clays will matter (over-excavation) and roughly how deep a pile would meet limestone, and it flags karst-prone settings where sinkhole risk enters foundation choice.",
     "limits": "No blow counts or strength data, and log descriptions are geological, not engineering classifications."
    },
+   "default_on": true,
+   "status": "ok",
+   "fetched": "2026-11-24T14:07:39+00:00",
+   "n_raw": 157,
    "n_in_area": 157,
    "n_after_dedupe": 157
   },
@@ -92,16 +92,16 @@
    "license": "US federal work (USGS), public domain.",
    "disclaimer": null,
    "doc_label": "USGS monitoring-location page",
-   "default_on": true,
-   "status": "ok",
-   "fetched": "2026-11-16T02:43:48+00:00",
-   "n_raw": 28,
    "about": {
     "origin": "USGS National Water Information System site service (waterservices.usgs.gov), queried for groundwater sites in the city's bounding box. US federal data: public domain (tier 1).",
     "contents": "28 groundwater sites, all completed in the Floridan aquifer, with well and hole depth (23 sites; median about 190 ft, up to 3,167 ft) and construction dates 1968\u20132004. Each links to its USGS monitoring-location page, which for many sites has a water-level history.",
     "design_use": "Groundwater, not soil. Where a site has a water-level record, it shows the seasonal range of the Floridan aquifer's potentiometric surface, background for dewatering a deep excavation. For a pool, the design water level depends on the shallow (surficial) water table; these deep wells only bound it.",
     "limits": "Deep wells, few sites. No lithology or engineering properties in the data we import."
    },
+   "default_on": true,
+   "status": "ok",
+   "fetched": "2026-11-24T14:07:46+00:00",
+   "n_raw": 28,
    "n_in_area": 28,
    "n_after_dedupe": 28
   },
@@ -114,18 +114,18 @@
    "license": "Florida agency public record (St. Johns River Water Management District).",
    "disclaimer": null,
    "doc_label": null,
-   "default_on": true,
-   "status": "ok",
-   "fetched": "2026-11-16T02:43:48+00:00",
-   "n_raw": 4054,
    "about": {
     "origin": "St. Johns River Water Management District's permitting map service (layer \"All Wells\" on permitting.sjrwmd.com), queried directly. These are the district's well-construction and well-permit records. Although it's SJRWMD's layer, Gainesville records cover the whole city, including the part in the Suwannee River district.",
     "contents": "4,037 wells: 1,478 monitoring wells (median depth 18 ft), domestic, irrigation, remediation and public-supply wells. The record holds total depth (3,357 wells), casing depth, diameter, use, drilling contractor, permit number, Florida unique well ID and, for 2,209 wells, the initial static water level. Many wells at one site share one coordinate, and those are flagged as approximate.",
     "design_use": "Two useful indicators, both rough. The initial static water level, especially from the many shallow monitoring wells, gives a sense of how deep groundwater sits nearby, an input to excavation dewatering and the design water level for a pool (uplift and hydrostatic-relief design). For wells drilled into the Floridan aquifer, casing depth often reflects where the driller reached limestone, a crude depth-to-rock indicator for deep foundations and karst screening.",
     "limits": "No soil descriptions or strength data. Water levels are single readings at completion, not seasonal highs."
    },
-   "n_in_area": 4054,
-   "n_after_dedupe": 4037
+   "default_on": true,
+   "status": "ok",
+   "fetched": "2026-11-24T14:07:54+00:00",
+   "n_raw": 4055,
+   "n_in_area": 4055,
+   "n_after_dedupe": 4038
   },
   "sjrwmd_erp": {
    "name": "SJRWMD Environmental Resource Permits",
@@ -136,43 +136,41 @@
    "license": "Florida agency public record (St. Johns River Water Management District).",
    "disclaimer": null,
    "doc_label": "SJRWMD e-Permitting record",
-   "default_on": true,
-   "status": "ok",
-   "fetched": "2026-11-16T02:43:49+00:00",
-   "n_raw": 2680,
    "about": {
     "origin": "St. Johns River Water Management District Environmental Resource Permit (ERP) application boundaries (layer 4 of the permitting map service on permitting.sjrwmd.com). Each permit links to its public e-Permitting record, whose documents (application, stormwater report, plans, responses to staff questions) can be downloaded without a login.",
     "contents": "1,129 permits (2,680 permit sequences merged by permit number; never-issued applications dropped), mostly stormwater permits for development: shopping centres, apartments, offices, subdivisions, public projects. Each area has permit type, status, applicant, decision and expiry dates, and its mapped boundary (median 0.5 acres). 495 permits date from 2010 or later.",
     "design_use": "Potentially the richest source for private sites. Stormwater ponds and exfiltration systems must be designed to the seasonal high water table, so recent applications usually include a geotechnical report. In a sample of Gainesville permits, the 2021\u20132022 applications (Oaks Mall Master Basin; Sunshine State RV) contained full geotechnical reports by local consultants: SPT boring logs with N-values, auger borings, soil classifications and seasonal high groundwater estimates. That's the same content, and often the same firms, as the site-specific report a pool or building project would get, including recommendations on over-excavation and compaction.",
     "limits": "Most permits from before about 2010 have only correspondence and the permit online, not the application package. Whether a given permit contains borings has to be checked in its documents. Permits over 100 acres (campus or master permits) are drawn dashed and don't count toward coverage."
    },
+   "default_on": true,
+   "status": "ok",
+   "fetched": "2026-11-24T14:08:02+00:00",
+   "n_raw": 2684,
    "n_in_area": 1129,
    "n_after_dedupe": 1129,
    "n_counting": 1090
   },
-  "geosetta_diggs": {
-   "name": "Geosetta (DIGGS area exports)",
-   "url": null,
+  "geosetta": {
+   "name": "Geosetta (API)",
+   "url": "https://geosetta.org/web_map/api_key/",
    "homepage": "https://geosetta.org",
    "tier": 4,
    "kind": "geotechnical",
    "license": "Geosetta terms of use: compiled from DOTs, agencies and public sources; parsed values may contain transcription errors. Disclaimer must accompany redistributed outputs.",
    "disclaimer": "The information made available through Geosetta has been compiled from various DOTs, public agencies, contributing data providers, and publicly available sources. The predictive models presented herein are based on machine learning tools applied to the data. The predicted subsurface conditions are a probabilistic model and do not depict the actual conditions at the site. No claim as to the accuracy of the data and predictive model is made or implied. No other representation, expressed or implied, is included or intended and no warranty or guarantee is included or intended in any Geosetta data or models. Data extracted, converted, or transformed from source documents, including documents supplied by users, provided by agencies, or obtained from publicly available sources, may contain transcription or conversion errors and is provided without warranty; the User is responsible for verifying such outputs against the source records. The User understands these limitations and that Geosetta is a tool for planning subsurface investigations and not a substitute for it. The User shall not redistribute, republish, or otherwise provide Geosetta predictions, models, or data outputs to any third party unless such outputs are accompanied by these same limitations and this disclaimer in full. Certain tools made available by or through Geosetta, including the DIGGS file viewer, are independent open-source software distributed under their own licenses; this disclaimer governs Geosetta-sourced data and outputs only, and neither restricts the User's rights in the User's own data nor alters the terms of any such open-source software. Where an output is derived solely from data the User supplied and incorporates no Geosetta-sourced data or model predictions, for example format conversion or extraction of the User's own uploaded document, that output is the User's data and the redistribution restriction above does not apply; outputs that incorporate Geosetta-sourced data or model predictions remain subject to it. In no event shall Geosetta or the Data Owners be liable to the User or another Party for any incidental, consequential, special, exemplary or indirect damages, lost business profits or lost data arising out of or in any way related to the use of information or data obtained from the Geosetta.org website, API, or associated tools and services. Full terms: https://geosetta.org/terms",
-   "doc_label": null,
+   "doc_label": "View this location on Geosetta's map",
+   "about": {
+    "origin": "Geosetta's API (geosetta.org), queried with an API key: overlapping 5 km radius searches covering the area, Geosetta's borehole map tiles for location precision and report grouping, DIGGS XML for every borehole with a parsed log, and the source-file list for every non-DOT location. Replaces the hand-drawn DIGGS area exports; it finds the same parsed logs. Responses are cached and the API's rate limits are respected. Geosetta's terms require its disclaimer to accompany the data, so this is tier 4.",
+    "contents": "741 Geosetta locations in our envelope. 698 are FDOT borings that sit on the FDOT District 2 layer, so they merge into it; 30 bring a parsed log (depth, SPT N-values, soil layers) that shows on the FDOT boring as \"Boring log via Geosetta\". 43 come from Geosetta's web crawl of non-DOT documents: 30 parsed boreholes in 5 reports (GRU Deerhaven pond embankment, Plum Creek Property, Boulware Springs, Malcom Randall VA boiler building, Alachua County Mill Creek Sink) and 13 locations where Geosetta holds a document but no parsed data. Each document is identified (title, author, type) and labelled with what you may do with it.",
+    "design_use": "The parsed logs are the only structured geotechnical parameters on the map: N-value versus depth and USCS layers can be read straight off the popup. The document locations point to reports worth requesting, such as the Deerhaven CCR stability assessment.",
+    "limits": "Values are machine-extracted from scanned logs and can contain transcription errors; check the source log. Non-DOT locations are site-level (Geosetta places a report's borings at its geocoded site), and several are off by up to kilometres. Four documents aren't about the place they're pinned to (a 1979 journal paper, an FHWA manual, a consultant's proposal, a Marion County management plan): they're marked \"not site data\" and don't count toward coverage. Geosetta's files need an API key to download, so the map links to the location on Geosetta's map."
+   },
    "default_on": true,
    "status": "ok",
-   "fetched": "2026-11-16T03:32:08+00:00",
-   "n_raw": 57,
-   "about": {
-    "origin": "Geosetta (geosetta.org), a non-profit that compiles public boring logs and extracts their data. With no API key, areas were drawn on Geosetta's map and exported as its DIGGS viewer pages (three exports covering Gainesville). The pipeline reads the DIGGS XML embedded in each page. Geosetta's terms require its disclaimer to accompany the data, so this is tier 4.",
-    "contents": "57 boreholes in our area. 27 matched FDOT borings within 5 m: their parsed logs (depth, SPT N-values, soil layers) are attached to the FDOT boring, which you'll see as \"Boring log via Geosetta\" in its popup. 30 more come from 5 non-DOT reports found by Geosetta's web crawl: GRU Deerhaven pond embankment, Plum Creek Property, Boulware Springs Improvements, Malcom Randall VA Medical Center boiler building, and Alachua County Mill Creek Sink. In all, about 500 SPT N-values, 300 soil layers with USCS classes (mostly SC, SM, SP-SM, with CL/CH clays and a few organic OL layers), some lab tests (natural water content, percent fines, liquid limit) and groundwater depths. Depths are 2\u2013100 ft, median about 27 ft.",
-    "design_use": "This is the only source on the map with geotechnical parameters as structured data rather than inside a PDF: N-value versus depth and USCS layers can be read straight off the popup. That's enough for a quick first pass: depth to firm bearing soil, thickness of clay (CL/CH) or organic layers to over-excavate, whether N-values stay low deep enough to suggest piles, and how deep groundwater sits.",
-    "limits": "Values are machine-extracted from scanned logs and can contain transcription errors; check the source log. The 30 non-DOT boreholes are placed at a geocoded report location, not where they were drilled, and several are visibly wrong by up to kilometres (all are flagged \"approximate location\")."
-   },
-   "reason": null,
-   "method": "imported DIGGS files from data/manual/geosetta",
-   "n_in_area": 57,
-   "n_after_dedupe": 30
+   "fetched": "2026-11-24T14:29:20+00:00",
+   "n_raw": 741,
+   "n_in_area": 741,
+   "n_after_dedupe": 43
   },
   "fdep_cleanup": {
    "name": "FDEP Cleanup Sites (active, all programs)",
@@ -183,16 +181,16 @@
    "license": "Florida agency public record (FDEP).",
    "disclaimer": null,
    "doc_label": "FDEP cleanup documents (site assessment reports)",
-   "default_on": true,
-   "status": "ok",
-   "fetched": "2026-11-16T02:43:49+00:00",
-   "n_raw": 131,
    "about": {
     "origin": "FDEP open data: DEP Cleanup Sites (OpenData/CLEANUP_SP), active sites in all cleanup programs. Each site links to its public file search in DEP Nexus.",
     "contents": "126 facilities (after merging the same facility across FDEP layers): petroleum tank sites, other contamination cleanups, brownfields, PFAS and Superfund sites, with address, program and remediation status.",
     "design_use": "A cleanup site's file usually includes site assessment reports with soil borings (typically direct-push or hand-auger lithologic descriptions, not SPT), monitoring-well logs and measured groundwater levels. That gives the shallow soil types and water table near the site. For an excavation (a pool, an over-excavation), it also warns that contaminated soil or groundwater may need special handling and disposal.",
     "limits": "One point per facility, not per boring. Borings are environmental, so no blow counts or bearing data. Contents vary by site and haven't been checked one by one."
    },
+   "default_on": true,
+   "status": "ok",
+   "fetched": "2026-11-24T14:08:03+00:00",
+   "n_raw": 131,
    "n_in_area": 126,
    "n_after_dedupe": 126
   },
@@ -205,16 +203,16 @@
    "license": "Florida agency public record (FDEP).",
    "disclaimer": null,
    "doc_label": "FDEP cleanup documents (site assessment reports)",
-   "default_on": true,
-   "status": "ok",
-   "fetched": "2026-11-16T02:43:49+00:00",
-   "n_raw": 362,
    "about": {
     "origin": "FDEP open data: Petroleum Contamination Monitoring discharges from the Storage Tank Contamination Monitoring database (OpenData/DWM_STCM, layer 2), including closed cleanups. Each facility links to its DEP Nexus documents.",
     "contents": "236 facilities not already in the Cleanup Sites layer (309 facilities and 362 discharges in all), mostly retail fuel stations, with cleanup status (183 closed, 53 \"no cleanup required\") and the date of the earliest discharge (1982\u20132014).",
     "design_use": "Same as the other cleanup sites. Closed petroleum sites went through site assessment, so their files typically hold shallow soil-boring descriptions, monitoring-well construction and groundwater measurements. Gas stations sit on busy corridors, so these fill in areas between road projects.",
     "limits": "Environmental, not geotechnical, borings. \"No cleanup required\" sites may hold little subsurface data."
    },
+   "default_on": true,
+   "status": "ok",
+   "fetched": "2026-11-24T14:08:04+00:00",
+   "n_raw": 362,
    "n_in_area": 309,
    "n_after_dedupe": 236
   },
@@ -227,20 +225,52 @@
    "license": "Florida agency public record (FDEP).",
    "disclaimer": null,
    "doc_label": "FDEP cleanup documents (site assessment reports)",
-   "default_on": true,
-   "status": "ok",
-   "fetched": "2026-11-16T02:43:49+00:00",
-   "n_raw": 18,
    "about": {
     "origin": "FDEP open data: Drycleaning Solvent Cleanup Program sites (OpenData/DWM_STCM, layer 4). Each links to its DEP Nexus documents.",
     "contents": "2 facilities not already in the Cleanup Sites layer (18 dry cleaners in all), with program, status and site ID.",
     "design_use": "Solvent investigations often go deeper than petroleum ones and include soil borings and monitoring wells. That's useful for shallow soil type and groundwater, and a flag for contaminated-soil handling in any excavation.",
     "limits": "Environmental, not geotechnical, borings."
    },
+   "default_on": true,
+   "status": "ok",
+   "fetched": "2026-11-24T14:08:05+00:00",
+   "n_raw": 18,
    "n_in_area": 18,
    "n_after_dedupe": 2
   }
  },
- "built": "2026-11-16T03:32:14+00:00",
+ "model_grid": {
+  "h3_resolution": 8,
+  "n_cells": 246,
+  "depth_ft": 50,
+  "predictions": {
+   "status": "partial",
+   "n": 90,
+   "reason": "not in cache (needs GEOSETTA_API_KEY and a fetch)"
+  },
+  "site_class": {
+   "status": "partial",
+   "n": 53,
+   "reason": "not in cache (needs GEOSETTA_API_KEY and a fetch)"
+  },
+  "site_report": {
+   "status": "skipped",
+   "n": 0,
+   "reason": "not in cache (needs GEOSETTA_API_KEY and a fetch)"
+  },
+  "calls": 0,
+  "cache_hits": 62,
+  "disclaimer": "The information made available through Geosetta has been compiled from various DOTs, public agencies, contributing data providers, and publicly available sources. The predictive models presented herein are based on machine learning tools applied to the data. The predicted subsurface conditions are a probabilistic model and do not depict the actual conditions at the site. No claim as to the accuracy of the data and predictive model is made or implied. No other representation, expressed or implied, is included or intended and no warranty or guarantee is included or intended in any Geosetta data or models. Data extracted, converted, or transformed from source documents, including documents supplied by users, provided by agencies, or obtained from publicly available sources, may contain transcription or conversion errors and is provided without warranty; the User is responsible for verifying such outputs against the source records. The User understands these limitations and that Geosetta is a tool for planning subsurface investigations and not a substitute for it. The User shall not redistribute, republish, or otherwise provide Geosetta predictions, models, or data outputs to any third party unless such outputs are accompanied by these same limitations and this disclaimer in full. Certain tools made available by or through Geosetta, including the DIGGS file viewer, are independent open-source software distributed under their own licenses; this disclaimer governs Geosetta-sourced data and outputs only, and neither restricts the User's rights in the User's own data nor alters the terms of any such open-source software. Where an output is derived solely from data the User supplied and incorporates no Geosetta-sourced data or model predictions, for example format conversion or extraction of the User's own uploaded document, that output is the User's data and the redistribution restriction above does not apply; outputs that incorporate Geosetta-sourced data or model predictions remain subject to it. In no event shall Geosetta or the Data Owners be liable to the User or another Party for any incidental, consequential, special, exemplary or indirect damages, lost business profits or lost data arising out of or in any way related to the use of information or data obtained from the Geosetta.org website, API, or associated tools and services.",
+  "n_features": 90,
+  "built": "2026-11-24T14:39:03+00:00",
+  "status": "ok",
+  "about": {
+   "origin": "Geosetta's point lookups, sampled on a grid: we ask for each H3 cell centre (resolution 8, cells about 0.74 km\u00b2, roughly 0.9 km apart) over the city and colour the cell with the answer. Three products: SPT/lithology predictions to 50 ft (Geosetta's machine-learning model trained on its borings), ASCE 7-22 seismic site class (derived from the predicted profile: N-values converted to shear-wave velocity), and the site report (geology from the state geologic map, karst from USGS, sinkhole and slope screening from a terrain model, mines, SoilGrids soil order).",
+   "contents": "Per cell: the predicted soil profile (layers with USCS class and SPT N range), the depth to the first clay or silt layer, to N \u2265 10 and to rock, the predicted groundwater depth class with probabilities, the model's confidence and its distance to the nearest training boring, site class and Vs30, the mapped geologic formation, karst setting, sinkhole and slope screening, and mines within 2 miles.",
+   "design_use": "A screening layer between borings. Shallow predicted clay (Hawthorn Group) hints at over-excavation; a deep \"N \u2265 10\" hints at loose sands that may push toward deep foundations or ground improvement; shallow predicted groundwater matters for pools and excavations. Low-confidence cells, far from training borings, are where real data is most needed: compare with the coverage hexes.",
+   "limits": "Estimates, not measurements: probabilistic model output with Geosetta's disclaimer. The profile resolves one foot, but the model is smooth between borings and can't see local karst features. One sample per cell, so detail finer than a cell is not shown. The SoilGrids soil order is a 250 m global product and very coarse. Never counts toward coverage."
+  }
+ },
+ "built": "2026-11-24T14:39:03+00:00",
  "basemap_style": "https://tiles.openfreemap.org/styles/positron"
 }

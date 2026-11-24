@@ -1,6 +1,6 @@
 # Data profile: Gainesville, FL
 
-Generated 2026-11-16T03:32:14+00:00.
+Generated 2026-11-24T14:39:03+00:00.
 
 ## FDOT District 2 Soil Borings (`fdot_d2`)
 
@@ -213,7 +213,7 @@ Normalized before keying: nothing.
 |---|---|
 | geodes.kyrasolutions.com | 157 |
 
-Examples: <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18576>, <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18577>, <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18578>, <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18579>, <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/14713>
+Examples: <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/13174>, <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/6144>, <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/10243>, <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/14850>, <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/13615>
 
 ### Layer attachments
 
@@ -227,16 +227,16 @@ Examples: <https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWell/18576>
 
 | boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
 |---|---|---|---|---|---|---|---|---|---|
-| fgs_wells:47 | Well | GRU - North Main Street (A-0392) | 1094601600000 | 2004.0 | 192.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.319725 | 29.691673 |
-| fgs_wells:48 | Well | GRU - F2 (A-0399) | 1096502400000 | 2004.0 | 165.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.315559 | 29.748339 |
-| fgs_wells:49 | Well | GRU - F3 (A-0396) | 1097020800000 | 2004.0 | 130.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.31417 | 29.728339 |
-| fgs_wells:50 | Well | GRU - F6 (A-0402) | 1097539200000 | 2004.0 | 120.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.339447 | 29.72945 |
-| fgs_wells:258 | Well | Dept. of Interior- Natl. Fish & Wildlife | 322790400000 | 1980.0 | 310.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.418563 | 29.725186 |
-| fgs_wells:1006 | Well | Northwood Well #2 | -141940800000 | 1965.0 | 330.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.358333 | 29.695836 |
-| fgs_wells:1033 | Well | UF - Old Union Bldg 8" Recharge Well | -72489600000 | 1967.0 | 427.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.347625 | 29.662784 |
-| fgs_wells:1103 | Well | Gainesville- Lake Kanapaha WWTP | 203817600000 | 1976.0 | 1050.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.412264 | 29.63195 |
-| fgs_wells:1721 | Well | Koppers XB-1 |  | 2002.0 | 155.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.3281 | 29.680914 |
-| fgs_wells:1986 | Well | City of Gainesville 1954 (Airport) |  | 1954.0 | 350.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.274163 | 29.695836 |
+| fgs_wells:36 | Well | Gainesville- Lake Kanapaha WWTP | 203817600000 | 1976.0 | 1050.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.412264 | 29.63195 |
+| fgs_wells:342 | Well | General Electric Company | -222634800000 | 1962.0 | 430.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.437503 | 29.771946 |
+| fgs_wells:440 | Well | Gainesville - Well #N-8 | -12700800000 | 1969.0 | 537.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.295293 | 29.704566 |
+| fgs_wells:665 | Well | Turkey Creek #3 | 341208000000 | 1980.0 | 300.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.405953 | 29.767756 |
+| fgs_wells:834 | Well | UF - Turlington Hall |  | 1977.0 | 410.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.34434 | 29.649489 |
+| fgs_wells:891 | Well | Gainesville - Deep Obs. Well #1 | 192758400000 | 1976.0 | 1050.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.412292 | 29.613914 |
+| fgs_wells:1181 | Well | Gainesville - Disposal Well #1 | 216432000000 | 1976.0 | 1055.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.412292 | 29.613914 |
+| fgs_wells:1193 | Well | Gainesville - Obs. Well #5 | 234144000000 | 1977.0 | 1050.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.364167 | 29.652784 |
+| fgs_wells:1262 | Well | Koppers XB-1 |  | 2002.0 | 155.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.3281 | 29.680914 |
+| fgs_wells:1332 | Well | City of Gainesville 1954 (Airport) |  | 1954.0 | 350.0 | fgs_wells:REPORT_LINK=https://geodes.kyrasolutions.com/Boreh | https://geodes.kyrasolutions.com/BoreholeSummary/InventoryWe | -82.274163 | 29.695836 |
 
 
 ## USGS NWIS Groundwater Sites (`usgs_nwis_gw`)
@@ -352,7 +352,7 @@ Examples: <https://waterdata.usgs.gov/monitoring-location/293634082144901/>, <ht
 
 - URL: https://permitting.sjrwmd.com/arcgis02/rest/services/sjrRegMapICR/MapServer/13
 - Tier 2, kind `geologic_well`
-- Raw records in envelope: **4054**; after cleaning: **4054**
+- Raw records in envelope: **4055**; after cleaning: **4055**
 - Flags: {'approx_location': 2401}
 
 ### Null rate per field
@@ -389,15 +389,15 @@ Examples: <https://waterdata.usgs.gov/monitoring-location/293634082144901/>, <ht
 
 | type | n |
 |---|---|
-| Well | 4054 |
+| Well | 4055 |
 
 ### Date formats (field `None`)
 
-Share with a parsed year: **0.0%**; undated: **4054**.
+Share with a parsed year: **0.0%**; undated: **4055**.
 
 | format | n |
 |---|---|
-| null | 4054 |
+| null | 4055 |
 
 ### Report-key candidates
 
@@ -405,7 +405,7 @@ Normalized before keying: nothing.
 
 | key | non_null_pct | distinct |
 |---|---|---|
-| FULL_APP_NO | 10.9 | 255 |
+| FULL_APP_NO | 10.9 | 256 |
 
 ### Layer attachments
 
@@ -419,58 +419,62 @@ Normalized before keying: nothing.
 
 | boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
 |---|---|---|---|---|---|---|---|---|---|
+| sjrwmd_wells:45226 | Well | INDUSPL |  |  |  |  |  | -82.255556 | 29.695278 |
 | sjrwmd_wells:44754 | Well | OR908 |  |  |  |  |  | -82.337222 | 29.619444 |
 | sjrwmd_wells:44755 | Well | OR909 |  |  |  |  |  | -82.372778 | 29.6525 |
 | sjrwmd_wells:45228 | Well | KANA |  |  |  |  |  | -82.405 | 29.618889 |
 | sjrwmd_wells:45229 | Well | LHATSB |  |  |  |  |  | -82.253056 | 29.686111 |
 | sjrwmd_wells:44657 | Well | HOG30 |  |  |  |  |  | -82.392583 | 29.638194 |
-| sjrwmd_wells:45226 | Well | INDUSPL |  |  |  |  |  | -82.255556 | 29.695278 |
-| sjrwmd_wells:45284 | Well | LHAT26 |  |  |  |  |  | -82.23444 | 29.67941 |
-| sjrwmd_wells:45285 | Well | LHT26E |  |  |  |  |  | -82.220833 | 29.688017 |
-| sjrwmd_wells:45286 | Well | LHTNB |  |  |  |  |  | -82.2656 | 29.6933 |
-| sjrwmd_wells:45289 | Well | PCS20 |  |  |  |  |  | -82.248056 | 29.610833 |
+| sjrwmd_wells:45237 | Well | NEW |  |  |  |  |  | -82.22 | 29.645278 |
+| sjrwmd_wells:45238 | Well | NEWLKA |  |  |  |  |  | -82.211389 | 29.672778 |
+| sjrwmd_wells:45239 | Well | NEWLKB |  |  |  |  |  | -82.220556 | 29.675556 |
+| sjrwmd_wells:45240 | Well | NEWLKC |  |  |  |  |  | -82.223611 | 29.677778 |
 
 
 ## SJRWMD Environmental Resource Permits (`sjrwmd_erp`)
 
-- Polygon records in envelope: **2680**; areas after grouping by `OFFCL_PRMT_ID` and excluding {'PRMT_STTS': ['Never Issued']}: **1129**
+- Polygon records in envelope: **2684**; areas after grouping by `OFFCL_PRMT_ID` and excluding {'PRMT_STTS': ['Never Issued']}: **1129**
 - Counting toward coverage (≤ 100 acres): **1090**; median 0.5 acres
 
-## Geosetta (DIGGS area exports) (`geosetta_diggs`)
+## Geosetta (API) (`geosetta`)
 
-- URL: None
+- URL: https://geosetta.org/web_map/api_key/
 - Tier 4, kind `geotechnical`
-- Raw records in envelope: **57**; after cleaning: **57**
-- Flags: {'approx_location': 30}
+- Raw records in envelope: **741**; after cleaning: **741**
+- Flags: {'approx_location': 41, 'not_site_data': 4}
 
 ### Null rate per field
 
 | field | null_% |
 |---|---|
-| fk | 0.0 |
-| name | 0.0 |
-| project | 0.0 |
-| provider | 0.0 |
-| lat | 0.0 |
-| lon | 0.0 |
-| elev_ft | 0.0 |
-| total_depth_ft | 0.0 |
-| n_values | 0.0 |
-| lithology | 0.0 |
-| lab | 0.0 |
-| groundwater_depth_ft | 73.7 |
-| test_types | 0.0 |
-| depth_ft | 0.0 |
-| test_type | 0.0 |
 | uid | 0.0 |
+| name | 92.3 |
+| provider | 0.0 |
+| project | 90.8 |
+| test_type | 90.8 |
+| depth_ft | 92.3 |
+| elev_ft | 92.3 |
+| groundwater_depth_ft | 98.0 |
+| log | 92.3 |
+| location_precision | 94.5 |
+| report_group | 96.0 |
+| doc_path | 94.5 |
+| n_files | 0.0 |
+| geosetta_url | 0.0 |
 | flags | 0.0 |
-| log | 0.0 |
+| doc_title | 94.5 |
+| doc_author | 94.5 |
+| doc_kind | 94.5 |
+| rights | 94.5 |
+| rights_detail | 94.5 |
 
 ### `test_type` distribution
 
 | test_type | n |
 |---|---|
+| (null) | 673 |
 | SPT | 55 |
+| Document | 11 |
 | Depth to groundwater table observation | 1 |
 | Depth to groundwater table observation,The percentage of par | 1 |
 
@@ -478,39 +482,68 @@ Normalized before keying: nothing.
 
 | type | n |
 |---|---|
+| Other | 675 |
 | SPT | 55 |
-| Other | 2 |
+| Document | 11 |
 
 ### Date formats (field `None`)
 
-Share with a parsed year: **0.0%**; undated: **57**.
+Share with a parsed year: **0.0%**; undated: **741**.
 
 | format | n |
 |---|---|
-| null | 57 |
+| null | 741 |
 
 ### Report-key candidates
 
 Normalized before keying: nothing.
 
-| key | non_null_pct | distinct |
-|---|---|---|
-| project | 100.0 | 11 |
+| key | non_null_pct | distinct | values_with_>1 report_group | values_with_>1 project | values_with_>1 doc_path |
+|---|---|---|---|---|---|
+| doc_path | 5.5 | 11 | 0.0 | 5.0 |  |
+| report_group | 4.0 | 5 |  | 1.0 | 0.0 |
+| project | 9.2 | 22 | 0.0 |  | 0.0 |
+
+### Hostnames in `geosetta_url`
+
+| host | n |
+|---|---|
+| geosetta.org | 741 |
+
+Examples: <https://geosetta.org/web_map/map/#18/29.595054/-82.382668>, <https://geosetta.org/web_map/map/#18/29.595583/-82.381944>, <https://geosetta.org/web_map/map/#18/29.596123/-82.381229>, <https://geosetta.org/web_map/map/#18/29.596655/-82.380508>, <https://geosetta.org/web_map/map/#18/29.597007/-82.380025>
+
+### Geosetta API
+
+- Radius-query locations: 799; tile keys: 815; parsed logs: 60; API calls this fetch: 0 (cached: 130)
+
+| Document (Geosetta path) | Catalog title (config/documents.yaml) |
+|---|---|
+| `logs/reports/29.599255;-82.413637.pdf` | Silver Springs Conservation Area Unit Management Plan (draft, May 2019) |
+| `logs/reports/29.6486;-82.3456.pdf` | Statics of SPT (Journal of the Geotechnical Engineering Division, May 1979) |
+| `logs/reports/29.65008;-82.34038.pdf` | Geotechnical Report, Malcom Randall VA Medical Center Boiler Building |
+| `logs/reports/29.6516;-82.3248.pdf` | Preliminary Geological and Geotechnical Site Evaluation, Plum Creek Property |
+| `logs/reports/29.65538;-82.423567.pdf` | Statement of qualifications for Sumter County RFQ 17-0031 (DRMP, Inc.) |
+| `logs/reports/29.6605;-82.3307.pdf` | Boulware Springs Nature Park — Park and Building Revitalization (draft) |
+| `logs/reports/29.665226;-82.35004.pdf` | Guidelines for Cone Penetration Test: Performance and Design (FHWA, 1978) |
+| `logs/reports/29.6856;-82.3549.pdf` | CCR Abutment and Base Surface Impoundment System Evaluation, Deerhaven Generating Station |
+| `logs/reports/29.7007;-82.3999.pdf` | CCR Impoundment System Periodic Structural Stability Assessment, Deerhaven Generating Station |
+| `logs/reports/29.73595;-82.40327.pdf` | Alachua County comments on the Tara April special exception (Mill Creek Sink), Nov 2025 |
+| `logs/reports/29.7772;-82.4175.pdf` | Invitation to Bid: Site Work at IFAS Dairy Unit, Hague, FL (May 2022) |
 
 ### Sample rows (10)
 
 | boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
 |---|---|---|---|---|---|---|---|---|---|
-| geosetta_diggs:29.65398732;-82.41391143#ff7ae3de | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.413911 | 29.653987 |
-| geosetta_diggs:29.65697928;-82.41652743#c618ebb3 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.416527 | 29.656979 |
-| geosetta_diggs:29.65525635;-82.4149488#20da4274 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.414949 | 29.655256 |
-| geosetta_diggs:29.6888682;-82.42318691#8e683156 | SPT | 129+19, 32.0' Lt. |  |  | 30.5 | geosetta_diggs:project=SPT BORINGS FOR ROADWAY STA. 129+19 - |  | -82.423187 | 29.688868 |
-| geosetta_diggs:29.65453707;-82.41435742#d1faa4f1 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.414357 | 29.654537 |
-| geosetta_diggs:29.65741689;-82.41690904#5282866a | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.416909 | 29.657417 |
-| geosetta_diggs:29.57818442;-82.33643683#b078caf6 | SPT | 514+53, 42' LT |  |  | 21.5 | geosetta_diggs:project=STATE ROAD 25 BOX CULVERT REPAIR |  | -82.336437 | 29.578184 |
-| geosetta_diggs:29.65541703;-82.41503896#970cec62 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.415039 | 29.655417 |
-| geosetta_diggs:29.65582667;-82.41537391#20f7e847 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.415374 | 29.655827 |
-| geosetta_diggs:29.65426943;-82.41413128#dfc05192 | SPT | ALACHUA COUNTY, FLORIDA |  |  | 6.5 | geosetta_diggs:project=S.R. 93 (INTERSTATE 75) NORTHBOUND OF |  | -82.414131 | 29.654269 |
+| geosetta:29.59505391;-82.38266764 | Other |  |  |  |  |  | https://geosetta.org/web_map/map/#18/29.595054/-82.382668 | -82.382668 | 29.595054 |
+| geosetta:29.59558313;-82.38194362 | Other |  |  |  |  |  | https://geosetta.org/web_map/map/#18/29.595583/-82.381944 | -82.381944 | 29.595583 |
+| geosetta:29.59612268;-82.38122945 | Other |  |  |  |  |  | https://geosetta.org/web_map/map/#18/29.596123/-82.381229 | -82.381229 | 29.596123 |
+| geosetta:29.59665468;-82.38050757 | Other |  |  |  |  |  | https://geosetta.org/web_map/map/#18/29.596655/-82.380508 | -82.380508 | 29.596655 |
+| geosetta:29.5970074;-82.38002488 | Other |  |  |  |  |  | https://geosetta.org/web_map/map/#18/29.597007/-82.380025 | -82.380025 | 29.597007 |
+| geosetta:29.626401;-82.37282 | Other |  |  |  |  |  | https://geosetta.org/web_map/map/#18/29.626401/-82.372820 | -82.37282 | 29.626401 |
+| geosetta:29.627022;-82.372833 | Other |  |  |  |  |  | https://geosetta.org/web_map/map/#18/29.627022/-82.372833 | -82.372833 | 29.627022 |
+| geosetta:29.626814;-82.372234 | Other |  |  |  |  |  | https://geosetta.org/web_map/map/#18/29.626814/-82.372234 | -82.372234 | 29.626814 |
+| geosetta:29.627443;-82.372254 | Other |  |  |  |  |  | https://geosetta.org/web_map/map/#18/29.627443/-82.372254 | -82.372254 | 29.627443 |
+| geosetta:29.59233684;-82.38576453 | Other |  |  |  |  |  | https://geosetta.org/web_map/map/#18/29.592337/-82.385765 | -82.385765 | 29.592337 |
 
 
 ## FDEP Cleanup Sites (active, all programs) (`fdep_cleanup`)
@@ -594,7 +627,7 @@ Normalized before keying: nothing.
 |---|---|
 | prodenv.dep.state.fl.us | 131 |
 
-Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/9401874/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/9818287/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/FLD980711071/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/FLD000823393/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/ERIC_3780/facility!search>
+Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8518110/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500098/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/ERIC_3780/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/FLD980711071/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/ERIC_3985/facility!search>
 
 ### Layer attachments
 
@@ -608,16 +641,16 @@ Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/
 
 | boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
 |---|---|---|---|---|---|---|---|---|---|
-| fdep_cleanup:507 | Site | JOONS BEAUTY SUPPLY & WIGS INC |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=9401874 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.329108 | 29.659662 |
-| fdep_cleanup:1045 | Site | SANTA FE COLLEGE BLOUNT HALL - E PARKING LOT |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=9818287 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.329538 | 29.652159 |
-| fdep_cleanup:1079 | Site | Processing and Storage Building (PSB) - SWMU 4 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_16399 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.349931 | 29.716815 |
-| fdep_cleanup:1118 | Site | 3,000-Gallon Waste Liquids Tank - SWMU 6 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_16401 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.349931 | 29.716815 |
-| fdep_cleanup:1162 | Site | Former Landfill - SWMU 1 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_16228 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.368031 | 29.63182 |
-| fdep_cleanup:1180 | Site | Decommissioned Outdoor Rifle Range - SWMU 30 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_18906 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.345728 | 29.643589 |
-| fdep_cleanup:1235 | Site | Cabot - Koppers |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_3780 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.326671 | 29.678175 |
-| fdep_cleanup:1275 | Site | PCB Commercial Storage Area - SWMU 42 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_18936 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.349423 | 29.716968 |
-| fdep_cleanup:1287 | Site | Tacachale Part A-2002 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_6137 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.301392 | 29.666672 |
-| fdep_cleanup:1342 | Site | IFAS Building 63 University of Florida Campus Part B-2010 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_6205 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.357329 | 29.638744 |
+| fdep_cleanup:2 | Site | UNION 76-NORTHGATE |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=8518110 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.310622 | 29.666838 |
+| fdep_cleanup:130 | Site | EXXON #4-4769 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=8500098 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.371984 | 29.651846 |
+| fdep_cleanup:572 | Site | Cabot - Koppers |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_3780 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.326671 | 29.678175 |
+| fdep_cleanup:595 | Site | Processing and Storage Building (PSB) - SWMU 4 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_16399 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.349931 | 29.716815 |
+| fdep_cleanup:596 | Site | 3,000-Gallon Waste Liquids Tank - SWMU 6 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_16401 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.349931 | 29.716815 |
+| fdep_cleanup:642 | Site | Town & Country Cleaners |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_3985 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.423195 | 29.661713 |
+| fdep_cleanup:674 | Site | Decommissioned Outdoor Rifle Range - SWMU 30 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_18906 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.345728 | 29.643589 |
+| fdep_cleanup:720 | Site | PCB Commercial Storage Area - SWMU 42 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_18936 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.349423 | 29.716968 |
+| fdep_cleanup:828 | Site | SiVance LLC- Facilitywide Site |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_17222 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.267226 | 29.705561 |
+| fdep_cleanup:831 | Site | LSV Hazardous Waste Storage Area - SWMU 41 |  |  |  | fdep_cleanup:SOURCE_DATABASE_ID=ERIC_18935 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.349387 | 29.717017 |
 
 
 ## FDEP Petroleum Discharges (incl. closed) (`fdep_petroleum`)
@@ -696,7 +729,7 @@ Normalized before keying: nothing.
 |---|---|
 | prodenv.dep.state.fl.us | 362 |
 
-Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500032/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500035/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500038/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500039/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500049/facility!search>
+Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500069/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500083/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500092/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500094/facility!search>, <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/8500098/facility!search>
 
 ### Layer attachments
 
@@ -710,16 +743,16 @@ Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/
 
 | boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
 |---|---|---|---|---|---|---|---|---|---|
-| fdep_petroleum:358 | Site | ALACHUA CNTY- PUBLIC WORKS GARAGE | 220924800000 | 1977 |  | fdep_petroleum:FACILITY_ID=8626841 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.404779 | 29.766328 |
-| fdep_petroleum:249 | Site | DIXON OIL CORP | 358300800000 | 1981 |  | fdep_petroleum:FACILITY_ID=8626921 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.322415 | 29.682089 |
-| fdep_petroleum:194 | Site | GAINESVILLE REGIONAL AIRPORT RENTAL CAR FAC | 399686400000 | 1982 |  | fdep_petroleum:FACILITY_ID=8500204 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.278926 | 29.685828 |
-| fdep_petroleum:247 | Site | UNITED RENTAL | 403660800000 | 1982 |  | fdep_petroleum:FACILITY_ID=8626910 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.327671 | 29.659604 |
-| fdep_petroleum:521 | Site | HANRAHAN ROBERT & MARY ELLEN RESIDENCE | 412905600000 | 1983 |  | fdep_petroleum:FACILITY_ID=9047510 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.379859 | 29.667326 |
-| fdep_petroleum:95 | Site | TEXACO #110-0018 | 415324800000 | 1983 |  | fdep_petroleum:FACILITY_ID=8500296 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.372136 | 29.628265 |
-| fdep_petroleum:221 | Site | ARCHER SHELL | 432345600000 | 1983 |  | fdep_petroleum:FACILITY_ID=8500252 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.372069 | 29.627611 |
-| fdep_petroleum:222 | Site | SHELL-THOMAS | 460339200000 | 1984 |  | fdep_petroleum:FACILITY_ID=8500253 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.338823 | 29.653781 |
-| fdep_petroleum:303 | Site | UNIV OF FL STRUCTURES & MATERIALS LAB #1626 | 463881600000 | 1984 |  | fdep_petroleum:FACILITY_ID=8732506 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.299679 | 29.672251 |
-| fdep_petroleum:459 | Site | TURKEY CREEK INC | 483753600000 | 1985 |  | fdep_petroleum:FACILITY_ID=8943125 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.412108 | 29.755164 |
+| fdep_petroleum:5791 | Site | ALACHUA CNTY- PUBLIC WORKS GARAGE | 220924800000 | 1977 |  | fdep_petroleum:FACILITY_ID=8626841 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.404779 | 29.766328 |
+| fdep_petroleum:5813 | Site | DIXON OIL CORP | 358300800000 | 1981 |  | fdep_petroleum:FACILITY_ID=8626921 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.322415 | 29.682089 |
+| fdep_petroleum:22266 | Site | GAINESVILLE REGIONAL AIRPORT RENTAL CAR FAC | 399686400000 | 1982 |  | fdep_petroleum:FACILITY_ID=8500204 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.278926 | 29.685828 |
+| fdep_petroleum:5811 | Site | UNITED RENTAL | 403660800000 | 1982 |  | fdep_petroleum:FACILITY_ID=8626910 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.327671 | 29.659604 |
+| fdep_petroleum:6012 | Site | HANRAHAN ROBERT & MARY ELLEN RESIDENCE | 412905600000 | 1983 |  | fdep_petroleum:FACILITY_ID=9047510 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.379859 | 29.667326 |
+| fdep_petroleum:22167 | Site | TEXACO #110-0018 | 415324800000 | 1983 |  | fdep_petroleum:FACILITY_ID=8500296 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.372136 | 29.628265 |
+| fdep_petroleum:22293 | Site | ARCHER SHELL | 432345600000 | 1983 |  | fdep_petroleum:FACILITY_ID=8500252 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.372069 | 29.627611 |
+| fdep_petroleum:22294 | Site | SHELL-THOMAS | 460339200000 | 1984 |  | fdep_petroleum:FACILITY_ID=8500253 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.338823 | 29.653781 |
+| fdep_petroleum:5828 | Site | UNIV OF FL STRUCTURES & MATERIALS LAB #1626 | 463881600000 | 1984 |  | fdep_petroleum:FACILITY_ID=8732506 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.299679 | 29.672251 |
+| fdep_petroleum:5950 | Site | TURKEY CREEK INC | 483753600000 | 1985 |  | fdep_petroleum:FACILITY_ID=8943125 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.412108 | 29.755164 |
 
 
 ## FDEP Drycleaning Solvent Cleanup Sites (`fdep_drycleaning`)
@@ -795,21 +828,21 @@ Examples: <https://prodenv.dep.state.fl.us/DepNexus/public/electronic-documents/
 
 | boring_uid | boring_type | boring_name | date_raw | year | depth_ft | report_key | doc_url | lon | lat |
 |---|---|---|---|---|---|---|---|---|---|
-| fdep_drycleaning:190 | Site | Custom Care Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3980 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.379732 | 29.651514 |
-| fdep_drycleaning:191 | Site | Town & Country Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3985 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.423195 | 29.661713 |
-| fdep_drycleaning:246 | Site | Alpine Dry Cleaners Inc |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3987 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.365985 | 29.702789 |
-| fdep_drycleaning:412 | Site | Rips Cleaners - One Hour |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3998 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.329067 | 29.661228 |
-| fdep_drycleaning:431 | Site | Plaza Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3983 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.339424 | 29.653612 |
-| fdep_drycleaning:552 | Site | Robinsons Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3984 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.322595 | 29.666299 |
-| fdep_drycleaning:557 | Site | Suburban Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3995 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.369228 | 29.699997 |
-| fdep_drycleaning:813 | Site | Cranes One Hour Dry Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3979 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.320458 | 29.673611 |
-| fdep_drycleaning:957 | Site | Suburban Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3996 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.373095 | 29.632793 |
-| fdep_drycleaning:966 | Site | Quality Cleaners of Gainesville Inc |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3976 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.386848 | 29.674189 |
+| fdep_drycleaning:192 | Site | Custom Care Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3980 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.379732 | 29.651514 |
+| fdep_drycleaning:193 | Site | Town & Country Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3985 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.423195 | 29.661713 |
+| fdep_drycleaning:248 | Site | Alpine Dry Cleaners Inc |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3987 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.365985 | 29.702789 |
+| fdep_drycleaning:415 | Site | Rips Cleaners - One Hour |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3998 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.329067 | 29.661228 |
+| fdep_drycleaning:434 | Site | Plaza Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3983 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.339424 | 29.653612 |
+| fdep_drycleaning:555 | Site | Robinsons Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3984 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.322595 | 29.666299 |
+| fdep_drycleaning:560 | Site | Suburban Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3995 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.369228 | 29.699997 |
+| fdep_drycleaning:815 | Site | Cranes One Hour Dry Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3979 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.320458 | 29.673611 |
+| fdep_drycleaning:958 | Site | Suburban Cleaners |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3996 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.373095 | 29.632793 |
+| fdep_drycleaning:967 | Site | Quality Cleaners of Gainesville Inc |  |  |  | fdep_drycleaning:ERIC_ID=ERIC_3976 | https://prodenv.dep.state.fl.us/DepNexus/public/electronic-d | -82.386848 | 29.674189 |
 
 
 ## Reports (M2)
 
-- Reports built: **831**; borings in reports: **1432** (= sum of n_borings: 1432); borings without a key: **3596**; reports with 2+ borings (drawn as outlines): **62**.
+- Reports built: **837**; borings in reports: **1444** (= sum of n_borings: 1444); borings without a key: **3598**; reports with 2+ borings (drawn as outlines): **62**.
 - Reports spanning > 5 km (corridor project or bad key): **1**
 
   - `fdot_d2:FIN=44703215201` — 26 borings, 5042 m
