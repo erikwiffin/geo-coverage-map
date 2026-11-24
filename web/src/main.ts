@@ -50,7 +50,8 @@ const SEQ = ["#7a2a04", "#b2420a", "#e0651f", "#f39a4d", "#f9c890", "#fde9cf"]; 
 const DEPTH_BINS = [3, 6, 10, 20, 35];
 const DEPTH_LABELS = ["0–3 ft", "3–6 ft", "6–10 ft", "10–20 ft", "20–35 ft", "35–50 ft"];
 const MODEL_VARS: Record<string, ModelVar> = {
-  depth_fines_ft: { label: "Depth to first clay or silt layer", short: "clay/silt", bins: DEPTH_BINS, binLabels: DEPTH_LABELS, none: "none predicted to 50 ft", palette: SEQ },
+  fines_top10_pct: { label: "Chance of clay soil in the upper 10 ft", short: "shallow clay", bins: [15, 20, 25], binLabels: ["< 15%", "15–20%", "20–25%", "≥ 25%"], palette: ["#fde9cf", "#f9c890", "#e0651f", "#7a2a04"] },
+  depth_fines_ft: { label: "Depth to first clay layer (CL/CH)", short: "clay layer", bins: DEPTH_BINS, binLabels: DEPTH_LABELS, none: "no clay layer predicted to 50 ft", palette: SEQ },
   depth_n10_ft: { label: "Depth to SPT N ≥ 10 (medium dense / stiff)", short: "N ≥ 10", bins: DEPTH_BINS, binLabels: DEPTH_LABELS, none: "not reached by 50 ft", palette: SEQ },
   depth_rock_ft: { label: "Depth to rock (limestone)", short: "rock", bins: DEPTH_BINS, binLabels: DEPTH_LABELS, none: "no rock predicted to 50 ft", palette: SEQ },
   gw_category: { label: "Groundwater depth", short: "groundwater", cats: [[0, "Shallow (≤ 10 ft)"], [1, "Medium (10–50 ft)"], [2, "Deep (> 50 ft)"]], palette: ["#0b4f8a", "#56b4e9", "#d9ecf8"] },
@@ -137,7 +138,7 @@ async function main() {
       yearMin: y0, yearMax: y1, includeUndated: true,
     } as Filters,
     layers: { boundary: true, hexes: true, borings: true, reports: true, areas: true, gaps: true, model: false } as Record<string, boolean>,
-    modelVar: "depth_fines_ft",
+    modelVar: "fines_top10_pct",
   };
 
   // ---------------------------------------------------------------- shareable URL state
@@ -483,7 +484,10 @@ async function main() {
       // the legend floats over the map's right edge: keep the popup left of it when there's room
       const lg = $("legend").getBoundingClientRect();
       const right = lg.width && lg.left - c.left > r.width + 2 * M ? Math.min(c.right, lg.left) : c.right;
-      const dx = r.left < c.left + M ? r.left - (c.left + M) : r.right > right - M ? r.right - (right - M) : 0;
+      // ...and right of the zoom buttons where it overlaps them vertically
+      const ctl = map.getContainer().querySelector(".maplibregl-ctrl-top-left")?.getBoundingClientRect();
+      const left = ctl && ctl.width && r.top < ctl.bottom && right - ctl.right > r.width + 2 * M ? ctl.right : c.left;
+      const dx = r.left < left + M ? r.left - (left + M) : r.right > right - M ? r.right - (right - M) : 0;
       const dy = r.top < c.top + M ? r.top - (c.top + M) : r.bottom > c.bottom - M ? r.bottom - (c.bottom - M) : 0;
       if (dx || dy) map.panBy([dx, dy], { duration: 250 });
     };
@@ -512,7 +516,8 @@ async function main() {
     const t = table([
       ["Grid cell", p.address ?? `${Number(p.lat ?? 0).toFixed(4)}, ${Number(p.lon ?? 0).toFixed(4)}`],
       ["Ground elevation", p.elev_ft != null ? `${p.elev_ft} ft` : null],
-      ["First clay or silt layer", p.layers != null ? ft(p.depth_fines_ft, `none predicted to ${depth} ft`) : null],
+      ["Upper 10 ft", p.fines_top10_pct != null ? `${p.top_uscs === "SC" ? "clayey sand (SC)" : p.top_uscs ?? "—"}; ${p.fines_top10_pct}% chance of clay soil (fine-grained)` : null],
+      ["First clay layer (CL/CH)", p.layers != null ? ft(p.depth_fines_ft, `none predicted to ${depth} ft`) : null],
       ["SPT N ≥ 10 from", p.layers != null ? ft(p.depth_n10_ft, `not reached by ${depth} ft`) : null],
       ["Rock (limestone)", p.layers != null ? ft(p.depth_rock_ft, `none predicted to ${depth} ft`) : null],
       ["Groundwater", p.gw_label ? `${p.gw_label}${probs ? ` (${Object.entries(probs).map(([k, v]) => `${k} ${Math.round(v)}%`).join(", ")})` : ""}` : null],

@@ -32,6 +32,7 @@ from .geosetta_api import NotCached, QuotaExceeded, client_for
 log = logging.getLogger(__name__)
 
 N_ORDER = ["0", "1-9", "10-25", "26-41", "42-50", "50+"]
+FINE_USCS = {"CL", "CH", "ML", "MH", "OL", "OH", "CL-ML", "PT"}
 
 
 def grid_cells(boundary_geom, res: int) -> list[str]:
@@ -66,7 +67,22 @@ def summarize_prediction(r: dict) -> dict:
     def first(pred):
         return next((row["depth_ft"] for row in prof if pred(row)), None)
 
-    out["depth_fines_ft"] = first(lambda x: x.get("dominant_grain_size") in ("CLAY", "SILT"))
+    # a clay (or silt) layer: fine-grained USCS class, or clay/silt as the dominant grain. Clayey
+    # sand (SC) doesn't count: the model predicts SC from the surface in every Gainesville cell
+    # (checked 2026-11-24), so "depth to SC" would read 0 ft everywhere.
+    out["depth_fines_ft"] = first(lambda x: x.get("USCS_groupSymbol") in FINE_USCS
+                                  or x.get("dominant_grain_size") in ("CLAY", "SILT"))
+    # what does vary: the model's probability that the upper 10 ft is clay-rich
+    top = [x for x in prof if (x.get("depth_ft") or 0) <= 10]
+
+    def mean_prob(get):
+        v = [get(x.get("lab_predictions") or {}) for x in top]
+        v = [p for p in v if p is not None]
+        return round(100 * sum(v) / len(v), 1) if v else None
+
+    out["fines_top10_pct"] = mean_prob(lambda lp: (lp.get("fines_probs") or {}).get("Fine-grained"))
+    syms = [x["USCS_groupSymbol"] for x in top if x.get("USCS_groupSymbol")]
+    out["top_uscs"] = max(set(syms), key=syms.count) if syms else None  # most common, 0-10 ft
     out["depth_n10_ft"] = first(lambda x: x.get("dominant_N_value") in N_ORDER[2:])
     out["depth_rock_ft"] = first(lambda x: (x.get("geomaterial") or "").upper() == "ROCK"
                                  or bool(x.get("rock_type")))

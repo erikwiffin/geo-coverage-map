@@ -239,8 +239,9 @@ geosetta_model:
     state geologic map, karst from USGS, sinkhole and slope screening from a terrain model,
     mines, SoilGrids soil order).
   contents: >-
-    Per cell: the predicted soil profile (layers with USCS class and SPT N range), the depth to
-    the first clay or silt layer, to N ≥ 10 and to rock, the predicted groundwater depth class
+    Per cell: the predicted soil profile (layers with USCS class and SPT N range), the chance
+    that the upper 10 ft is clay soil, the depth to the first clay layer (CL/CH), to N ≥ 10 and
+    to rock, the predicted groundwater depth class
     with probabilities, the model's confidence and its distance to the nearest training boring,
     site class and Vs30, the mapped geologic formation, karst setting, sinkhole and slope
     screening, and mines within 2 miles.
@@ -251,7 +252,10 @@ geosetta_model:
     Low-confidence cells, far from training borings, are where real data is most needed: compare
     with the coverage hexes.
   limits: >-
-    Estimates, not measurements: probabilistic model output with Geosetta's disclaimer. The
+    Estimates, not measurements: probabilistic model output with Geosetta's disclaimer. In
+    Gainesville the model predicts clayey sand (SC) from the surface in every cell, at medium
+    confidence (51–60%), with most cells over a mile from a training boring: the variables show
+    relative tendencies, and a nearby real log always wins. The
     profile resolves one foot, but the model is smooth between borings and can't see local
     karst features. One sample per cell, so detail finer than a cell is not shown. The SoilGrids
     soil order is a 250 m global product and very coarse. Never counts toward coverage.

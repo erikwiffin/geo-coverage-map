@@ -211,7 +211,7 @@ OpenFreeMap vector tiles (no API key needed), for example the style at `https://
 - **Coverage hexes**, coloured either by distance to the nearest qualifying boring (bins 0–50, 50–100, 100–250, 250–500, 500–1000, >1000 m; sequential palette, light means far) or by the number of reports within R. The user switches between the two.
 - **Borings**: colour by type, with lower opacity or a hollow marker for higher tiers. Cluster at low zoom.
 - **Report footprints**: polygons with a light fill.
-- **Geosetta model estimates** (off by default): H3 cells over the city coloured by one variable from Geosetta's point lookups (depth to clay/silt, to SPT N ≥ 10, to rock; groundwater class; seismic site class; sinkhole risk; model confidence). Model output, never counted toward coverage, always shown with Geosetta's disclaimer.
+- **Geosetta model estimates** (off by default): H3 cells over the city coloured by one variable from Geosetta's point lookups (chance of clay soil in the upper 10 ft; depth to a clay layer (CL/CH), to SPT N ≥ 10, to rock; groundwater class; seismic site class; sinkhole risk; model confidence). Model output, never counted toward coverage, always shown with Geosetta's disclaimer.
 - **Gaps**: outline the top-N uncovered clusters.
 
 **Controls:**
@@ -548,7 +548,9 @@ When a request is blocked, the error names the host; add it to the allowlist and
     resolution-8 run would take ~8 h; the report is mostly regional context (geology, karst,
     terrain screening), so the coarser sample suits it. Each grid cell shows its parent's
     report. Summarized per cell: predicted layers, depth to first
-    clay/silt, to N ≥ 10 and to rock, groundwater class and probabilities, confidence and
+    clay layer (CL/CH), to N ≥ 10 and to rock, the chance of clay soil in the upper 10 ft (the
+    model predicts clayey sand, SC, from the surface in every cell, so only the probability
+    varies), groundwater class and probabilities, confidence and
     distance to training borings, site class and Vs30, geology, karst, sinkhole and slope
     screening, mines, SoilGrids soil order. Drawn as an optional layer with a variable picker;
     never counts toward coverage. Run with `python -m pipeline model-grid` (also part of
