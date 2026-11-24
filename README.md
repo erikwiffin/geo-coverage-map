@@ -28,7 +28,8 @@ web app). Raw API responses are cached in `data/raw/`; use `--refresh` to refetc
 `--area config/area.<city>.yaml` selects another area.
 
 Outputs go to `data/processed/`: `boundary.geojson`, `borings.geojson` / `.parquet`,
-`reports.geojson`, `gaps.geojson`, `stats.json`, `coverage_curve.png`, `manifest.json`, `profile.md`.
+`reports.geojson`, `gaps.geojson`, `model_grid.geojson`, `stats.json`, `coverage_curve.png`,
+`manifest.json`, `profile.md`.
 
 ## Publishing (GitHub Pages)
 
@@ -68,6 +69,7 @@ cd web && npm test   # NN correctness + performance, and web-vs-Python stats con
 | `doi.org`, `www.sciencebase.gov` | USGS CPT release (open question 6) | reachable; release has no Florida points |
 | `services1.arcgis.com` | FDOT's ArcGIS Online org (`O1JpcwDW8sjYuddV`) | reachable; its 1,605 hosted services include **no soil-boring layer**, so it's not an FDOT mirror |
 | `geodes.kyrasolutions.com` | FGS well report links (links only; not fetched) | not needed |
+| `geosetta.org` | Geosetta API (borings, documents, model grid; needs `GEOSETTA_API_KEY`) | reachable (2026-11-24) |
 
 ### FDOT access workaround
 
@@ -78,12 +80,31 @@ URLs in a browser, and save the responses into `data/manual/fdot_d2/` (details i
 and records the import in `manifest.json`. Saved `.json` feature pages there are used instead of
 the network, and `attachments.json` gives every boring a direct link to its public log PDF.
 
-### Geosetta (no API key needed for this route)
+### Geosetta
 
-Draw an area on geosetta.org's map, export the DIGGS viewer page, and save the `.html` (or raw
-DIGGS `.xml`) into `data/manual/geosetta/`. `build` re-reads that folder. Boreholes that match an
-FDOT boring within 5 m add their depth, SPT N-values and soil layers to it; the rest become
-tier-4 borings flagged `approx_location` when Geosetta placed them at a report site.
+**With an API key** (`GEOSETTA_API_KEY` in the environment), source `geosetta` queries
+Geosetta's API: every Geosetta borehole and report location in the envelope, parsed logs (depth,
+SPT N-values, soil layers), location precision, and the source document behind each non-DOT
+location. Documents are identified and given a reuse label in `config/documents.yaml`; add an
+entry there when a new one appears (`profile.md` lists unlabelled ones). Responses are cached in
+`data/raw/geosetta/` and the API's hourly limits are tracked across runs; a 429 (daily quota)
+stops the run and the next run resumes from cache. `build` never calls the API.
+
+The **model grid** samples Geosetta's point lookups (predicted soil/SPT profile, seismic site
+class, site report) at 246 grid points over the city and draws them as an optional map layer:
+
+```bash
+python -m pipeline model-grid      # ~1.5-2 h the first time (Geosetta takes 10-25 s per lookup)
+python -m pipeline fetch --only geosetta   # refetch just the Geosetta borings
+```
+
+**Without a key:** draw an area on geosetta.org's map, export the DIGGS viewer page, and save the
+`.html` (or raw DIGGS `.xml`) into `data/manual/geosetta/`, then put `geosetta_diggs` back in
+the area config's `sources` instead of `geosetta`.
+
+Either way, boreholes that match an FDOT boring within 5 m add their depth, SPT N-values and soil
+layers to it; the rest become tier-4 borings flagged `approx_location` when Geosetta placed them
+at a report site. Geosetta's disclaimer travels with its data.
 
 ### Linking to a view
 
@@ -94,5 +115,7 @@ Defaults are omitted, so the plain URL shows every source at 250 m.
 ## Licensing
 
 Each source has a license tier (SPEC §8), recorded in `manifest.json` and shown in the map's About
-panel. Reports written by private consultants may still carry the consultant's copyright. This is
-not legal advice. **The map is not for design use; locations are approximate.**
+panel. All reports are included, whoever holds them; every boring, report and document carries a
+**reuse label** saying what you may do with it (public domain, public record, consultant
+copyright, link-only, Geosetta terms). Reports written by private consultants may still carry the
+consultant's copyright even in an agency file. This is not legal advice. **The map is not for design use; locations are approximate.**

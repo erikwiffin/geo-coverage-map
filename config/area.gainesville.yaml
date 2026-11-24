@@ -10,7 +10,7 @@ boundary:
 # Records outside this box get an out_of_county flag (Alachua County, approximate, WGS84).
 county_bbox: [-82.66, 29.41, -82.05, 29.95]
 
-sources: [fdot_d2, fgs_wells, usgs_nwis_gw, sjrwmd_wells, sjrwmd_erp, geosetta_diggs, fdep_cleanup, fdep_petroleum, fdep_drycleaning]
+sources: [fdot_d2, fgs_wells, usgs_nwis_gw, sjrwmd_wells, sjrwmd_erp, geosetta, fdep_cleanup, fdep_petroleum, fdep_drycleaning]
 
 envelope_buffer_m: 1000        # fetch boundary bbox + this
 h3_resolution: auto            # auto: 10, or 11 when min(radii_m) < 100
@@ -30,3 +30,11 @@ http:
   user_agent: "geotech-coverage/0.1 (public geotechnical data coverage map)"
   contact_email: ""            # set to add "; contact: <email>" to the User-Agent
   max_rps_per_host: 2
+
+# Geosetta point lookups (predicted soil/SPT profile, seismic site class, site report) sampled
+# at H3 cell centres over the city. Needs GEOSETTA_API_KEY to fetch; build reads the cache.
+model_grid:
+  h3_resolution: 8             # ~0.74 km² cells, ~0.9 km apart: 246 cells in Gainesville
+  depth_ft: 50
+  prediction_batch: 10         # points per prediction call (API max 50 timed out)
+  products: [predictions, site_class, site_report]

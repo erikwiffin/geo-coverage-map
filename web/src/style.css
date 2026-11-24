@@ -138,3 +138,12 @@ dialog table.guide td:first-child { font-weight: 600; width: 22%; }
 .src-row label { flex: 1; }
 button.info { flex: none; width: 22px; height: 22px; padding: 0; border-radius: 50%; font: italic 600 12px/20px Georgia, serif; }
 
+/* reuse label in popups */
+.rights { margin: 6px 0; padding: 6px 8px; border-left: 3px solid var(--accent); background: var(--surface-0); font-size: 12px; }
+.rights details { margin-top: 2px; }
+.rights summary { cursor: pointer; color: var(--text-secondary); }
+.rights p { margin: 4px 0 0; }
+.popup-title { font-weight: 650; margin: 0 0 4px; }
+.small { font-size: 11px; }
+.model-var { margin-top: 4px; }
+.model-var select { max-width: 230px; font: inherit; }

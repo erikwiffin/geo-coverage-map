@@ -21,4 +21,13 @@ describe("url state", () => {
     expect(v.maxTier).toBe(4); expect(v.radius).toBe(250); expect([...v.types]).toEqual(["SPT"]);
     expect(v.map).toBeUndefined(); expect(v.about).toBeUndefined();
   });
+  it("layers hidden by default stay hidden, and can be shown with an empty hide", () => {
+    const d: ViewState = { ...D, hiddenLayers: new Set(["model"]), modelVar: "depth_fines_ft" };
+    expect(encodeState(d, d, T, S)).toBe("");
+    expect([...decodeState("", d, T, S, [...L, "model"]).hiddenLayers]).toEqual(["model"]);
+    const shown = { ...d, hiddenLayers: new Set<string>(), modelVar: "site_class" };
+    const q = encodeState(shown, d, T, S);
+    expect(q).toBe("hide=&mv=site_class");
+    expect(decodeState("?" + q, d, T, S, [...L, "model"], ["depth_fines_ft", "site_class"])).toEqual(shown);
+  });
 });

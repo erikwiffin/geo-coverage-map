@@ -120,6 +120,9 @@ A generic adapter reads a CSV with `lat, lon` and optionally `source, tier, kind
 
 ### 4.5 Geosetta (M5, optional)
 
+Implemented 2026-11-24 as source `geosetta` (`pipeline/sources/geosetta.py`, client in
+`pipeline/geosetta_api.py`) and the model-grid layer (`pipeline/model_grid.py`, §7). See §14.
+
 - **API docs:** https://geosetta.org/api_docs/ (read these before implementing; don't guess the payload).
 - **Radius query:** `POST https://geosetta.org/web_map/api_key/` with `deliverableType: "Return_Historic_Data_In_Radius"`. The radius is capped at 5 km and each call returns at most 500 borings. To cover the city, tile it with overlapping circles.
 - **Limits:** the data API allows 100 requests per hour. Commercial use requires a data access fee.
@@ -141,12 +144,15 @@ OpenFreeMap vector tiles (no API key needed), for example the style at `https://
 |---|---|---|
 | `boring_uid` | str | `"{source_id}:{native_id}"` |
 | `source_id`, `tier`, `kind` | str/int/str | from the source config |
-| `boring_type` | str | normalized: `SPT`, `CPT`, `Auger`, `Well`, `Other` |
+| `boring_type` | str | normalized: `SPT`, `CPT`, `Auger`, `Well`, `Other`, `Document` (a report location with no parsed boring data), `Site`, `Permit` |
 | `boring_name` | str | native label (e.g. `BORENUM`) |
 | `date_raw`, `date`, `year` | str / ISO date / int | parse what can be parsed, keep the raw string, leave the rest null |
 | `depth_ft`, `elev`, `gw` | float or null | |
 | `report_key` | str | see §4.1 |
 | `doc_url`, `doc_name`, `project`, `consultant` | str or null | |
+| `rights`, `rights_detail` | str or null | reuse label (§8): the document's own label when known (`config/documents.yaml`), else the source's `rights` |
+| `location_precision` | str or null | Geosetta: `site_level` (placed at the report's site) or null (not assessed) |
+| `flags` | list | `approx_location`, `out_of_county`, `swapped_latlon`, `not_site_data` (drawn, never counted toward coverage) |
 | `lon`, `lat` | float | WGS84 |
 | `attrs` | JSON | all original attributes, untouched |
 
@@ -205,6 +211,7 @@ OpenFreeMap vector tiles (no API key needed), for example the style at `https://
 - **Coverage hexes**, coloured either by distance to the nearest qualifying boring (bins 0–50, 50–100, 100–250, 250–500, 500–1000, >1000 m; sequential palette, light means far) or by the number of reports within R. The user switches between the two.
 - **Borings**: colour by type, with lower opacity or a hollow marker for higher tiers. Cluster at low zoom.
 - **Report footprints**: polygons with a light fill.
+- **Geosetta model estimates** (off by default): H3 cells over the city coloured by one variable from Geosetta's point lookups (depth to clay/silt, to SPT N ≥ 10, to rock; groundwater class; seismic site class; sinkhole risk; model confidence). Model output, never counted toward coverage, always shown with Geosetta's disclaimer.
 - **Gaps**: outline the top-N uncovered clusters.
 
 **Controls:**
@@ -220,8 +227,9 @@ OpenFreeMap vector tiles (no API key needed), for example the style at `https://
 
 **Popups:**
 
-- **Boring:** name, type, date, source, tier, elevation and water level if present, document link
-- **Report:** name, link, number of borings, date range, license note
+- **Boring:** name, type, date, source, tier, elevation and water level if present, document link, reuse label
+- **Report:** name, link, number of borings, date range, reuse label
+- **Model cell:** every looked-up value, the predicted profile, and a "model estimate, not a measurement" note
 - **Hex:** distance to nearest boring, number of reports within R
 
 **Footer and about panel:** data sources with links and fetch dates (from `manifest.json`), the license tier explanation, the basemap attribution, the Geosetta disclaimer when that source is on, and a statement that the map is **not for design use** and that locations are approximate.
@@ -241,10 +249,24 @@ OpenFreeMap vector tiles (no API key needed), for example the style at `https://
 | 3 | Open license that requires attribution (CC BY, OGL) | none in Gainesville v1 |
 | 4 | Accessible under terms of use or a disclaimer | Geosetta |
 
-**Caveats to show in the about panel and README:**
+**All reports are included, whoever holds them** (universities included). Instead of excluding
+anything, every record carries a **reuse label** saying what we're allowed to do with it. The
+tier describes how we got the *data*; the reuse label also covers the *document*, which can
+differ (a consultant's report in an agency file is a public record you may inspect and copy, but
+the consultant may still own its copyright).
 
-- Reports written by private consultants and hosted by an agency may still carry the consultant's copyright.
-- University-held reports (for example, from the University of Florida) are excluded.
+| Reuse label | What you may do | Examples |
+|---|---|---|
+| Public domain | Copy, republish, adapt | USGS, FHWA publications |
+| Public record — free to reuse | Copy and republish, citing the agency | FDOT, FDEP, SJRWMD records; county, city and state-university (e.g. University of Florida) documents |
+| Public record; consultant copyright | Inspect, copy for own use, link and cite; don't republish the document | consultant reports in agency or utility files |
+| Copyrighted — link and cite only | Link and cite; don't copy or re-host | private reports, journal papers, proposals |
+| Geosetta terms of use | Share only with Geosetta's full disclaimer, no warranty; commercial API use needs Geosetta's data access fee | Geosetta locations, parsed logs, model estimates |
+
+- Source-level labels: `rights` / `rights_detail` in `sources.yaml`. Document-level labels (which
+  win): `config/documents.yaml`, keyed by the source's document id, filled in after opening each
+  document.
+- The map never re-hosts a document; it links to the publisher.
 - This is not legal advice.
 
 The tier assigned to each source is set in `sources.yaml` and recorded in `manifest.json`.
@@ -489,3 +511,45 @@ When a request is blocked, the error names the host; add it to the allowlist and
   year range, `undated`, `hide` (hidden layers), `map` (zoom/lat/lng, once the user moves the
   map) and `about` (open source card, or `guide`). It updates on every change with
   `history.replaceState`; a "Copy link to this view" button copies it.
+- **Geosetta API (2026-11-24), replaces the DIGGS exports; all reports included with reuse
+  labels.** With an API key (`GEOSETTA_API_KEY`), source `geosetta` replaces `geosetta_diggs` in
+  the area config (the export adapter and files stay for key-less use).
+  - **Client** (`pipeline/geosetta_api.py`): every response cached under
+    `data/raw/geosetta/` (keyed by request); sliding-window limits persisted in `usage.json`
+    (data API 90/h, tiles 450/h, under the documented 100 and 500), ≥ 1 s between calls, and a
+    429 stops the run (`QuotaExceeded`) without retrying; the next run resumes from cache.
+    `build` reads the cache only. Auth: `Authorization: Bearer` for `web_map`, `X-API-Key` for
+    `site_class` (which rejects Bearer).
+  - **Borings:** 16 overlapping 5 km radius queries over the envelope (a query that hits the
+    500 cap is split; none did): 799 locations, 741 in the envelope. Vector tiles (z13) add
+    `location_precision` (`loc: site_level`) and the report group. DIGGS XML is fetched one key
+    per call: the documented comma-joined form returned an empty document. 60 parsed logs (57
+    in the envelope), the same set as the three exports. 698 locations are FDOT borings that
+    dedupe into `fdot_d2` (26 FDOT borings carry a Geosetta log, as before). 43 remain: 30
+    parsed boreholes in 5 non-DOT reports, 11 document locations, 2 locations with neither.
+  - **Documents:** `do_files_json` gives each non-DOT location's source file (11 PDFs). Each
+    was opened and described in `config/documents.yaml` (title, author, kind, reuse label,
+    `site_specific`). One report key per document (`report_key: [doc_path, report_group,
+    project]`). Four aren't about the place they're pinned to (a 1979 Schmertmann journal
+    paper and an FHWA CPT manual pinned near UF, a DRMP proposal for Sumter County, a Marion
+    County management plan): flagged `not_site_data`, drawn and labelled but excluded from
+    coverage in Python (`Filters.mask`) and the web (`counts`), covered by the consistency
+    test. Geosetta's file downloads answer 403 without a key, so documents link to the
+    location on Geosetta's map. New boring type `Document`.
+  - **Model grid** (`pipeline/model_grid.py`, `model_grid.geojson`): Geosetta's predictions,
+    site class and site report are point lookups, so they're sampled at the 246 H3 resolution-8
+    cell centres in the city (~0.74 km² cells, ~0.9 km apart). `SPT_Point_Prediction` in
+    batches of 10 points (25 data-API calls; a 50-point batch timed out at 180 s, and each
+    point takes ~20 s), one `site_class` GET and one `generate_site_report` POST (with the
+    cell polygon, ~23 s each) per cell. Summarized per cell: predicted layers, depth to first
+    clay/silt, to N ≥ 10 and to rock, groundwater class and probabilities, confidence and
+    distance to training borings, site class and Vs30, geology, karst, sinkhole and slope
+    screening, mines, SoilGrids soil order. Drawn as an optional layer with a variable picker;
+    never counts toward coverage. Run with `python -m pipeline model-grid` (also part of
+    `fetch`); about 1.5–2 h of requests the first time.
+  - **Not used:** `report-issue` (posting corrections to Geosetta) is left for a person to do;
+    vector tiles' clustering and `Distance_From_Trained_Point` (covered by the prediction
+    response); the PDF-extraction endpoints on `diggs.geosetta.org` (unreachable from the build
+    sandbox: DNS failure).
+  - **Coverage:** geotechnical-only coverage at 1 km rose from 29.7% to 33.2% (document
+    locations); the default view (all sources) is unchanged within 0.3 pp.

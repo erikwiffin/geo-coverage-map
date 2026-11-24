@@ -1,0 +1,130 @@
+# Source documents behind Geosetta's non-DOT locations, keyed by Geosetta's file path
+# (do_files_json `path`). Each was opened and its title page read (2026-11-24).
+#
+#   title, author, kind   what the document is
+#   site_specific         false = not data about the place it's pinned to (a journal paper or
+#                         a proposal geocoded to an office address). Drawn and labelled, but it
+#                         doesn't count toward coverage.
+#   rights                short reuse label shown on the map (see SPEC §8 "Reuse labels")
+#   rights_detail         what we may do with it, and why
+#
+# Geosetta-sourced data (locations, parsed logs) is also under Geosetta's terms of use whatever
+# the document's own status: redistribute only with Geosetta's disclaimer. The PDFs themselves
+# are only downloadable from Geosetta with a key, so the map links to the location on Geosetta's
+# map and never re-hosts a file.
+
+logs/reports/29.6516;-82.3248.pdf:
+  title: Preliminary Geological and Geotechnical Site Evaluation, Plum Creek Property
+  author: GSE Engineering & Consulting (for CHW Professional Consultants), June 2015
+  kind: geotechnical report
+  site_specific: true
+  rights: Copyrighted (private consultant) — link and cite only
+  rights_detail: >-
+    A private consultant's report for a private client, found by Geosetta's web crawl. The
+    consultant holds copyright. Cite it and link to it; don't copy or republish the report.
+    The parsed boring data comes via Geosetta under its terms of use.
+
+logs/reports/29.6856;-82.3549.pdf:
+  title: CCR Abutment and Base Surface Impoundment System Evaluation, Deerhaven Generating Station
+  author: Universal Engineering Sciences (for Innovative Waste Consulting Services / GRU), Oct 2016
+  kind: geotechnical report
+  site_specific: true
+  rights: Public record (utility file); consultant copyright — link and cite
+  rights_detail: >-
+    Prepared for Gainesville Regional Utilities' coal-ash compliance file, which GRU publishes
+    as a public record. Florida public records can be inspected and copied by anyone, but the
+    consultant may still hold copyright in the report. Link and cite; don't republish.
+
+logs/reports/29.7007;-82.3999.pdf:
+  title: CCR Impoundment System Periodic Structural Stability Assessment, Deerhaven Generating Station
+  author: Universal Engineering Sciences (for Gainesville Regional Utilities)
+  kind: geotechnical report
+  site_specific: true
+  rights: Public record (utility file); consultant copyright — link and cite
+  rights_detail: >-
+    Prepared for Gainesville Regional Utilities' coal-ash compliance file (public record). The
+    consultant may still hold copyright. Link and cite; don't republish. Geosetta hasn't parsed
+    its borings, so only the document location is shown.
+
+logs/reports/29.65008;-82.34038.pdf:
+  title: Geotechnical Report, Malcom Randall VA Medical Center Boiler Building
+  author: GEAR Engineering, August 2012
+  kind: geotechnical report
+  site_specific: true
+  rights: Copyrighted (consultant, federal client) — link and cite only
+  rights_detail: >-
+    A consultant's report for a US Department of Veterans Affairs project. Work by a contractor
+    isn't automatically a US government work, so treat it as the consultant's copyright: cite
+    and link, don't republish.
+
+logs/reports/29.6605;-82.3307.pdf:
+  title: Boulware Springs Nature Park — Park and Building Revitalization (draft)
+  author: Jones Edmunds & Associates (for the City of Gainesville), Nov–Dec 2022
+  kind: design report with geotechnical data
+  site_specific: true
+  rights: Public record (City of Gainesville); consultant copyright — link and cite
+  rights_detail: >-
+    A consultant's draft for the City of Gainesville, so a Florida public record. The consultant
+    may still hold copyright. Link and cite; don't republish.
+
+logs/reports/29.73595;-82.40327.pdf:
+  title: Alachua County comments on the Tara April special exception (Mill Creek Sink), Nov 2025
+  author: Alachua County Board of County Commissioners (letter with attached studies)
+  kind: agency correspondence with geotechnical attachments
+  site_specific: true
+  rights: Public record (Alachua County) — free to reuse
+  rights_detail: >-
+    County correspondence and attachments are Florida public records; the county can't claim
+    copyright in them (Microdecisions v. Skinner). Attached consultant studies may still carry
+    the consultant's copyright.
+
+logs/reports/29.7772;-82.4175.pdf:
+  title: "Invitation to Bid: Site Work at IFAS Dairy Unit, Hague, FL (May 2022)"
+  author: University of Florida Procurement Services
+  kind: bid documents (construction)
+  site_specific: true
+  rights: Public record (University of Florida) — free to reuse
+  rights_detail: >-
+    UF is a state university, so its procurement documents are Florida public records. Bid
+    packages often attach soil or site information; this one hasn't been checked page by page.
+
+logs/reports/29.599255;-82.413637.pdf:
+  title: Silver Springs Conservation Area Unit Management Plan (draft, May 2019)
+  author: Prepared for Marion County Parks & Recreation by a Gainesville consultant
+  kind: land management plan
+  site_specific: false
+  rights: Public record (Marion County); consultant copyright — link and cite
+  rights_detail: >-
+    About a conservation area in Marion County (Ocala), pinned to the consultant's Gainesville
+    office address. Not data about this location, so it doesn't count toward coverage.
+
+logs/reports/29.65538;-82.423567.pdf:
+  title: Statement of qualifications for Sumter County RFQ 17-0031 (DRMP, Inc.)
+  author: DRMP, Inc.
+  kind: consultant proposal
+  site_specific: false
+  rights: Copyrighted (consultant) — link only
+  rights_detail: >-
+    A firm's qualification package for a Sumter County contract; no Gainesville site data. It
+    became a public record when submitted, but the firm holds copyright. Doesn't count toward
+    coverage.
+
+logs/reports/29.6486;-82.3456.pdf:
+  title: "Statics of SPT (Journal of the Geotechnical Engineering Division, May 1979)"
+  author: John H. Schmertmann
+  kind: journal article
+  site_specific: false
+  rights: Copyrighted (ASCE) — link and cite only
+  rights_detail: >-
+    A classic research paper, pinned near the University of Florida (the author's affiliation).
+    Not site data, so it doesn't count toward coverage. ASCE holds copyright: cite it, don't copy.
+
+logs/reports/29.665226;-82.35004.pdf:
+  title: "Guidelines for Cone Penetration Test: Performance and Design (FHWA, 1978)"
+  author: John H. Schmertmann, for the Federal Highway Administration
+  kind: technical manual
+  site_specific: false
+  rights: Public domain (US federal publication)
+  rights_detail: >-
+    An FHWA report, so a US government work in the public domain. A design manual, not site
+    data: it doesn't count toward coverage.

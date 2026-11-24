@@ -34,7 +34,7 @@ def build_reports(borings: pd.DataFrame, buffer_m: float = 30,
                   span_flag_km: float = 5) -> gpd.GeoDataFrame:
     keyed = borings[borings["report_key"].notna()]
     cols = ["report_key", "source_id", "tier", "kind", "doc_name", "doc_url", "doc_internal",
-            "fin", "n_documents", "n_borings",
+            "fin", "rights", "rights_detail", "n_documents", "n_borings",
             "types", "date_min", "date_max", "year_min", "year_max", "span_m", "flag_span",
             "centroid_lon", "centroid_lat", "hull", "geometry"]
     if keyed.empty:
@@ -65,6 +65,8 @@ def build_reports(borings: pd.DataFrame, buffer_m: float = 30,
             "doc_url": g["doc_url"].dropna().iloc[0] if g["doc_url"].notna().any() else None,
             "doc_internal": _first(g, "doc_internal"),
             "fin": _first(g, "fin"),
+            "rights": _first(g, "rights"),
+            "rights_detail": _first(g, "rights_detail"),
             "n_documents": int(pd.concat([g.get("doc_url", pd.Series(dtype=object)),
                                           g.get("doc_internal", pd.Series(dtype=object))])
                                .dropna().nunique()),

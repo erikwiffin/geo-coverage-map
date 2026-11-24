@@ -15,8 +15,12 @@ SCHEMA = [
     "boring_uid", "source_id", "tier", "kind", "boring_type", "boring_name",
     "date_raw", "date", "year", "date_format", "depth_ft", "elev", "gw", "report_key",
     "doc_url", "doc_internal", "doc_name", "n_attachments", "project", "fin", "consultant",
-    "lon", "lat", "flags", "also_in", "log", "log_from", "site_id", "details", "attrs",
+    "lon", "lat", "flags", "also_in", "log", "log_from", "site_id", "details",
+    "rights", "rights_detail", "location_precision", "attrs",
 ]
+# Records flagged with this are drawn and labelled but never count toward coverage (e.g. a
+# journal article Geosetta geocoded to the author's university).
+NO_COVERAGE_FLAG = "not_site_data"
 # Filled from a merged duplicate when the kept record lacks them (e.g. Geosetta's parsed log
 # depth/N-values attached to the matching FDOT boring).
 ENRICH = ["depth_ft", "log"]
@@ -70,6 +74,7 @@ def parse_date(raw) -> tuple[str | None, int | None, str | None]:
 
 TYPE_RULES = [
     ("Site", re.compile(r"^SITE$", re.I)),
+    ("Document", re.compile(r"^DOCUMENT$", re.I)),
     ("CPT", re.compile(r"\bCPT|CONE", re.I)),
     ("SPT", re.compile(r"\bSPT|STANDARD\s*PEN", re.I)),
     ("Auger", re.compile(r"AUG", re.I)),
@@ -191,7 +196,8 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
             "consultant": get(a, "consultant"),
             "lon": _num(r.get("lon")),
             "lat": _num(r.get("lat")),
-            "flags": (list(a.get("flags") or []) if src.get("adapter") == "diggs" else [])
+            "flags": (list(a.get("flags") or []) if src.get("adapter") in ("diggs", "geosetta")
+                      else [])
             + (["approx_location"] if any(_clean(a.get(f)) in vals for f, vals in
                                           (src.get("approx_when") or {}).items()) else []),
             "also_in": [],
@@ -202,6 +208,10 @@ def normalize_source(records: list[dict], src: dict, county_bbox=None) -> pd.Dat
             "details": json.dumps({k: _fmt(a[f]) for k, f in (src.get("details") or {}).items()
                                    if _clean(a.get(f)) is not None}) if src.get("details")
             else None,
+            # what we may do with the record: a per-document label wins over the source's
+            "rights": _clean(a.get("rights")) or _clean(src.get("rights")),
+            "rights_detail": _clean(a.get("rights_detail")),
+            "location_precision": _clean(a.get("location_precision")),
             "attrs": json.dumps(a, default=str),
         })
     df = pd.DataFrame(rows, columns=SCHEMA)

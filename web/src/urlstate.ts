@@ -9,6 +9,7 @@ export interface ViewState {
   yearMax: number;
   includeUndated: boolean;
   hiddenLayers: Set<string>;
+  modelVar?: string; // variable shown by the Geosetta model-grid layer
   map?: { zoom: number; lat: number; lng: number };
   about?: string;
 }
@@ -24,7 +25,8 @@ export function encodeState(s: ViewState, d: ViewState, typeOrder: string[], sou
   if (!setEq(s.sources, d.sources)) q.set("src", list(s.sources, sourceOrder));
   if (s.yearMin !== d.yearMin || s.yearMax !== d.yearMax) q.set("y", `${s.yearMin}-${s.yearMax}`);
   if (s.includeUndated !== d.includeUndated) q.set("undated", s.includeUndated ? "1" : "0");
-  if (s.hiddenLayers.size) q.set("hide", [...s.hiddenLayers].sort().join(","));
+  if (!setEq(s.hiddenLayers, d.hiddenLayers)) q.set("hide", [...s.hiddenLayers].sort().join(","));
+  if (s.modelVar && s.modelVar !== d.modelVar) q.set("mv", s.modelVar);
   if (s.map) q.set("map", `${s.map.zoom.toFixed(2)}/${s.map.lat.toFixed(5)}/${s.map.lng.toFixed(5)}`);
   if (s.about) q.set("about", s.about);
   return q.toString().replace(/%2C/g, ",").replace(/%2F/g, "/"); // keep , and / readable
@@ -32,9 +34,9 @@ export function encodeState(s: ViewState, d: ViewState, typeOrder: string[], sou
 
 /** Apply query params onto a copy of the defaults; unknown or malformed values are ignored. */
 export function decodeState(search: string, d: ViewState, validTypes: string[], validSources: string[],
-  validLayers: string[]): ViewState {
+  validLayers: string[], validModelVars: string[] = []): ViewState {
   const q = new URLSearchParams(search);
-  const s: ViewState = { ...d, types: new Set(d.types), sources: new Set(d.sources), hiddenLayers: new Set() };
+  const s: ViewState = { ...d, types: new Set(d.types), sources: new Set(d.sources), hiddenLayers: new Set(d.hiddenLayers) };
   const num = (k: string) => { const v = Number(q.get(k)); return q.has(k) && Number.isFinite(v) ? v : null; };
   const pick = (k: string, valid: string[]) => new Set((q.get(k) ?? "").split(",").filter((x) => valid.includes(x)));
   const r = num("r"); if (r !== null && r > 0 && r <= 5000) s.radius = Math.round(r);
@@ -45,9 +47,10 @@ export function decodeState(search: string, d: ViewState, validTypes: string[], 
   if (y) { s.yearMin = Math.min(+y[1], +y[2]); s.yearMax = Math.max(+y[1], +y[2]); }
   if (q.has("undated")) s.includeUndated = q.get("undated") !== "0";
   if (q.has("hide")) s.hiddenLayers = pick("hide", validLayers);
+  if (q.get("mv") && validModelVars.includes(q.get("mv")!)) s.modelVar = q.get("mv")!;
   const m = (q.get("map") ?? "").split("/").map(Number);
   if (m.length === 3 && m.every(Number.isFinite) && Math.abs(m[1]) <= 90 && Math.abs(m[2]) <= 180)
     s.map = { zoom: m[0], lat: m[1], lng: m[2] };
-  if (q.get("about") && validSources.concat(["guide"]).includes(q.get("about")!)) s.about = q.get("about")!;
+  if (q.get("about") && validSources.concat(["guide", "geosetta_model"]).includes(q.get("about")!)) s.about = q.get("about")!;
   return s;
 }

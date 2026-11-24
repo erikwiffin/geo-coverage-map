@@ -14,12 +14,20 @@ interface SourceEntry {
   name?: string; url?: string; homepage?: string; tier: number; kind: string; license?: string;
   disclaimer?: string; status: string; reason?: string; fetched?: string; n_raw?: number;
   n_in_area?: number; n_after_dedupe?: number; default_on?: boolean; doc_label?: string;
+  rights?: string; rights_detail?: string;
+  about?: { origin?: string; contents?: string; design_use?: string; limits?: string };
+}
+interface ModelGridEntry {
+  status: string; n_cells: number; n_features: number; h3_resolution: number; depth_ft: number; built?: string;
+  disclaimer?: string; predictions?: { status: string; n: number; reason?: string };
+  site_class?: { status: string; n: number; reason?: string }; site_report?: { status: string; n: number; reason?: string };
   about?: { origin?: string; contents?: string; design_use?: string; limits?: string };
 }
 interface Manifest {
   area: string; generated: string; built?: string; basemap_style?: string;
   boundary: { url: string; license?: string; fetched?: string };
   sources: Record<string, SourceEntry>;
+  model_grid?: ModelGridEntry;
 }
 interface Stats {
   area_id: string; h3_resolution: number; radii_m: number[]; default_radius_m: number;
@@ -28,11 +36,41 @@ interface Stats {
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const DATA = "./data/";
-const TYPES = ["SPT", "CPT", "Auger", "Well", "Other", "Site", "Permit"];
-const TYPE_LABEL: Record<string, string> = { Site: "Cleanup site (FDEP)", Permit: "Permit area (ERP)" };
+const TYPES = ["SPT", "CPT", "Auger", "Well", "Other", "Document", "Site", "Permit"];
+const TYPE_LABEL: Record<string, string> = { Site: "Cleanup site (FDEP)", Permit: "Permit area (ERP)", Document: "Report document (location)" };
 const TYPE_COLOR: Record<string, string> = {
-  SPT: "#2a78d6", CPT: "#eb6834", Auger: "#1baf7a", Well: "#52514e", Other: "#a3a29c", Site: "#c98500", Permit: "#008300",
+  SPT: "#2a78d6", CPT: "#eb6834", Auger: "#1baf7a", Well: "#52514e", Other: "#a3a29c", Document: "#b8336a", Site: "#c98500", Permit: "#008300",
 };
+// Drawn and labelled, never counted toward coverage (pipeline: normalize.NO_COVERAGE_FLAG)
+const counts = (b: Boring) => !String(b.flags ?? "").split(",").includes("not_site_data");
+
+// Geosetta model grid (pipeline/model_grid.py): one variable at a time colours the cells.
+interface ModelVar { label: string; short: string; bins?: number[]; binLabels?: string[]; cats?: [string | number, string][]; none?: string; palette: string[] }
+const SEQ = ["#7a2a04", "#b2420a", "#e0651f", "#f39a4d", "#f9c890", "#fde9cf"]; // shallow/low = dark
+const CAT = ["#0072b2", "#e69f00", "#009e73", "#cc79a7", "#56b4e9", "#d55e00", "#999999"]; // Okabe-Ito
+const DEPTH_BINS = [3, 6, 10, 20, 35];
+const DEPTH_LABELS = ["0–3 ft", "3–6 ft", "6–10 ft", "10–20 ft", "20–35 ft", "35–50 ft"];
+const MODEL_VARS: Record<string, ModelVar> = {
+  depth_fines_ft: { label: "Depth to first clay or silt layer", short: "clay/silt", bins: DEPTH_BINS, binLabels: DEPTH_LABELS, none: "none predicted to 50 ft", palette: SEQ },
+  depth_n10_ft: { label: "Depth to SPT N ≥ 10 (medium dense / stiff)", short: "N ≥ 10", bins: DEPTH_BINS, binLabels: DEPTH_LABELS, none: "not reached by 50 ft", palette: SEQ },
+  depth_rock_ft: { label: "Depth to rock (limestone)", short: "rock", bins: DEPTH_BINS, binLabels: DEPTH_LABELS, none: "no rock predicted to 50 ft", palette: SEQ },
+  gw_category: { label: "Groundwater depth", short: "groundwater", cats: [[0, "Shallow (≤ 10 ft)"], [1, "Medium (10–50 ft)"], [2, "Deep (> 50 ft)"]], palette: ["#0b4f8a", "#56b4e9", "#d9ecf8"] },
+  // ordered stiff (blue) to soft (brown); categories filled from the data
+  site_class: { label: "Seismic site class (ASCE 7-22)", short: "site class", cats: [], palette: ["#0b4f8a", "#3a7fc1", "#7fb8e0", "#f9c890", "#e0651f", "#b2420a", "#7a2a04"] },
+  sinkhole_risk: { label: "Sinkhole risk (terrain analysis)", short: "sinkhole risk", cats: [["low", "Low"], ["moderate", "Moderate"], ["high", "High"]], palette: ["#f9c890", "#e0651f", "#7a2a04"] },
+  confidence: { label: "Prediction confidence", short: "confidence", bins: [40, 50, 60, 70], binLabels: ["< 40%", "40–50%", "50–60%", "60–70%", "≥ 70%"], palette: ["#7a2a04", "#e0651f", "#f9c890", "#7fb8e0", "#0b4f8a"] },
+};
+function modelValue(v: ModelVar, p: Record<string, unknown>, key: string): { i: number; label: string } {
+  const x = p[key];
+  if (v.cats) {
+    const i = v.cats.findIndex(([c]) => String(c) === String(x));
+    return i < 0 ? { i: -1, label: x == null ? "no data" : String(x) } : { i, label: v.cats[i][1] };
+  }
+  if (x == null) return { i: v.none ? v.palette.length : -1, label: v.none ?? "no data" };
+  const i = binOf(Number(x), v.bins!);
+  return { i, label: v.binLabels![i] };
+}
+const NONE_COLOR = "#eeeeec";
 const DIST_BINS = [50, 100, 250, 500, 1000];
 const DIST_COLORS = ["#104281", "#1c5cab", "#2a78d6", "#5598e7", "#86b6ef", "#cde2fb"]; // near = dark
 const DIST_LABELS = ["0–50 m", "50–100 m", "100–250 m", "250–500 m", "500–1000 m", "> 1000 m"];
@@ -58,11 +96,19 @@ async function getJSON<T>(name: string): Promise<T> {
 }
 
 async function main() {
-  const [boundary, boringsFC, reportsFC, manifest, stats, areasFC] = await Promise.all([
+  const [boundary, boringsFC, reportsFC, manifest, stats, areasFC, modelFC] = await Promise.all([
     getJSON<FC>("boundary.geojson"), getJSON<FC>("borings.geojson"), getJSON<FC>("reports.geojson"),
     getJSON<Manifest>("manifest.json"), getJSON<Stats>("stats.json"),
     getJSON<FC>("areas.geojson"),
+    getJSON<FC>("model_grid.geojson").catch(() => ({ type: "FeatureCollection", features: [] }) as FC),
   ]);
+  const hasModel = modelFC.features.length > 0;
+  { // site class comes as a single class or a range ("D–DE"): legend categories from the data, in ASCE order
+    const order = ["A", "B", "BC", "C", "CD", "D", "DE", "E", "F"];
+    const rank = (x: string) => x.split("–").reduce((t, c) => t + Math.max(0, order.indexOf(c)), 0) / x.split("–").length;
+    const vals = [...new Set(modelFC.features.map((f) => f.properties?.site_class).filter((x): x is string => typeof x === "string"))];
+    MODEL_VARS.site_class.cats = vals.sort((a, b) => rank(a) - rank(b)).map((x) => [x, x]);
+  }
   // Real borings are drawn and counted. Area sources (permit polygons) add pseudo-points at the
   // H3 cells they overlap; those feed the coverage maths only (same model as pipeline/areas.py).
   const realBorings: Boring[] = boringsFC.features.map((f) => f.properties as Boring);
@@ -91,26 +137,31 @@ async function main() {
       sources: new Set(sources.filter(([, s]) => s.status === "ok" && s.default_on !== false).map(([id]) => id)),
       yearMin: y0, yearMax: y1, includeUndated: true,
     } as Filters,
-    layers: { boundary: true, hexes: true, borings: true, reports: true, areas: true, gaps: true } as Record<string, boolean>,
+    layers: { boundary: true, hexes: true, borings: true, reports: true, areas: true, gaps: true, model: false } as Record<string, boolean>,
+    modelVar: "depth_fines_ft",
   };
 
   // ---------------------------------------------------------------- shareable URL state
   const LAYER_KEYS = Object.keys(state.layers);
   const sourceIds = sources.map(([id]) => id);
   const defaults: ViewState = { radius: state.radius, maxTier: 4, types: new Set(TYPES), sources: new Set(state.filters.sources),
-    yearMin: y0, yearMax: y1, includeUndated: true, hiddenLayers: new Set() };
-  const initial = decodeState(location.search, defaults, TYPES, sourceIds.filter((id) => manifest.sources[id].status === "ok"), LAYER_KEYS);
+    yearMin: y0, yearMax: y1, includeUndated: true, hiddenLayers: new Set(LAYER_KEYS.filter((k) => !state.layers[k])),
+    modelVar: state.modelVar };
+  const initial = decodeState(location.search, defaults, TYPES, sourceIds.filter((id) => manifest.sources[id].status === "ok"), LAYER_KEYS,
+    Object.keys(MODEL_VARS));
   state.radius = initial.radius;
   Object.assign(state.filters, { maxTier: initial.maxTier, types: initial.types, sources: initial.sources,
     yearMin: Math.max(y0, initial.yearMin), yearMax: Math.min(y1, initial.yearMax), includeUndated: initial.includeUndated });
-  for (const k of initial.hiddenLayers) state.layers[k] = false;
+  for (const k of LAYER_KEYS) state.layers[k] = !initial.hiddenLayers.has(k);
+  if (!hasModel) state.layers.model = false;
+  state.modelVar = initial.modelVar ?? state.modelVar;
   let mapView = initial.map;   // only written once the view differs from the default fit
   let aboutOpen: string | undefined;
   function writeUrl() {
     const f = state.filters;
     const v: ViewState = { radius: state.radius, maxTier: f.maxTier, types: f.types, sources: f.sources, yearMin: f.yearMin,
       yearMax: f.yearMax, includeUndated: f.includeUndated, hiddenLayers: new Set(LAYER_KEYS.filter((k) => !state.layers[k])),
-      map: mapView, about: aboutOpen };
+      modelVar: state.modelVar, map: mapView, about: aboutOpen };
     const q = encodeState(v, defaults, TYPES, sourceIds);
     const url = location.pathname + (q ? "?" + q : "") + location.hash;
     if (url !== location.pathname + location.search + location.hash) history.replaceState(null, "", url);
@@ -151,6 +202,12 @@ async function main() {
     map.addLayer({ id: "hexes", type: "fill", source: "hexes",
       paint: { "fill-color": HEX_COLOR, "fill-outline-color": HEX_COLOR,
         "fill-opacity": ["case", ["<", ["coalesce", ["feature-state", "c"], -1], 0], 0, 0.55] } });
+    map.addSource("model", { type: "geojson", data: modelFC });
+    map.addLayer({ id: "model-fill", type: "fill", source: "model",
+      paint: { "fill-color": ["coalesce", ["get", "_c"], "#00000000"], "fill-opacity": 0.72, "fill-outline-color": "#ffffff" } });
+    map.addLayer({ id: "model-line", type: "line", source: "model",
+      paint: { "line-color": "#ffffff", "line-width": 0.6, "line-opacity": 0.9 } });
+    paintModel();
     map.addSource("areas", { type: "geojson", data: areasFC });
     map.addLayer({ id: "areas-fill", type: "fill", source: "areas", filter: ["in", ["get", "area_uid"], ["literal", []]],
       paint: { "fill-color": "#008300", "fill-opacity": ["case", ["get", "counts_toward_coverage"], 0.14, 0.05] } });
@@ -185,7 +242,7 @@ async function main() {
         "circle-stroke-width": 2,
       } });
 
-    for (const id of ["borings", "clusters", "reports-fill", "areas-fill", "hexes"]) {
+    for (const id of ["borings", "clusters", "reports-fill", "areas-fill", "model-fill", "hexes"]) {
       map.on("mouseenter", id, () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", id, () => (map.getCanvas().style.cursor = ""));
     }
@@ -195,7 +252,7 @@ async function main() {
   });
 
   // ---------------------------------------------------------------- compute
-  let last: { dist: Float64Array; ddist: Float64Array; filtered: Boring[]; pct: number; curve: number[] } | null = null;
+  let last: { dist: Float64Array; ddist: Float64Array; filtered: Boring[]; counted: Boring[]; pct: number; curve: number[] } | null = null;
   let pending = 0;
   buildControls();
 
@@ -204,11 +261,12 @@ async function main() {
     pending = requestAnimationFrame(() => {
       const t0 = performance.now();
       const filtered = applyFilters(borings, state.filters);
-      const dist = nearestDistances(grid, filtered);
-      const ddist = dgrid === grid ? dist : nearestDistances(dgrid, filtered);
+      const counted = filtered.filter(counts);
+      const dist = nearestDistances(grid, counted);
+      const ddist = dgrid === grid ? dist : nearestDistances(dgrid, counted);
       const both = coverageCurve(dist, grid.area, [...SPARK_R, state.radius]);
       const curve = both.slice(0, SPARK_R.length), pct = both[SPARK_R.length];
-      last = { dist, ddist, filtered, pct, curve };
+      last = { dist, ddist, filtered, counted, pct, curve };
       writeUrl();
       const t1 = performance.now();
       updateMap();
@@ -270,6 +328,8 @@ async function main() {
     const inUse = new Set([...state.filters.sources, ...filtered.map((b) => b.log_from as string).filter(Boolean)]);
     const gs = sources.filter(([id, s]) => inUse.has(id) && s.disclaimer);
     for (const [, s] of gs) msgs.push(`${s.name ?? "Source"} data is shown with its disclaimer (see About): not for design; may contain transcription errors.`);
+    if (filtered.some((b) => !counts(b))) msgs.push("Documents marked \"not site data\" (e.g. a journal paper pinned to a university) are drawn but don't count toward coverage.");
+    if (state.layers.model && hasModel) msgs.push(`Geosetta model grid: machine-learning estimates, not measurements, shown with Geosetta's disclaimer (see About). They don't count toward coverage.`);
     notice.hidden = !msgs.length;
     notice.textContent = msgs.join(" ");
   }
@@ -310,6 +370,30 @@ async function main() {
     return curve[a] + (curve[b] - curve[a]) * (i - a);
   }
 
+  // ---------------------------------------------------------------- model grid
+  function paintModel() {
+    if (!mapReady || !map.getSource("model")) return;
+    const v = MODEL_VARS[state.modelVar];
+    for (const f of modelFC.features) {
+      const p = f.properties as Record<string, unknown>;
+      const { i } = modelValue(v, p, state.modelVar);
+      p._c = i < 0 ? null : i >= v.palette.length ? NONE_COLOR : v.palette[i];
+    }
+    (map.getSource("model") as GeoJSONSource).setData(modelFC);
+  }
+  function modelLegend(): string {
+    if (!state.layers.model || !hasModel) return "";
+    const v = MODEL_VARS[state.modelVar];
+    const items: [string, string][] = v.cats ? v.cats.map(([, l], i) => [v.palette[i % v.palette.length], l])
+      : v.binLabels!.map((l, i) => [v.palette[i], l]);
+    if (v.none) items.push([NONE_COLOR, v.none]);
+    const present = new Set(modelFC.features.map((f) => modelValue(v, f.properties as Record<string, unknown>, state.modelVar).label));
+    return `<h3>Geosetta model: ${esc(v.label)}</h3>
+      <div class="bins">${items.filter(([, l]) => !v.cats || present.has(l)).map(([c, l]) => `<span class="bin" style="background:${c}"></span><span>${esc(l)}</span>`).join("")}</div>
+      <p class="muted small">Estimates at ${MODEL_GRID_NOTE()}, not measurements.</p>`;
+  }
+  const MODEL_GRID_NOTE = () => `${manifest.model_grid?.n_features ?? modelFC.features.length} grid points ~0.9 km apart`;
+
   // ---------------------------------------------------------------- legend
   function renderLegend() {
     const bins = DIST_LABELS.map((l, i) => [DIST_COLORS[i], l]);
@@ -323,12 +407,13 @@ async function main() {
         <span class="swatch" style="border:2px solid #52514e"></span><span>Hollow: tier 3–4</span></div>
       <div class="bins"><span class="bin" style="background:#6250d633;border-color:#6250d6"></span><span>Report footprint</span>
         <span class="bin" style="border:2px dashed #d03b3b"></span><span>Largest gaps at R</span>
-        ${state.filters.sources.has("sjrwmd_erp") ? `<span class="bin" style="background:#00830024;border-color:#008300"></span><span>Permit area (dashed: drawn only)</span>` : ""}</div></details>`;
+        ${state.filters.sources.has("sjrwmd_erp") ? `<span class="bin" style="background:#00830024;border-color:#008300"></span><span>Permit area (dashed: drawn only)</span>` : ""}</div>
+      ${modelLegend()}</details>`;
   }
 
   // ---------------------------------------------------------------- popups
   function onClick(e: MapMouseEvent) {
-    const order = ["clusters", "borings", "reports-fill", "areas-fill", "hexes"].filter((l) => state.layers[layerKey(l)]);
+    const order = ["clusters", "borings", "reports-fill", "areas-fill", "model-fill", "hexes"].filter((l) => state.layers[layerKey(l)]);
     const hits = map.queryRenderedFeatures(e.point, { layers: order });
     if (!hits.length) return;
     const f = hits.sort((a, b) => order.indexOf(a.layer.id) - order.indexOf(b.layer.id))[0];
@@ -345,10 +430,14 @@ async function main() {
         [p.boring_type === "Site" ? "Site" : "Boring", p.boring_name], ["Type", TYPE_LABEL[p.boring_type as string] ?? p.boring_type], [p.boring_type === "Site" ? "Discharge date" : "Date", p.date ?? p.year ?? p.date_raw ?? "undated"],
         ["Source", src?.name ?? p.source_id], ["Tier", p.tier], ["Depth", p.depth_ft != null ? `${p.depth_ft} ft${p.log_from && p.log_from !== p.source_id ? " (from parsed log)" : ""}` : null],
         ["Elevation", p.elev], ["Water level", p.gw], ["FDOT project (FIN)", p.fin],
-        ["Project", p.source_id !== "fdot_d2" ? p.doc_name : null],
-        ["Location", String(p.flags ?? "").includes("approx_location") ? "approximate: placed at a geocoded report site, may be far off" : null],
-      ]).concat(detailRows(p.details))) + logHtml(p.log, p.log_from) + docLine(url, p.doc_internal, src?.doc_label)
-        + (p.boring_type === "Site" ? `<p class="muted">A cleanup site, not a boring: its public file usually holds site assessment reports with shallow soil-boring and monitoring-well logs. Point = facility location.</p>` : "");
+        [p.boring_type === "Document" ? "Document" : "Project", p.source_id !== "fdot_d2" ? p.doc_name : null],
+        ["Location", String(p.flags ?? "").includes("approx_location") ? (p.location_precision === "site_level"
+          ? "site-level (Geosetta): placed at the report's site, not where it was drilled" : "approximate: placed at a geocoded report site, may be far off") : null],
+      ]).concat(detailRows(p.details).filter(([k, v]) => k !== "Location precision" && !(k === "Document" && v === p.doc_name)))) + logHtml(p.log, p.log_from) + docLine(url, p.doc_internal, src?.doc_label)
+        + rightsHtml(p, src)
+        + (!counts(p as unknown as Boring) ? `<p class="muted"><strong>Not site data:</strong> this document isn't about the place it's pinned to, so it doesn't count toward coverage.</p>` : "")
+        + (p.boring_type === "Site" ? `<p class="muted">A cleanup site, not a boring: its public file usually holds site assessment reports with shallow soil-boring and monitoring-well logs. Point = facility location.</p>` : "")
+        + (p.boring_type === "Document" ? `<p class="muted">A source document Geosetta found, with no parsed boring data. Geosetta only serves the file to API-key holders, so the link opens the location on Geosetta's map.</p>` : "");
     } else if (f.layer.id === "areas-fill") {
       const src = manifest.sources[p.source_id as string];
       const url = safeUrl(p.doc_url);
@@ -366,14 +455,58 @@ async function main() {
         ["Report", p.doc_name ?? p.report_key], ["Borings", p.n_borings], ["Types", p.types],
         ["Dates", dr.length ? [...new Set(dr)].join(" – ") : "undated"], ["Source", src?.name ?? p.source_id],
         ["FDOT project (FIN)", p.fin], ["Log sheets", p.n_documents],
-        ["Licence", src?.license], ["Span", p.flag_span ? `${fmtM(p.span_m as number)} (wide: corridor or key issue)` : null],
-      ]) + docLine(url, p.doc_internal, src?.doc_label);
+        ["Span", p.flag_span ? `${fmtM(p.span_m as number)} (wide: corridor or key issue)` : null],
+      ]) + docLine(url, p.doc_internal, src?.doc_label) + rightsHtml(p, src);
+    } else if (f.layer.id === "model-fill") {
+      html = modelPopup(p);
     } else if (f.layer.id === "hexes" && last) {
       const i = p.i as number;
-      const rc = reportCounts(dgrid, last.filtered, state.radius, [i])[i];
+      const rc = reportCounts(dgrid, last.counted, state.radius, [i])[i];
       html = table([["Distance to nearest boring", fmtM(last.ddist[i])], [`Reports within ${state.radius} m`, rc]]);
     }
     new maplibregl.Popup({ maxWidth: "320px" }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+  }
+  // What we may do with a record: the document's own label when known, else the source's.
+  function rightsHtml(p: Record<string, unknown>, src?: SourceEntry): string {
+    const label = (p.rights as string) ?? src?.rights;
+    if (!label) return "";
+    const detail = (p.rights_detail as string) ?? src?.rights_detail;
+    const logSrc = p.log_from && p.log_from !== p.source_id ? manifest.sources[p.log_from as string] : undefined;
+    const via = (p.rights_detail && src?.rights && src.rights !== p.rights ? `<br/><span class="muted">Data via ${esc(src.name)}: ${esc(src.rights)}</span>` : "")
+      + (logSrc?.rights ? `<br/><span class="muted">Parsed log via ${esc(logSrc.name)}: ${esc(logSrc.rights)}</span>` : "");
+    return `<div class="rights"><strong>Reuse:</strong> ${esc(label)}${detail ? `<details><summary>What this means</summary><p>${esc(detail)}</p></details>` : ""}${via}</div>`;
+  }
+  function modelPopup(p: Record<string, unknown>): string {
+    const ft = (v: unknown, none: string) => v == null ? none : `${v} ft`;
+    const json = <T,>(v: unknown): T | null => { try { return typeof v === "string" ? JSON.parse(v) as T : null; } catch { return null; } };
+    const probs = json<Record<string, number>>(p.gw_probs);
+    const vs = json<number[]>(p.vs30_range);
+    const flags = json<string[]>(p.hazard_flags);
+    const layers = json<[number, number, string | null, string | null, string | null][]>(p.layers) ?? [];
+    const depth = manifest.model_grid?.depth_ft ?? 50;
+    const t = table([
+      ["Grid cell", p.address ?? `${Number(p.lat ?? 0).toFixed(4)}, ${Number(p.lon ?? 0).toFixed(4)}`],
+      ["Ground elevation", p.elev_ft != null ? `${p.elev_ft} ft` : null],
+      ["First clay or silt layer", p.layers != null ? ft(p.depth_fines_ft, `none predicted to ${depth} ft`) : null],
+      ["SPT N ≥ 10 from", p.layers != null ? ft(p.depth_n10_ft, `not reached by ${depth} ft`) : null],
+      ["Rock (limestone)", p.layers != null ? ft(p.depth_rock_ft, `none predicted to ${depth} ft`) : null],
+      ["Groundwater", p.gw_label ? `${p.gw_label}${probs ? ` (${Object.entries(probs).map(([k, v]) => `${k} ${Math.round(v)}%`).join(", ")})` : ""}` : null],
+      ["Confidence", p.confidence != null ? `${p.confidence}% (${p.confidence_level})` : null],
+      ["Nearest training boring", p.nearest_trained_mi != null ? `${p.nearest_trained_mi} mi` : null],
+      ["Geosetta borings within 500 m / 1 mi", p.borings_500m != null ? `${p.borings_500m} / ${p.borings_1mi}` : null],
+      ["Seismic site class", p.site_class ? `${p.site_class} (ASCE 7-22)` : null],
+      ["Vs30", p.vs30_ft_s ? `${Math.round(Number(p.vs30_ft_s))} ft/s${vs ? ` (${vs.map((x) => Math.round(x)).join("–")})` : ""}` : null],
+      ["Geology", p.geology], ["Karst", p.karst == null ? null : p.karst ? (p.karst_type ?? "yes") : "no"],
+      ["Sinkhole risk (terrain)", p.sinkhole_risk], ["Slope", p.slope_susceptibility],
+      ["Terrain hazard", p.terrain_hazard ? `${p.terrain_hazard}${flags?.length ? ` (${flags.join(", ").replace(/_/g, " ")})` : ""}` : null],
+      ["Mines within 2 mi", p.mines_2mi], ["Soil order", p.soil_order ? `${p.soil_order} (${p.soil_source ?? "SoilGrids"}, coarse)` : null],
+    ]);
+    const prof = layers.length ? `<details class="log"><summary>Predicted profile to ${depth} ft</summary><div class="log-body"><table>
+      <tr><th>Depth</th><th>Soil</th><th class="num">N</th></tr>${layers.map(([a, b, sym, d, n]) =>
+        `<tr><td>${a}–${b} ft</td><td>${sym ? `<strong>${esc(sym)}</strong> ` : ""}${esc(String(d ?? "").toLowerCase())}</td><td class="num">${esc(n ?? "")}</td></tr>`).join("")}</table></div></details>` : "";
+    return `<p class="popup-title">Geosetta model estimate</p>${t}${prof}
+      <p class="muted">Machine-learning predictions and GIS screening from Geosetta, not measurements. Doesn't count toward coverage.
+      Shown under Geosetta's terms of use with its disclaimer (see About).</p>`;
   }
   const detailRows = (raw: unknown): [string, unknown][] => {
     if (typeof raw !== "string") return [];
@@ -400,10 +533,10 @@ async function main() {
   }
   const table = (rows: [string, unknown][]) =>
     `<table>${rows.filter(([, v]) => v != null && v !== "").map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}</table>`;
-  const layerKey = (id: string) => (id.startsWith("areas") ? "areas" : id.startsWith("report") ? "reports" : id === "clusters" || id === "cluster-count" ? "borings" : id.startsWith("gaps") ? "gaps" : id);
+  const layerKey = (id: string) => (id.startsWith("areas") ? "areas" : id.startsWith("report") ? "reports" : id.startsWith("model") ? "model" : id === "clusters" || id === "cluster-count" ? "borings" : id.startsWith("gaps") ? "gaps" : id);
 
   function applyLayerVisibility() {
-    for (const id of ["boundary", "hexes", "areas-fill", "areas-line", "reports-fill", "reports-line", "gaps", "gaps-label", "borings", "clusters", "cluster-count"]) {
+    for (const id of ["boundary", "hexes", "model-fill", "model-line", "areas-fill", "areas-line", "reports-fill", "reports-line", "gaps", "gaps-label", "borings", "clusters", "cluster-count"]) {
       if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", state.layers[layerKey(id)] ? "visible" : "none");
     }
   }
@@ -457,8 +590,22 @@ async function main() {
 
 
     const L: [string, string][] = [["hexes", "Coverage hexes"], ["borings", "Borings"], ["reports", "Report footprints"], ["areas", "Permit areas"], ["gaps", "Gaps"], ["boundary", "City boundary"]];
-    $("layers").innerHTML = L.map(([k, l]) => `<label class="check"><input type="checkbox" value="${k}" ${state.layers[k] ? "checked" : ""}/> ${l}</label>`).join("");
-    $("layers").addEventListener("change", (e) => { const i = e.target as HTMLInputElement; state.layers[i.value] = i.checked; applyLayerVisibility(); writeUrl(); if (i.value === "gaps" && i.checked) recompute(); });
+    if (hasModel) L.push(["model", "Geosetta model estimates"]);
+    $("layers").innerHTML = L.map(([k, l]) => `<label class="check"><input type="checkbox" value="${k}" ${state.layers[k] ? "checked" : ""}/> ${l}${k === "model"
+      ? ` <button type="button" class="info" data-about="geosetta_model" aria-label="About the Geosetta model estimates" title="About this layer">i</button>` : ""}</label>`).join("")
+      + (hasModel ? `<label class="row model-var">Show <select id="model-var" aria-label="Model variable">${Object.entries(MODEL_VARS).map(([k, v]) =>
+        `<option value="${k}" ${k === state.modelVar ? "selected" : ""}>${esc(v.label)}</option>`).join("")}</select></label>` : "");
+    $("layers").addEventListener("change", (e) => {
+      const i = e.target as HTMLInputElement | HTMLSelectElement;
+      if (i.id === "model-var") {
+        state.modelVar = i.value; paintModel();
+        if (!state.layers.model) { state.layers.model = true; ($("layers").querySelector('input[value="model"]') as HTMLInputElement).checked = true; applyLayerVisibility(); }
+        renderLegend(); writeUrl(); return;
+      }
+      state.layers[i.value] = (i as HTMLInputElement).checked; applyLayerVisibility(); writeUrl(); renderLegend(); updateStats();
+      if (i.value === "gaps" && (i as HTMLInputElement).checked) recompute();
+    });
+    $("layers").addEventListener("click", (e) => { const id = (e.target as HTMLElement).dataset?.about; if (id) { e.preventDefault(); openAbout(id); } });
 
     $("export-csv").addEventListener("click", exportCSV);
     $("export-geojson").addEventListener("click", () => {
@@ -502,6 +649,35 @@ async function main() {
     writeUrl();
   }
 
+  function documentsTable(): string {
+    const docs = new Map<string, Record<string, unknown>>();
+    for (const b of realBorings) if (b.source_id === "geosetta" && b.doc_name && !docs.has(b.doc_name as string)) docs.set(b.doc_name as string, b);
+    if (!docs.size) return "";
+    const row = (b: Record<string, unknown>) => {
+      const d = detailRows(b.details).reduce((o, [k, v]) => ({ ...o, [k]: v }), {} as Record<string, unknown>);
+      return `<tr><td>${esc(b.doc_name)}${d["Author"] ? `<br/><span class="muted">${esc(d["Author"])}</span>` : ""}</td><td>${esc(d["Document type"] ?? "")}${counts(b as Boring) ? "" : "<br/><em>not site data</em>"}</td><td>${esc(b.rights)}</td></tr>`;
+    };
+    return `<h4>Documents behind Geosetta's non-DOT locations</h4><table class="guide"><tr><th>Document</th><th>Type</th><th>Reuse</th></tr>
+      ${[...docs.values()].map(row).join("")}</table>`;
+  }
+  function modelCard(focus?: string): string {
+    const m = manifest.model_grid;
+    if (!m || !hasModel) return "";
+    const a = m.about ?? {};
+    const para = (t?: string) => (t ?? "").split(/\n+/).filter(Boolean).map((x) => `<p>${esc(x)}</p>`).join("");
+    const prod = (k: "predictions" | "site_class" | "site_report", l: string) => m[k] ? `${l}: ${m[k]!.n}/${m.n_cells}${m[k]!.status !== "ok" ? ` (${esc(m[k]!.status)})` : ""}` : "";
+    return `<details class="src-card" id="about-geosetta_model" ${focus === "geosetta_model" ? "open" : ""}>
+      <summary><strong>Geosetta model estimates (grid layer)</strong> <span class="muted">${m.n_features} grid cells · tier 4 · off by default · built ${esc((m.built ?? "").slice(0, 10))}</span></summary>
+      ${a.origin ? `<h4>Where we got it</h4>${para(a.origin)}` : ""}
+      ${a.contents ? `<h4>What it contains</h4>${para(a.contents)}` : ""}
+      ${a.design_use ? `<h4>Use for a first-pass design</h4>${para(a.design_use)}` : ""}
+      ${a.limits ? `<h4>Limits</h4>${para(a.limits)}` : ""}
+      <h4>What you may do with it</h4><p><strong>Geosetta terms of use — model output; share only with Geosetta's disclaimer</strong></p>
+      <p class="muted">${[prod("predictions", "Predictions"), prod("site_class", "Site class"), prod("site_report", "Site reports")].filter(Boolean).join(" · ")}</p>
+      ${m.disclaimer ? `<p class="muted"><strong>Disclaimer:</strong> ${esc(m.disclaimer)}</p>` : ""}
+    </details>`;
+  }
+
   function renderAbout(focus?: string) {
     const para = (t?: string) => (t ?? "").split(/\n+/).filter(Boolean).map((x) => `<p>${esc(x)}</p>`).join("");
     const count = (s: SourceEntry) => s.n_after_dedupe ?? s.n_in_area ?? s.n_raw;
@@ -518,10 +694,12 @@ async function main() {
         ${a.contents ? `<h4>What it contains</h4>${para(a.contents)}` : ""}
         ${a.design_use ? `<h4>Use for a first-pass design</h4>${para(a.design_use)}` : ""}
         ${a.limits ? `<h4>Limits</h4>${para(a.limits)}` : ""}
+        ${s.rights ? `<h4>What you may do with it</h4><p><strong>${esc(s.rights)}</strong></p>${para(s.rights_detail)}` : ""}
+        ${id === "geosetta" ? documentsTable() : ""}
         <p class="muted">${esc(s.license ?? "")}${links ? ` · ${links}` : ""}</p>
         ${s.disclaimer ? `<p class="muted"><strong>Disclaimer:</strong> ${esc(s.disclaimer)}</p>` : ""}
       </details>`;
-    }).join("");
+    }).join("") + modelCard(focus);
     $("about-body").innerHTML = `
       <p>This map shows where public subsurface information exists around ${esc(bprops.BASENAME ?? "the city")}, and how far any point is from it.
       The aim is a <strong>first pass at the soil parameters structural design needs</strong>, so you know what a site-specific geotechnical report is likely
@@ -558,7 +736,19 @@ async function main() {
       <ol><li>US federal work (public domain).</li>
       <li>Florida agency public record. In <em>Microdecisions v. Skinner</em> (Fla. 2d DCA 2004) the court held an agency can't claim copyright in a public record without legislative authorization.</li>
       <li>Open licence that requires attribution (CC BY, OGL).</li><li>Accessible under terms of use or a disclaimer.</li></ol>
-      <p>Reports written by private consultants and hosted by an agency may still carry the consultant's copyright. University-held reports are excluded. This is not legal advice.</p>
+      <h3>Reuse labels</h3>
+      <p>Every boring, report and document says what you may do with it ("Reuse" in its popup). The tier describes how we got the <em>data</em>;
+      the reuse label also covers the <em>document</em>, which can differ: a consultant's report in an agency file is a public record you may inspect and copy,
+      but the consultant may still own its copyright.</p>
+      <table class="guide">
+        <tr><th>Label</th><th>What you may do</th></tr>
+        <tr><td>Public domain</td><td>Copy, republish and adapt freely (US federal works). Attribution is courteous.</td></tr>
+        <tr><td>Public record — free to reuse</td><td>Florida agency records (state, county, city, water district, state university): copy and republish, citing the agency.</td></tr>
+        <tr><td>Public record; consultant copyright</td><td>Inspect, copy for your own use, link and cite. Don't republish the document itself without the author's permission.</td></tr>
+        <tr><td>Copyrighted — link and cite only</td><td>Private reports, journal papers, proposals. Link to and cite them; don't copy or re-host.</td></tr>
+        <tr><td>Geosetta terms of use</td><td>Geosetta-compiled data (locations, parsed logs, model estimates) may be shared only with Geosetta's full disclaimer, without warranty; commercial API use needs Geosetta's data access fee. The documents behind it keep their own label.</td></tr>
+      </table>
+      <p>All reports are included whoever holds them, universities included; each carries its label. This map never re-hosts a document: it links to the publisher. This is not legal advice.</p>
       <p>Basemap: © <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>, © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors.</p>`;
     setTimeout(() => {
       const dlg = $<HTMLDialogElement>("about");

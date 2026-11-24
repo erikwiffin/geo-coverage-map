@@ -113,6 +113,15 @@ def profile_source(src: dict, records: list[dict], norm: pd.DataFrame, extra: di
         att = json.dumps(extra["attachments"], indent=1)
         s += ["### Layer attachments", "", f"```\n{att}\n```", ""]
 
+    if "documents" in extra:  # Geosetta: source documents and their catalog entries
+        s += ["### Geosetta API", "",
+              f"- Radius-query locations: {extra.get('n_radius')}; tile keys: "
+              f"{extra.get('n_tiles_keys')}; parsed logs: {extra.get('n_logs')}; API calls this "
+              f"fetch: {extra.get('calls')} (cached: {extra.get('cache_hits')})", "",
+              "| Document (Geosetta path) | Catalog title (config/documents.yaml) |", "|---|---|"]
+        s += [f"| `{k}` | {v} |" for k, v in sorted(extra["documents"].items())]
+        s += [""]
+
     show = [c for c in ["boring_uid", "boring_type", "boring_name", "date_raw", "year",
                         "depth_ft", "report_key", "doc_url", "lon", "lat"] if c in norm]
     s += ["### Sample rows (10)", "", _md_table(norm[show].head(10).round(6))]

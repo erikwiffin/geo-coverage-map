@@ -44,12 +44,20 @@ class Filters:
             m &= df["source_id"].isin(self.sources).to_numpy()
         if self.exclude_kinds:
             m &= ~df["kind"].isin(self.exclude_kinds).to_numpy()
+        if "flags" in df:  # drawn but never counted (see normalize.NO_COVERAGE_FLAG)
+            m &= ~df["flags"].map(_no_coverage).to_numpy(dtype=bool)
         if self.min_year is not None:
             yr = df["year"]
             m &= ((yr >= self.min_year) | (yr.isna() & self.include_undated)).to_numpy()
         elif not self.include_undated:
             m &= df["year"].notna().to_numpy()
         return m
+
+
+def _no_coverage(flags) -> bool:
+    if flags is None or isinstance(flags, float):
+        return False
+    return "not_site_data" in (flags.split(",") if isinstance(flags, str) else list(flags))
 
 
 def nearest_distance(grid: Grid, borings: pd.DataFrame) -> np.ndarray:
@@ -132,7 +140,7 @@ def compute_stats(grid: Grid, borings: pd.DataFrame, area_cfg: dict,
     type_sets = {
         "all": Filters(sources=tuple(default_sources)),
         "spt_cpt": Filters(types=("SPT", "CPT"), sources=tuple(default_sources)),
-        "excluding_wells": Filters(types=("SPT", "CPT", "Auger", "Other"),
+        "excluding_wells": Filters(types=("SPT", "CPT", "Auger", "Other", "Document"),
                                    sources=tuple(default_sources)),
     }
     by_type = {k: curve(nearest_distance(grid, borings[f.mask(borings)]), grid.area_m2, radii)

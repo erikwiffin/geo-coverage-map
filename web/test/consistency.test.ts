@@ -17,20 +17,22 @@ describe.skipIf(!have)("web vs pipeline consistency", () => {
     .concat(areaPseudoPoints(areas, stats.h3_resolution));
   const grid = makeGrid(boundary.features[0].geometry, stats.h3_resolution);
   const ok = Object.entries(man.sources as Record<string, { status: string; default_on?: boolean }>).filter(([, s]) => s.status === "ok");
-  const base = { maxTier: 4, types: new Set(["SPT", "CPT", "Auger", "Well", "Other", "Site", "Permit"]), yearMin: -1e9, yearMax: 1e9, includeUndated: true };
+  // records flagged not_site_data are drawn but never counted (main.ts `counts`, coverage.py)
+  const counted = (bs: Boring[]) => bs.filter((b) => !String(b.flags ?? "").split(",").includes("not_site_data"));
+  const base = { maxTier: 4, types: new Set(["SPT", "CPT", "Auger", "Well", "Other", "Document", "Site", "Permit"]), yearMin: -1e9, yearMax: 1e9, includeUndated: true };
 
   it("uses the same H3 cell count", () => expect(grid.cells.length).toBe(stats.n_cells));
 
   it("default filters match stats.json pct_covered", () => {
     const sources = new Set(ok.filter(([, s]) => s.default_on !== false).map(([id]) => id));
-    const d = nearestDistances(grid, applyFilters(borings, { ...base, sources }));
+    const d = nearestDistances(grid, counted(applyFilters(borings, { ...base, sources })));
     const web = coverageCurve(d, grid.area, stats.radii_m);
     stats.radii_m.forEach((r: number, i: number) => expect(Math.abs(web[i] - stats.pct_covered[String(r)])).toBeLessThan(0.5));
   });
 
   it("geotechnical-only view matches stats.json pct_covered_geotechnical_only", () => {
     const sources = new Set(ok.map(([id]) => id));
-    const d = nearestDistances(grid, applyFilters(borings, { ...base, sources })
+    const d = nearestDistances(grid, counted(applyFilters(borings, { ...base, sources }))
       .filter((b) => !["geologic_well", "environmental_site", "permit_site"].includes(b.kind)));
     const web = coverageCurve(d, grid.area, stats.radii_m);
     stats.radii_m.forEach((r: number, i: number) => expect(Math.abs(web[i] - stats.pct_covered_geotechnical_only[String(r)])).toBeLessThan(0.5));
@@ -38,7 +40,7 @@ describe.skipIf(!have)("web vs pipeline consistency", () => {
 
   it("all sources (incl. wells) match stats.json pct_covered_all_sources", () => {
     const sources = new Set(ok.map(([id]) => id));
-    const d = nearestDistances(grid, applyFilters(borings, { ...base, sources }));
+    const d = nearestDistances(grid, counted(applyFilters(borings, { ...base, sources })));
     const web = coverageCurve(d, grid.area, stats.radii_m);
     stats.radii_m.forEach((r: number, i: number) => expect(Math.abs(web[i] - stats.pct_covered_all_sources[String(r)])).toBeLessThan(0.5));
   });

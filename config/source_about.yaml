@@ -198,3 +198,59 @@ sjrwmd_erp:
     the application package. Whether a given permit contains borings has to be checked in its
     documents. Permits over 100 acres (campus or master permits) are drawn dashed and don't
     count toward coverage.
+
+geosetta:
+  origin: >-
+    Geosetta's API (geosetta.org), queried with an API key: overlapping 5 km radius searches
+    covering the area, Geosetta's borehole map tiles for location precision and report grouping,
+    DIGGS XML for every borehole with a parsed log, and the source-file list for every non-DOT
+    location. Replaces the hand-drawn DIGGS area exports; it finds the same parsed logs. Responses
+    are cached and the API's rate limits are respected. Geosetta's terms require its disclaimer
+    to accompany the data, so this is tier 4.
+  contents: >-
+    741 Geosetta locations in our envelope. 698 are FDOT borings that sit on the FDOT District 2
+    layer, so they merge into it; 30 bring a parsed log (depth, SPT N-values, soil layers) that
+    shows on the FDOT boring as "Boring log via Geosetta". 43 come from Geosetta's web crawl of
+    non-DOT documents: 30 parsed boreholes in 5 reports (GRU Deerhaven pond embankment, Plum
+    Creek Property, Boulware Springs, Malcom Randall VA boiler building, Alachua County Mill
+    Creek Sink) and 13 locations where Geosetta holds a document but no parsed data. Each
+    document is identified (title, author, type) and labelled with what you may do with it.
+  design_use: >-
+    The parsed logs are the only structured geotechnical parameters on the map: N-value versus
+    depth and USCS layers can be read straight off the popup. The document locations point to
+    reports worth requesting, such as the Deerhaven CCR stability assessment.
+  limits: >-
+    Values are machine-extracted from scanned logs and can contain transcription errors; check
+    the source log. Non-DOT locations are site-level (Geosetta places a report's borings at its
+    geocoded site), and several are off by up to kilometres. Four documents aren't about the
+    place they're pinned to (a 1979 journal paper, an FHWA manual, a consultant's proposal, a
+    Marion County management plan): they're marked "not site data" and don't count toward
+    coverage. Geosetta's files need an API key to download, so the map
+    links to the location on Geosetta's map.
+
+geosetta_model:
+  origin: >-
+    Geosetta's point lookups, sampled on a grid: we ask for each H3 cell centre (resolution 8,
+    cells about 0.74 km², roughly 0.9 km apart) over the city and colour the cell with the
+    answer. Three products: SPT/lithology predictions to 50 ft (Geosetta's machine-learning
+    model trained on its borings), ASCE 7-22 seismic site class (derived from the predicted
+    profile: N-values converted to shear-wave velocity), and the site report (geology from the
+    state geologic map, karst from USGS, sinkhole and slope screening from a terrain model,
+    mines, SoilGrids soil order).
+  contents: >-
+    Per cell: the predicted soil profile (layers with USCS class and SPT N range), the depth to
+    the first clay or silt layer, to N ≥ 10 and to rock, the predicted groundwater depth class
+    with probabilities, the model's confidence and its distance to the nearest training boring,
+    site class and Vs30, the mapped geologic formation, karst setting, sinkhole and slope
+    screening, and mines within 2 miles.
+  design_use: >-
+    A screening layer between borings. Shallow predicted clay (Hawthorn Group) hints at
+    over-excavation; a deep "N ≥ 10" hints at loose sands that may push toward deep foundations
+    or ground improvement; shallow predicted groundwater matters for pools and excavations.
+    Low-confidence cells, far from training borings, are where real data is most needed: compare
+    with the coverage hexes.
+  limits: >-
+    Estimates, not measurements: probabilistic model output with Geosetta's disclaimer. The
+    profile resolves one foot, but the model is smooth between borings and can't see local
+    karst features. One sample per cell, so detail finer than a cell is not shown. The SoilGrids
+    soil order is a 250 m global product and very coarse. Never counts toward coverage.

@@ -1,4 +1,5 @@
-"""CLI: python -m pipeline {check-network,fetch,build,stats,all} [--area CONFIG] [--refresh]"""
+"""CLI: python -m pipeline {check-network,fetch,build,stats,all,model-grid} [--area CONFIG]
+[--refresh]"""
 from __future__ import annotations
 
 import argparse
@@ -16,6 +17,7 @@ import yaml
 from shapely.geometry import shape
 
 from . import config as cfgmod
+from . import model_grid
 from .arcgis import FetchError, RemoteBlocked, SandboxBlocked, classify_response, make_client
 from .areas import build_areas, pseudo_points
 from .coverage import compute_stats, make_grid, plot_curve
@@ -97,7 +99,13 @@ def fetch(ctx) -> None:
                              "fetched": _now(),
                              "attributes": data["features"][0].get("properties")},
                 "sources": {}}
+    only = set(getattr(ctx, "only", None) or [])
+    prev = ctx.raw_dir / "fetch_manifest.json"
+    if only and prev.exists():  # refetch some sources, keep the others' last fetch
+        manifest["sources"] = json.loads(prev.read_text()).get("sources", {})
     for src in ctx.sources:
+        if only and src["id"] not in only:
+            continue
         entry = _source_entry(src)
         try:
             log.info("fetching %s", src["id"])
@@ -110,6 +118,8 @@ def fetch(ctx) -> None:
                 extra = _mark_imported(src, files, recs, entry)
             elif src["adapter"] == "arcgis" and recs:
                 extra["attachments"] = _attachment_probe(client, src, recs)
+            elif src["adapter"] == "geosetta":
+                extra = getattr(ADAPTERS["geosetta"], "last_extra", {})
             (ctx.raw_dir / f"{src['id']}.extra.json").write_text(json.dumps(extra))
         except (SourceSkipped, FileNotFoundError) as e:
             entry.update(status="skipped", reason=str(e))
@@ -118,6 +128,21 @@ def fetch(ctx) -> None:
             log.error("source %s failed: %s", src["id"], e)
         manifest["sources"][src["id"]] = entry
     (ctx.raw_dir / "fetch_manifest.json").write_text(json.dumps(manifest, indent=1))
+    if not only or "model_grid" in only:
+        fetch_model_grid(ctx, geom)
+
+
+def fetch_model_grid(ctx, geom=None) -> None:
+    """Geosetta point lookups on a grid (pipeline/model_grid.py). Needs GEOSETTA_API_KEY."""
+    import os
+    if not ctx.area.get("model_grid"):
+        return
+    if not os.environ.get("GEOSETTA_API_KEY"):
+        log.info("model grid: GEOSETTA_API_KEY not set; build uses whatever is cached")
+        return
+    log.info("fetching Geosetta model grid")
+    st = model_grid.fetch(ctx, geom if geom is not None else model_grid.boundary(ctx))
+    log.info("model grid: %s", {k: v for k, v in st.items() if k != "disclaimer"})
 
 
 def _mark_imported(src, files, recs, entry) -> dict:
@@ -159,6 +184,9 @@ def _attachment_probe(client, src, recs, n=5) -> dict:
 # --------------------------------------------------------------------- build
 def build(ctx) -> None:
     man = json.loads((ctx.raw_dir / "fetch_manifest.json").read_text())
+    # sources dropped from the area config since the last fetch don't belong on the map
+    wanted = [s["id"] for s in ctx.sources]
+    man["sources"] = {k: man["sources"][k] for k in wanted if k in man["sources"]}
     frames, profiles, area_frames = [], [], []
     for src in ctx.sources:
         entry = man["sources"].setdefault(src["id"], {})
@@ -267,6 +295,11 @@ def build(ctx) -> None:
     else:
         for name in ("borings.geojson", "reports.geojson"):
             (out / name).write_text('{"type":"FeatureCollection","features":[]}')
+    if ctx.area.get("model_grid"):
+        mg = model_grid.build(ctx, model_grid.boundary(ctx))
+        mg["about"] = _source_about().get("geosetta_model")
+        man["model_grid"] = mg
+        log.info("model grid: %d cells written", mg["n_features"])
     man["built"] = _now()
     man["basemap_style"] = ctx.area.get("basemap_style")
     (out / "manifest.json").write_text(json.dumps(man, indent=1))
@@ -359,10 +392,13 @@ def manual_urls(ctx) -> None:
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="pipeline")
     p.add_argument("command", choices=["check-network", "fetch", "build", "stats", "all",
-                                        "manual-urls"])
+                                        "manual-urls", "model-grid"])
     p.add_argument("--area", default=str(cfgmod.ROOT / "config" / "area.gainesville.yaml"))
     p.add_argument("--sources", default=None)
     p.add_argument("--refresh", action="store_true", help="ignore the raw cache and refetch")
+    p.add_argument("--only", default=None,
+                   help="fetch: comma-separated source ids to refetch (others keep their last "
+                   "fetch); model_grid refetches the Geosetta grid")
     p.add_argument("--web", action="store_true", help="also copy outputs to web/public/data")
     p.add_argument("-v", "--verbose", action="store_true")
     a = p.parse_args(argv)
@@ -370,11 +406,15 @@ def main(argv=None) -> int:
                         format="%(levelname)s %(message)s")
     ctx = cfgmod.load(a.area, a.sources)
     ctx.refresh = a.refresh
+    ctx.only = a.only.split(",") if a.only else None
     ctx.raw_dir.mkdir(parents=True, exist_ok=True)
     if a.command == "check-network":
         return check_network(ctx)
     if a.command == "manual-urls":
         manual_urls(ctx)
+        return 0
+    if a.command == "model-grid":  # fetch only the grid lookups (long: ~1 h of site reports)
+        fetch_model_grid(ctx)
         return 0
     if a.command in ("fetch", "all"):
         fetch(ctx)
@@ -386,7 +426,7 @@ def main(argv=None) -> int:
         dest = cfgmod.ROOT / "web" / "public" / "data"
         dest.mkdir(parents=True, exist_ok=True)
         for f in ("boundary.geojson", "borings.geojson", "reports.geojson", "gaps.geojson",
-                  "areas.geojson",
+                  "areas.geojson", "model_grid.geojson",
                   "stats.json", "manifest.json"):
             if (ctx.out_dir / f).exists():
                 shutil.copy(ctx.out_dir / f, dest / f)

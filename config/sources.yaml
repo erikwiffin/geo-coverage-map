@@ -12,6 +12,10 @@
   # folder and the adapter uses them instead of the network. See README "FDOT access".
   import_dir: data/manual/fdot_d2
   tier: 2
+  rights: >-
+    Public record (FDOT) — free to reuse; consultant-authored logs may carry the consultant's copyright
+  rights_detail: >-
+    Florida agency public record: anyone may inspect, copy and republish it (Fla. Stat. ch. 119; Microdecisions v. Skinner). Logs drawn up by FDOT's consultants may still be the consultant's copyright, so cite the source when reproducing them.
   kind: geotechnical
   license: >-
     Florida agency public record (FDOT). See Microdecisions v. Skinner (Fla. 2d DCA 2004).
@@ -50,6 +54,10 @@
   homepage: https://floridadep.gov/fgs
   where: "1=1"
   tier: 2
+  rights: >-
+    Public record (FDEP/FGS) — free to reuse
+  rights_detail: >-
+    Florida agency public record: free to copy and republish with attribution to the Florida Geological Survey.
   kind: geologic_well        # hidden by default in UI and headline stats
   license: Florida agency public record (FDEP / Florida Geological Survey).
   fixed_type: Well
@@ -78,6 +86,10 @@
   homepage: https://floridadep.gov/waste/waste-cleanup
   where: "1=1"
   tier: 2
+  rights: >-
+    Public record (FDEP) — free to reuse; documents in the file may be consultants' copyright
+  rights_detail: >-
+    The site records are Florida public records. The assessment reports in DEP Nexus are public records too, but were usually written by consultants, who may hold copyright: link and cite rather than republish them.
   kind: environmental_site
   license: Florida agency public record (FDEP).
   fixed_type: Site
@@ -101,6 +113,10 @@
   homepage: https://floridadep.gov/waste/petroleum-restoration
   where: "1=1"
   tier: 2
+  rights: >-
+    Public record (FDEP) — free to reuse; documents in the file may be consultants' copyright
+  rights_detail: >-
+    The site records are Florida public records. The assessment reports in DEP Nexus are public records too, but were usually written by consultants, who may hold copyright: link and cite rather than republish them.
   kind: environmental_site
   license: Florida agency public record (FDEP).
   fixed_type: Site
@@ -127,6 +143,10 @@
   homepage: https://floridadep.gov/waste/waste-cleanup/content/drycleaning-solvent-cleanup-program
   where: "1=1"
   tier: 2
+  rights: >-
+    Public record (FDEP) — free to reuse; documents in the file may be consultants' copyright
+  rights_detail: >-
+    The site records are Florida public records. The assessment reports in DEP Nexus are public records too, but were usually written by consultants, who may hold copyright: link and cite rather than republish them.
   kind: environmental_site
   license: Florida agency public record (FDEP).
   fixed_type: Site
@@ -159,6 +179,10 @@
   url: https://waterservices.usgs.gov/nwis/site/
   homepage: https://waterdata.usgs.gov/
   tier: 1
+  rights: >-
+    Public domain (US federal) — reuse freely
+  rights_detail: >-
+    US government work, not subject to copyright. USGS asks for attribution.
   kind: geologic_well        # water wells, hidden by default like FGS wells
   license: US federal work (USGS), public domain.
   fixed_type: Well
@@ -189,6 +213,10 @@
   homepage: https://www.sjrwmd.com/data/groundwater/
   where: "1=1"
   tier: 2
+  rights: >-
+    Public record (SJRWMD) — free to reuse
+  rights_detail: >-
+    Florida water management district records are public records: free to copy and republish with attribution.
   kind: geologic_well        # water/monitoring wells: hidden by default like FGS and USGS
   license: Florida agency public record (St. Johns River Water Management District).
   fixed_type: Well
@@ -227,6 +255,10 @@
   where: "1=1"
   max_offset: 0.00002         # ~2 m geometry generalization on the server
   tier: 2
+  rights: >-
+    Public record (SJRWMD) — free to reuse; consultant reports in permit files may be copyrighted
+  rights_detail: >-
+    The permit records are public. Geotechnical reports inside the permit files are public records but were written by consultants, who may hold copyright: link and cite rather than republish them.
   kind: permit_site
   license: Florida agency public record (St. Johns River Water Management District).
   fixed_type: Permit
@@ -258,6 +290,10 @@
   import_dir: data/manual/geosetta
   homepage: https://geosetta.org
   tier: 4
+  rights: >-
+    Geosetta terms of use — share only with Geosetta's disclaimer; source documents keep their authors' copyright
+  rights_detail: >-
+    Data compiled by Geosetta is offered under its terms of use (https://geosetta.org/terms), not as public domain. It may be redistributed only with Geosetta's full disclaimer, with no warranty. The underlying documents keep their own status: see each report's label.
   kind: geotechnical
   license: >-
     Geosetta terms of use: compiled from DOTs, agencies and public sources; parsed values may
@@ -276,9 +312,52 @@
     log: log
   report_key: [project]
 
-# Optional, needs GEOSETTA_API_KEY. Read https://geosetta.org/api_docs/ before enabling.
-# - id: geosetta
-#   adapter: geosetta
-#   tier: 4
-#   kind: geotechnical
-#   disclaimer: "<copy Geosetta's required disclaimer here>"
+# Geosetta API (needs GEOSETTA_API_KEY; skipped cleanly without it, or built from data/raw cache).
+# Replaces geosetta_diggs in the area config: the same parsed logs, plus every Geosetta location
+# in the envelope, location precision from Geosetta's tiles, and the source document for each
+# non-DOT location (described in config/documents.yaml). FDOT boreholes dedupe into fdot_d2
+# (tier 2) and enrich it with their parsed log. API docs: https://geosetta.org/api_docs/
+- id: geosetta
+  name: Geosetta (API)
+  adapter: geosetta
+  url: https://geosetta.org/web_map/api_key/
+  homepage: https://geosetta.org
+  tier: 4
+  rights: >-
+    Geosetta terms of use — share only with Geosetta's disclaimer; source documents keep their
+    authors' copyright
+  rights_detail: >-
+    Data compiled by Geosetta is offered under its terms of use (https://geosetta.org/terms),
+    not as public domain. It may be redistributed only with Geosetta's full disclaimer, with no
+    warranty; commercial API use carries a data access fee. The underlying documents keep their
+    own status: each report location says what it is and what you may do with it.
+  kind: geotechnical
+  license: >-
+    Geosetta terms of use: compiled from DOTs, agencies and public sources; parsed values may
+    contain transcription errors. Disclaimer must accompany redistributed outputs.
+  disclaimer_file: data/manual/geosetta/DISCLAIMER.txt
+  documents: config/documents.yaml
+  doc_label: View this location on Geosetta's map
+  tile_zoom: 13
+  keep_colocated: true        # report boreholes share the report's site coordinate
+  field_map:
+    native_id: uid
+    boring_name: name
+    type: test_type
+    depth_ft: depth_ft
+    elev: elev_ft
+    gw: groundwater_depth_ft
+    doc_url: geosetta_url
+    doc_name: doc_title
+    project: project
+    consultant: provider
+    log: log
+  details:
+    Document: doc_title
+    Author: doc_author
+    Document type: doc_kind
+    Location precision: location_precision
+    Geosetta key: uid
+  # one report per source document; report boreholes without a document group by Geosetta's
+  # report id, then by DIGGS project name
+  report_key: [doc_path, report_group, project]
