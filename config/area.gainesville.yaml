@@ -37,4 +37,5 @@ model_grid:
   h3_resolution: 8             # ~0.74 km² cells, ~0.9 km apart: 246 cells in Gainesville
   depth_ft: 50
   prediction_batch: 10         # points per prediction call (API max 50 timed out)
+  site_report_h3_resolution: 7  # ~5 km², 53 cells: Geosetta throttles site reports at ~30/h
   products: [predictions, site_class, site_report]

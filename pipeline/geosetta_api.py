@@ -24,7 +24,10 @@ log = logging.getLogger(__name__)
 
 BASE = "https://geosetta.org"
 # bucket -> (max requests, window seconds). Kept ~10% under the documented limits.
-LIMITS = {"data_api": (90, 3600), "tiles": (450, 3600), "other": (600, 3600)}
+LIMITS = {"data_api": (90, 3600), "tiles": (450, 3600), "other": (600, 3600),
+          # undocumented: the 31st site report within ~13 minutes got a bare HTTP 403
+          # (2026-11-24); other endpoints kept answering. Treated as ~30 per hour.
+          "site_report": (28, 3600)}
 
 
 class QuotaExceeded(Exception):
@@ -113,6 +116,9 @@ class GeosettaClient:
                 continue
             if r.status_code == 429:
                 raise QuotaExceeded(f"HTTP 429 from {path}: {r.text[:200]}")
+            if r.status_code == 403 and "<html" in r.text[:200].lower():
+                # a bare HTML 403 (not a JSON auth error) is the server's throttle
+                raise QuotaExceeded(f"HTTP 403 (throttled) from {path}")
             if r.status_code >= 500 and attempt < 3:
                 log.warning("geosetta %s: HTTP %s; retrying", url, r.status_code)
                 time.sleep(5 * 2 ** attempt)

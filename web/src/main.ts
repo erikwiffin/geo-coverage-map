@@ -47,7 +47,6 @@ const counts = (b: Boring) => !String(b.flags ?? "").split(",").includes("not_si
 // Geosetta model grid (pipeline/model_grid.py): one variable at a time colours the cells.
 interface ModelVar { label: string; short: string; bins?: number[]; binLabels?: string[]; cats?: [string | number, string][]; none?: string; palette: string[] }
 const SEQ = ["#7a2a04", "#b2420a", "#e0651f", "#f39a4d", "#f9c890", "#fde9cf"]; // shallow/low = dark
-const CAT = ["#0072b2", "#e69f00", "#009e73", "#cc79a7", "#56b4e9", "#d55e00", "#999999"]; // Okabe-Ito
 const DEPTH_BINS = [3, 6, 10, 20, 35];
 const DEPTH_LABELS = ["0–3 ft", "3–6 ft", "6–10 ft", "10–20 ft", "20–35 ft", "35–50 ft"];
 const MODEL_VARS: Record<string, ModelVar> = {
@@ -499,6 +498,7 @@ async function main() {
       ["Geology", p.geology], ["Karst", p.karst == null ? null : p.karst ? (p.karst_type ?? "yes") : "no"],
       ["Sinkhole risk (terrain)", p.sinkhole_risk], ["Slope", p.slope_susceptibility],
       ["Terrain hazard", p.terrain_hazard ? `${p.terrain_hazard}${flags?.length ? ` (${flags.join(", ").replace(/_/g, " ")})` : ""}` : null],
+      ["Site report area", p.site_report_cell ? "the surrounding ~5 km² cell (geology, karst, terrain, mines, soil)" : null],
       ["Mines within 2 mi", p.mines_2mi], ["Soil order", p.soil_order ? `${p.soil_order} (${p.soil_source ?? "SoilGrids"}, coarse)` : null],
     ]);
     const prof = layers.length ? `<details class="log"><summary>Predicted profile to ${depth} ft</summary><div class="log-body"><table>

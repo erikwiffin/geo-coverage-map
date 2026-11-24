@@ -540,13 +540,20 @@ When a request is blocked, the error names the host; add it to the allowlist and
     site class and site report are point lookups, so they're sampled at the 246 H3 resolution-8
     cell centres in the city (~0.74 km² cells, ~0.9 km apart). `SPT_Point_Prediction` in
     batches of 10 points (25 data-API calls; a 50-point batch timed out at 180 s, and each
-    point takes ~20 s), one `site_class` GET and one `generate_site_report` POST (with the
-    cell polygon, ~23 s each) per cell. Summarized per cell: predicted layers, depth to first
+    point takes ~20 s), one `site_class` GET per cell (~14 s each), and one
+    `generate_site_report` POST per resolution-7 *parent* cell (53 cells of ~5 km², sent as
+    the cell polygon, ~23 s each). Site reports are throttled: the 31st within ~13 minutes got
+    a bare HTML 403 (undocumented; other endpoints kept working), so the client treats that 403
+    as a rate limit (`QuotaExceeded`, not cached) and budgets 28 site reports per hour. A full
+    resolution-8 run would take ~8 h; the report is mostly regional context (geology, karst,
+    terrain screening), so the coarser sample suits it. Each grid cell shows its parent's
+    report. Summarized per cell: predicted layers, depth to first
     clay/silt, to N ≥ 10 and to rock, groundwater class and probabilities, confidence and
     distance to training borings, site class and Vs30, geology, karst, sinkhole and slope
     screening, mines, SoilGrids soil order. Drawn as an optional layer with a variable picker;
     never counts toward coverage. Run with `python -m pipeline model-grid` (also part of
-    `fetch`); about 1.5–2 h of requests the first time.
+    `fetch`); about 2–3 h of requests the first time, most of it waiting for the site-report
+    window.
   - **Not used:** `report-issue` (posting corrections to Geosetta) is left for a person to do;
     vector tiles' clustering and `Distance_From_Trained_Point` (covered by the prediction
     response); the PDF-extraction endpoints on `diggs.geosetta.org` (unreachable from the build

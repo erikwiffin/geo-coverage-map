@@ -94,7 +94,7 @@ The **model grid** samples Geosetta's point lookups (predicted soil/SPT profile,
 class, site report) at 246 grid points over the city and draws them as an optional map layer:
 
 ```bash
-python -m pipeline model-grid      # ~1.5-2 h the first time (Geosetta takes 10-25 s per lookup)
+python -m pipeline model-grid      # 2-3 h the first time (10-25 s per lookup; site reports ~30/h)
 python -m pipeline fetch --only geosetta   # refetch just the Geosetta borings
 ```
 

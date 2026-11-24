@@ -232,7 +232,8 @@ geosetta_model:
   origin: >-
     Geosetta's point lookups, sampled on a grid: we ask for each H3 cell centre (resolution 8,
     cells about 0.74 km², roughly 0.9 km apart) over the city and colour the cell with the
-    answer. Three products: SPT/lithology predictions to 50 ft (Geosetta's machine-learning
+    answer (site reports on the coarser parent cells, about 5 km², because Geosetta allows
+    only about 30 per hour). Three products: SPT/lithology predictions to 50 ft (Geosetta's machine-learning
     model trained on its borings), ASCE 7-22 seismic site class (derived from the predicted
     profile: N-values converted to shear-wave velocity), and the site report (geology from the
     state geologic map, karst from USGS, sinkhole and slope screening from a terrain model,

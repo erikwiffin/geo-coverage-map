@@ -8,8 +8,11 @@ Requests (all cached in data/raw/geosetta/, rate limited by GeosettaClient):
 - SPT_Point_Prediction: 10 points per data-API call (25 calls for 246 cells). The API takes up
   to 50, but a 50-point request timed out after 180 s on 2026-11-24.
 - /web_map/api/site_class/{lat}/{lng}/: one GET per cell.
-- /web_map/api/generate_site_report/ (format json): one POST per cell, with the cell's polygon.
-  Each takes 10–30 s on Geosetta's side.
+- /web_map/api/generate_site_report/ (format json): one POST per *parent* cell (resolution
+  `site_report_h3_resolution`, default 7: ~5 km², 53 cells), with that cell's polygon; each
+  grid cell shows its parent's report. Each takes ~23 s, and Geosetta throttles after about 30
+  per hour (bare HTTP 403), so a full res-8 run would take 8 hours. The report is mostly
+  regional context (geology, karst, terrain screening), so the coarser sample suits it.
 A 429 (daily quota) stops that product; what's cached is kept and the next run resumes.
 
 Everything here is a machine-learning or GIS-derived estimate, not a measurement. It never
@@ -172,17 +175,26 @@ def _run(ctx, boundary_geom, offline: bool) -> tuple[list[dict], dict]:
         return n
 
     def site_report():
+        pres = int(cfg.get("site_report_h3_resolution", 7))
+        parents: dict[str, list[str]] = {}
+        for cell in cells:
+            parents.setdefault(h3.cell_to_parent(cell, pres) if pres < res else cell,
+                               []).append(cell)
+        status["site_report_h3_resolution"] = pres
         n = 0
-        for i, cell in enumerate(cells):
+        for i, (parent, kids) in enumerate(sorted(parents.items())):
             b = c.request("POST", "/web_map/api/generate_site_report/", kind="site_report",
-                          json_body={"geojson": _cell_polygon(cell), "format": "json"})["body"]
+                          bucket="site_report",
+                          json_body={"geojson": _cell_polygon(parent), "format": "json"})["body"]
             s = summarize_site_report(b)
             if s:
-                rows[cell].update(s)
-                rows[cell]["_site_report"] = True
+                for cell in kids:
+                    rows[cell].update(s, site_report_cell=parent)
+                    rows[cell]["_site_report"] = True
                 n += 1
-            if not offline and i % 20 == 0:
-                log.info("  site reports: %d/%d", i + 1, len(cells))
+            if not offline and i % 10 == 0:
+                log.info("  site reports: %d/%d", i + 1, len(parents))
+        status["site_report_cells"] = len(parents)
         return n
 
     products = cfg.get("products", ["predictions", "site_class", "site_report"])
