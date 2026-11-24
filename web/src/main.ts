@@ -400,8 +400,8 @@ async function main() {
     const typesShown = TYPES.filter((t) => state.filters.types.has(t));
     const open = (document.querySelector("#legend details") as HTMLDetailsElement | null)?.open ?? !matchMedia("(max-width: 760px)").matches;
     $("legend").innerHTML = `<details ${open ? "open" : ""}><summary>Legend</summary>
-      <h3>Distance to nearest boring</h3>
-      <div class="bins">${bins.map(([c, l]) => `<span class="bin" style="background:${c}"></span><span>${l}</span>`).join("")}</div>
+      ${state.layers.hexes ? `<h3>Distance to nearest boring</h3>
+      <div class="bins">${bins.map(([c, l]) => `<span class="bin" style="background:${c}"></span><span>${l}</span>`).join("")}</div>` : ""}
       <h3>Borings</h3>
       <div class="bins">${typesShown.map((t) => `<span class="swatch" style="background:${TYPE_COLOR[t]}"></span><span>${TYPE_LABEL[t] ?? t}</span>`).join("")}
         <span class="swatch" style="border:2px solid #52514e"></span><span>Hollow: tier 3–4</span></div>
