@@ -99,7 +99,7 @@ footer .warn { color: var(--text-primary); }
 .legend details[open] summary { margin-bottom: 6px; }
 .legend .bins { display: grid; grid-template-columns: 14px 1fr; gap: 2px 6px; align-items: center; margin-bottom: 6px; }
 .legend .bin { width: 14px; height: 10px; border-radius: 2px; border: 1px solid var(--border); }
-.maplibregl-popup-content { background: var(--surface-1); color: var(--text-primary); font-size: 13px; max-width: 300px; }
+.maplibregl-popup-content { background: var(--surface-1); color: var(--text-primary); font-size: 13px; max-width: min(600px, calc(100vw - 32px)); }
 .maplibregl-popup-content table { border-collapse: collapse; }
 .maplibregl-popup-content th { text-align: left; color: var(--text-secondary); font-weight: 500; padding-right: 8px; vertical-align: top; }
 .maplibregl-popup-content a { color: var(--accent); }

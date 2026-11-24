@@ -472,7 +472,7 @@ async function main() {
     const box = map.getContainer().getBoundingClientRect();
     const pt = map.project(lngLat);
     const anchor = pt.y < box.height / 2 ? "top" : "bottom";
-    const popup = new maplibregl.Popup({ maxWidth: "320px", anchor }).setLngLat(lngLat).setHTML(html).addTo(map);
+    const popup = new maplibregl.Popup({ maxWidth: "min(600px, calc(100vw - 32px))", anchor }).setLngLat(lngLat).setHTML(html).addTo(map);
     const el = popup.getElement();
     const content = el.querySelector(".maplibregl-popup-content") as HTMLElement;
     const M = 12;
@@ -480,7 +480,10 @@ async function main() {
     content.style.overflowY = "auto";
     const fit = () => {
       const r = el.getBoundingClientRect(), c = map.getContainer().getBoundingClientRect();
-      const dx = r.left < c.left + M ? r.left - (c.left + M) : r.right > c.right - M ? r.right - (c.right - M) : 0;
+      // the legend floats over the map's right edge: keep the popup left of it when there's room
+      const lg = $("legend").getBoundingClientRect();
+      const right = lg.width && lg.left - c.left > r.width + 2 * M ? Math.min(c.right, lg.left) : c.right;
+      const dx = r.left < c.left + M ? r.left - (c.left + M) : r.right > right - M ? r.right - (right - M) : 0;
       const dy = r.top < c.top + M ? r.top - (c.top + M) : r.bottom > c.bottom - M ? r.bottom - (c.bottom - M) : 0;
       if (dx || dy) map.panBy([dx, dy], { duration: 250 });
     };
