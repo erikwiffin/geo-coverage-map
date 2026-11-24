@@ -463,7 +463,30 @@ async function main() {
       const rc = reportCounts(dgrid, last.counted, state.radius, [i])[i];
       html = table([["Distance to nearest boring", fmtM(last.ddist[i])], [`Reports within ${state.radius} m`, rc]]);
     }
-    new maplibregl.Popup({ maxWidth: "320px" }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+    showPopup(e.lngLat, html);
+  }
+  // Long popups (model cells, logs) must never be cut off: anchor the popup on the side of the
+  // point with more room (fixed, so it can't flip while the map moves), cap its height to the
+  // map, then pan the map just enough to bring all of it into view.
+  function showPopup(lngLat: maplibregl.LngLat, html: string) {
+    const box = map.getContainer().getBoundingClientRect();
+    const pt = map.project(lngLat);
+    const anchor = pt.y < box.height / 2 ? "top" : "bottom";
+    const popup = new maplibregl.Popup({ maxWidth: "320px", anchor }).setLngLat(lngLat).setHTML(html).addTo(map);
+    const el = popup.getElement();
+    const content = el.querySelector(".maplibregl-popup-content") as HTMLElement;
+    const M = 12;
+    content.style.maxHeight = `${Math.max(160, box.height - 2 * M - 14)}px`;
+    content.style.overflowY = "auto";
+    const fit = () => {
+      const r = el.getBoundingClientRect(), c = map.getContainer().getBoundingClientRect();
+      const dx = r.left < c.left + M ? r.left - (c.left + M) : r.right > c.right - M ? r.right - (c.right - M) : 0;
+      const dy = r.top < c.top + M ? r.top - (c.top + M) : r.bottom > c.bottom - M ? r.bottom - (c.bottom - M) : 0;
+      if (dx || dy) map.panBy([dx, dy], { duration: 250 });
+    };
+    requestAnimationFrame(fit);
+    // expanding "Predicted profile" / "What this means" can grow the popup: refit
+    content.addEventListener("toggle", () => requestAnimationFrame(fit), true);
   }
   // What we may do with a record: the document's own label when known, else the source's.
   function rightsHtml(p: Record<string, unknown>, src?: SourceEntry): string {
@@ -622,6 +645,8 @@ async function main() {
       setTimeout(() => (b.textContent = "Copy link to this view"), 2000);
     });
     $<HTMLDialogElement>("about").addEventListener("close", () => { aboutOpen = undefined; writeUrl(); });
+    // the dialog has no padding, so a click whose target is the dialog itself is on the backdrop
+    $<HTMLDialogElement>("about").addEventListener("click", (e) => { if (e.target === e.currentTarget) $<HTMLDialogElement>("about").close(); });
     setRadius(state.radius);
     if (initial.about) setTimeout(() => openAbout(initial.about === "guide" ? undefined : initial.about), 0);
     $("foot-sources").innerHTML = `Data built ${esc((manifest.built ?? manifest.generated).slice(0, 10))}. Basemap © OpenFreeMap, © OpenStreetMap contributors.`;

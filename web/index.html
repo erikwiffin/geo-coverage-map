@@ -76,9 +76,11 @@
 
   <dialog id="about" aria-labelledby="about-title">
     <form method="dialog">
-      <h2 id="about-title" tabindex="-1">About this map</h2>
+      <div class="dlg-head">
+        <h2 id="about-title" tabindex="-1">About this map</h2>
+        <button class="dlg-close" value="close" aria-label="Close" title="Close (Esc)">×</button>
+      </div>
       <div id="about-body"></div>
-      <button value="close">Close</button>
     </form>
   </dialog>
   <script type="module" src="/src/main.ts"></script>

@@ -147,3 +147,15 @@ button.info { flex: none; width: 22px; height: 22px; padding: 0; border-radius: 
 .small { font-size: 11px; }
 .model-var { margin-top: 4px; }
 .model-var select { max-width: 230px; font: inherit; }
+/* About dialog: padding lives on the form, so clicks on the <dialog> itself are backdrop clicks;
+   the header (title + close) sticks to the top while the body scrolls */
+dialog#about { padding: 0; overflow-y: auto; }
+dialog#about > form { padding: 0 20px 20px; }
+dialog#about .dlg-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 14px 0 10px; background: var(--surface-1); border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+dialog#about .dlg-head h2 { margin: 0; font-size: 18px; }
+.dlg-close { flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface-0);
+  color: var(--text-primary); font-size: 20px; line-height: 1; cursor: pointer; }
+.dlg-close:hover { background: var(--border); }
+.dlg-close:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+dialog#about .src-card { scroll-margin-top: 64px; }
